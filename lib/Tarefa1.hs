@@ -12,14 +12,14 @@ import LI12324
 
 -- | Função para verificar colisões com plataformas e os limites do Mapa laterais e superior
 colisoesParede :: Mapa -> Personagem -> Bool
-colisoesParede (Mapa (_, _) (limiteX, limiteY) matriz) personagem = colide
+colisoesParede (Mapa (_, _) (_,_) matriz) personagem = colide
   where
     (px, py) = posicao personagem
     (tamanhoX, tamanhoY) = tamanho personagem
     -- | Verifica se o personagem está fora dos limites laterais
-    foraDosLimitesLaterais = px - tamanhoX / 2 < 0 || px + tamanhoX / 2 > limiteX
+    foraDosLimitesLaterais = px - tamanhoX / 2 < 0 || px + tamanhoX / 2 > fromIntegral (length(head matriz))
     -- | Verifica se o personagem está abaixo do limite superior (não colide com o topo)
-    abaixoDoLimiteSuperior = py + tamanhoY / 2 < limiteY
+    abaixoDoLimiteSuperior = py + tamanhoY / 2 < 0
     -- | Verifica se o personagem está em algum bloco de plataforma investigando os elementos verticais e horizontais da matriz
     emPlataforma i j = case matriz !! i !! j of
       Plataforma -> True
