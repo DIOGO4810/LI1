@@ -106,4 +106,4 @@ test-suite primate-kong-test
     main-is:          Spec.hs
 
     -- Test dependencies.
-    build-depends:    base ^>=4.16.4.0, HUnit
+    build-depends:    base ^>=4.16.4.0, random ^>=1.2.1.1, HUnit
