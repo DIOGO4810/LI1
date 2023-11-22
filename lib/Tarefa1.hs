@@ -12,7 +12,7 @@ import LI12324
 
 -- | Função para verificar colisões com plataformas e os limites do Mapa laterais e superior
 colisoesParede :: Mapa -> Personagem -> Bool
-colisoesParede (Mapa (_, _) (_,_) matriz) personagem = colide
+colisoesParede (Mapa (_, _) _ matriz) personagem = colide
   where
     (px, py) = posicao personagem
     (tamanhoX, tamanhoY) = tamanho personagem
@@ -28,6 +28,7 @@ colisoesParede (Mapa (_, _) (_,_) matriz) personagem = colide
     colideComPlataforma l = any (\i -> any (\j -> emPlataforma i j) [floor px, floor (px + tamanhoX)]) l
     -- | Combinando as condições na função principal
     colide = foraDosLimitesLaterais || (abaixoDoLimiteSuperior && (colideComPlataforma [floor px, floor (px + tamanhoX)]))
+
 
 
 
