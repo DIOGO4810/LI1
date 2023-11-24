@@ -9,6 +9,7 @@ Módulo para a realização da Tarefa 2 de LI1 em 2023/24.
 module Tarefa2 where
 
 import LI12324
+import Data.List
 
 valida :: Jogo -> Bool
 valida jogo =
@@ -36,7 +37,11 @@ valida jogo =
     vidasFantasmas = all (\inimigo -> if tipo inimigo == Fantasma then vida inimigo == 1 else True) listainimigos
 
     -- | 6. Escadas não podem começar/terminar em alçapões, e pelo menos uma das suas extremidades tem que ser do tipo Plataforma.
-    -- restricoesEscadas = all (\(pos, direcao) -> escadaValida pos direcao mapaJogo) (mapaEscadas mapaJogo)
+    restricoesEscadas mapa = all (\[(x1,y1),(x2,y2)] -> (if (elem (x1,y1-1) posplataformas) then (notElem (x2,y2+1) posalcapoes) else if (elem (x1,y1-1) posvazio) then (elem (x2,y2+1) posplataformas) else False)) (escadasadj)
+          where escadasadj = primUltEscadas mapa
+                posplataformas = mapaPlataformas mapa
+                posalcapoes = mapaAlcapoes mapa
+                posvazio = mapaVazio mapa
 
     -- | 7. Alçapões não podem ser menos largos que o jogador.
     -- restricoesAlcapoes = all (\(pos, direcao) -> alcapaoValido pos direcao jogadorJogo mapaJogo) (mapaAlcapoes mapaJogo)
@@ -62,6 +67,9 @@ mapaAlcapoes (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isAlcapao (
 mapaPlataformas :: Mapa -> [Posicao]
 mapaPlataformas (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isPlataforma (getBloco pos blocos)]
 
+mapaVazio :: Mapa -> [Posicao]
+mapaVazio (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isVazio (getBloco pos blocos)]
+
 indicesBlocos :: [[Bloco]] -> [Posicao]
 indicesBlocos blocos = [(fromIntegral j, fromIntegral i) | i<- [0..height-1], j <- [0..width-1]]
   where
@@ -83,6 +91,21 @@ isPlataforma :: Bloco -> Bool
 isPlataforma Plataforma = True
 isPlataforma _ = False
 
-escadaValida :: Mapa -> Bool
-escadaValida mapa = all (\(x,y) -> ((elem (x,y+1) (mapaEscadas mapa)) || (elem (x,y+1) (mapaPlataformas mapa))) && ((elem (x,y-1) (mapaEscadas mapa)) || (elem (x,y-1) (mapaPlataformas mapa)))) (mapaEscadas mapa)
+isVazio :: Bloco -> Bool
+isVazio Vazio = True
+isVazio _ = False
+
+agrupaEscadas :: Mapa -> [[Posicao]]
+agrupaEscadas mapa =  agrupaEscadasAux (sortOn fst (mapaEscadas mapa))
+
+agrupaEscadasAux :: [Posicao] -> [[Posicao]]
+agrupaEscadasAux [] = []
+agrupaEscadasAux [x] = [[x]]
+agrupaEscadasAux ((x,y):t)
+    | elem (x,y+1) (head r) = ((x,y) : (head r)) : tail r
+    | otherwise = [(x,y)] : r
+    where r = agrupaEscadasAux t
+
+primUltEscadas :: Mapa -> [[Posicao]]
+primUltEscadas mapa = map (\pos->[head pos,last pos]) (agrupaEscadas mapa)
 
