@@ -12,7 +12,7 @@ import LI12324
 
 valida :: Jogo -> Bool
 valida jogo =
-  temChao (mapa jogo) && inimigosRessaltam && posicoesIniciaisValidas && numeroMinimoInimigos && vidasFantasmas && restricoesEscadas && restricoesAlcapoes && semBlocosEmPersCole (mapa jogo) (colecionaveis jogo)
+  temChao (mapa jogo) && inimigosRessaltam && posicoesIniciaisValidas && numeroMinimoInimigos && vidasFantasmas && semBlocosEmPersCole (mapa jogo) (colecionaveis jogo)
   where
     mapaJogo = mapa jogo
     listainimigos = inimigos jogo
@@ -36,10 +36,10 @@ valida jogo =
     vidasFantasmas = all (\inimigo -> if tipo inimigo == Fantasma then vida inimigo == 1 else True) listainimigos
 
     -- | 6. Escadas não podem começar/terminar em alçapões, e pelo menos uma das suas extremidades tem que ser do tipo Plataforma.
-    restricoesEscadas = all (\(pos, direcao) -> escadaValida pos direcao mapaJogo) (mapaEscadas mapaJogo)
+    -- restricoesEscadas = all (\(pos, direcao) -> escadaValida pos direcao mapaJogo) (mapaEscadas mapaJogo)
 
     -- | 7. Alçapões não podem ser menos largos que o jogador.
-    restricoesAlcapoes = all (\(pos, direcao) -> alcapaoValido pos direcao jogadorJogo mapaJogo) (mapaAlcapoes mapaJogo)
+    -- restricoesAlcapoes = all (\(pos, direcao) -> alcapaoValido pos direcao jogadorJogo mapaJogo) (mapaAlcapoes mapaJogo)
 
     -- | 8. Não podem existir personagens nem colecionáveis "dentro" de plataformas ou alçapões.
       
@@ -53,23 +53,23 @@ valida jogo =
 
 -- | Funções auxiliares
 
-mapaBlocos :: Mapa -> [[Bloco]]
-mapaBlocos (Mapa _ _ matriz) = matriz
+mapaEscadas :: Mapa -> [Posicao]
+mapaEscadas (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isEscada (getBloco pos blocos)]
 
-mapaEscadas :: Mapa -> [(Posicao, Direcao)]
-mapaEscadas (Mapa _ _ blocos) = [(pos, direcao) | (pos, direcao) <- indicesBlocos blocos, isEscada (getBloco pos blocos)]
+mapaAlcapoes :: Mapa -> [Posicao]
+mapaAlcapoes (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isAlcapao (getBloco pos blocos)]
 
-mapaAlcapoes :: Mapa -> [(Posicao, Direcao)]
-mapaAlcapoes (Mapa _ _ blocos) = [(pos, direcao) | (pos, direcao) <- indicesBlocos blocos, isAlcapao (getBloco pos blocos)]
+mapaPlataformas :: Mapa -> [Posicao]
+mapaPlataformas (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isPlataforma (getBloco pos blocos)]
 
-indicesBlocos :: [[a]] -> [(Posicao, Direcao)]
-indicesBlocos blocos = [( (fromIntegral i, fromIntegral j), Este) | i <- [0..height-1], j <- [0..width-1]]
+indicesBlocos :: [[Bloco]] -> [Posicao]
+indicesBlocos blocos = [(fromIntegral j, fromIntegral i) | i<- [0..height-1], j <- [0..width-1]]
   where
     height = length blocos
     width = length (head blocos)
 
-getBloco :: Posicao -> [[a]] -> a
-getBloco (i, j) blocos = (blocos !! floor i) !! floor j
+getBloco :: Posicao -> [[Bloco]] -> Bloco
+getBloco (i, j) blocos = (blocos !! floor j) !! floor i
 
 isEscada :: Bloco -> Bool
 isEscada Escada = True
@@ -79,27 +79,10 @@ isAlcapao :: Bloco -> Bool
 isAlcapao Alcapao = True
 isAlcapao _ = False
 
-escadaValida :: Posicao -> Direcao -> Mapa -> Bool
-escadaValida posicao@(i, j) direcao mapa =
-  case getBloco posicao (mapaBlocos mapa) of
-    Escada ->
-      case direcao of
-        Norte -> i > 0 && getBloco (i - 1, j) (mapaBlocos mapa) /= Alcapao
-        Sul   -> i < fromIntegral (length (mapaBlocos mapa)) - 1 && getBloco (i + 1, j) (mapaBlocos mapa) /= Alcapao
-        Este  -> j < fromIntegral (length (head (mapaBlocos mapa))) - 1 && getBloco (i, j + 1) (mapaBlocos mapa) /= Alcapao
-        Oeste -> j > 0 && getBloco (i, j - 1) (mapaBlocos mapa) /= Alcapao
-    _ -> True
+isPlataforma :: Bloco -> Bool
+isPlataforma Plataforma = True
+isPlataforma _ = False
 
-
-alcapaoValido :: Posicao -> Direcao -> Personagem -> Mapa -> Bool
-alcapaoValido posicao@(i, j) direcao jogador mapa =
-  case getBloco posicao (mapaBlocos mapa) of
-    Alcapao ->
-      case direcao of
-        Norte -> i > 0 && getBloco (i - 1, j) (mapaBlocos mapa) == Plataforma
-        Sul   -> i < fromIntegral (length (mapaBlocos mapa)) - 1 && getBloco (i + 1, j) (mapaBlocos mapa) == Plataforma
-        Este  -> j < fromIntegral (length (head (mapaBlocos mapa))) - 1 && getBloco (i, j + 1) (mapaBlocos mapa) == Plataforma
-        Oeste -> j > 0 && getBloco (i, j - 1) (mapaBlocos mapa) == Plataforma
-    _ -> True
-
+escadaValida :: Mapa -> Bool
+escadaValida mapa = all (\(x,y) -> ((elem (x,y+1) (mapaEscadas mapa)) || (elem (x,y+1) (mapaPlataformas mapa))) && ((elem (x,y-1) (mapaEscadas mapa)) || (elem (x,y-1) (mapaPlataformas mapa)))) (mapaEscadas mapa)
 

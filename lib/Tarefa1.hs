@@ -9,30 +9,25 @@ Módulo para a realização da Tarefa 1 de LI1 em 2023/24.
 module Tarefa1 where
 
 import LI12324
+import Graphics.Gloss.Data.Point (pointInBox)
+import GHC.Float (double2Float)
+
+jogador1 = Personagem {posicao = (14.6,1), tamanho=(1,1)}
 
 -- | Função para verificar colisões com plataformas e os limites do Mapa laterais e superior
 colisoesParede :: Mapa -> Personagem -> Bool
-colisoesParede (Mapa (_, _) _ matriz) personagem = colide
+colisoesParede (Mapa _ _ matriz) personagem = colide
   where
     (px, py) = posicao personagem
     (tamanhoX, tamanhoY) = tamanho personagem
-    -- | Verifica se o personagem está fora dos limites laterais
-    foraDosLimitesLaterais = px - tamanhoX / 2 < 0 || px + tamanhoX / 2 > fromIntegral (length(head matriz))
-    -- | Verifica se o personagem está abaixo do limite superior (não colide com o topo)
-    abaixoDoLimiteSuperior = py + tamanhoY / 2 < 0
-    -- | Verifica se o personagem está em algum bloco de plataforma investigando os elementos verticais e horizontais da matriz
-    emPlataforma i j = case matriz !! i !! j of
-      Plataforma -> True
-      _ -> False
-    -- | Verifica se o personagem colide com a plataforma usando a função floor para combinar os valores reais recebidos com os inteiros da matriz
-    colideComPlataforma l = any (\i -> any (\j -> emPlataforma i j) [floor px, floor (px + tamanhoX)]) l
+    -- | Verifica se o personagem colide ou está fora dos limites laterais
+    foraDosLimitesLaterais = px - tamanhoX / 2 <= 0 || px + tamanhoX / 2 >= fromIntegral (length(head matriz))
+    -- | Verifica se o personagem colide ou está fora do limite superior
+    acimaDoLimiteSuperior = py - tamanhoY / 2 <= 0
+    -- | Verifica se o personagem colide com plataformas ou alçapões
+    colideComBloco = any (\h1-> colisaoHitbox h1 (calculaHitbox personagem)) (hitboxesPlataformasAlcapoes(mapaPlataformasAlcapoes matriz))
     -- | Combinando as condições na função principal
-    colide = foraDosLimitesLaterais || (abaixoDoLimiteSuperior && (colideComPlataforma [floor px, floor (px + tamanhoX)]))
-
-
-
-
-
+    colide = foraDosLimitesLaterais || acimaDoLimiteSuperior || colideComBloco
 
 
 colisoesPersonagens :: Personagem -> Personagem -> Bool
@@ -42,14 +37,47 @@ colisoesPersonagens p1 p2 = colide
     hitboxP2 = calculaHitbox p2
     colide = colisaoHitbox hitboxP1 hitboxP2
 
--- | Função auxiliar para calcular a hitbox de um personagem considerando que px e py estão no respetivo centro
+-- | Funções auxiliares
+
+-- | Função para calcular a hitbox de um personagem considerando que px e py estão no respetivo centro
 calculaHitbox :: Personagem -> Hitbox
 calculaHitbox personagem =
-  ((px - tamanhoX / 2, py - tamanhoY / 2), (px + tamanhoX / 2, py + tamanhoY / 2))
+  ((px - tamanhoX / 2, py + tamanhoY / 2), (px + tamanhoX / 2, py - tamanhoY / 2))
   where
     (px, py) = posicao personagem
     (tamanhoX, tamanhoY) = tamanho personagem
 
--- | Função auxiliar para verificar colisão entre duas hitboxes
+-- | Função auxiliar para verificar a colisão entre duas hitboxes
 colisaoHitbox :: Hitbox -> Hitbox -> Bool
-colisaoHitbox ((x1, y1), (x2, y2)) ((x3, y3), (x4, y4)) = x1 < x4 && x2 > x3 && y1 < y4 && y2 > y3
+colisaoHitbox h1 h2 = colisaoHitboxAux h1 h2 || colisaoHitboxAux h2 h1
+
+colisaoHitboxAux :: Hitbox -> Hitbox -> Bool
+colisaoHitboxAux ((x1,y1), (x2,y2)) ((x3,y3),(x4,y4)) = pointInBox (double2Float x3,double2Float y3) (double2Float x1,double2Float y1) (double2Float x2,double2Float y2)
+                                                    || pointInBox (double2Float x4,double2Float y4) (double2Float x1,double2Float y1) (double2Float x2,double2Float y2)
+                                                    || pointInBox (double2Float x3,double2Float y4) (double2Float x1,double2Float y1) (double2Float x2,double2Float y2)
+                                                    || pointInBox (double2Float x4,double2Float y3) (double2Float x1,double2Float y1) (double2Float x2,double2Float y2)
+
+-- | Função que retorna uma lista com as hitboxes dos blocos de plataforma e alçapão
+hitboxesPlataformasAlcapoes :: [Posicao] -> [Hitbox]
+hitboxesPlataformasAlcapoes = map (\(x,y) -> ((x,y),(x+1,y+1))) 
+
+-- | Função que retorna a lista de posições das plataformas e dos alçapões
+mapaPlataformasAlcapoes :: [[Bloco]] -> [Posicao]
+mapaPlataformasAlcapoes blocos = [pos | pos <- indicesBlocos blocos, isAlcapao (getBloco pos blocos) || isPlataforma (getBloco pos blocos)]
+
+indicesBlocos :: [[Bloco]] -> [Posicao]
+indicesBlocos blocos = [(fromIntegral j, fromIntegral i) | i<- [0..height-1], j <- [0..width-1]]
+  where
+    height = length blocos
+    width = length (head blocos)
+
+getBloco :: Posicao -> [[Bloco]] -> Bloco
+getBloco (i, j) blocos = (blocos !! floor j) !! floor i
+
+isAlcapao :: Bloco -> Bool
+isAlcapao Alcapao = True
+isAlcapao _ = False
+
+isPlataforma :: Bloco -> Bool
+isPlataforma Plataforma = True
+isPlataforma _ = False
