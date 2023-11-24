@@ -10,6 +10,7 @@ module Tarefa2 where
 
 import LI12324
 import Data.List
+import GHC.Float (double2Int)
 
 valida :: Jogo -> Bool
 valida jogo =
@@ -19,6 +20,7 @@ valida jogo =
     listainimigos = inimigos jogo
     jogadorJogo = jogador jogo
     listadecolecionaveis = colecionaveis jogo
+    (tamanhoX, tamanhoY) = tamanho (jogador jogo)
 
     -- | 1. O mapa tem "chão", ou seja, uma plataforma que impede que o jogador ou outro personagem caia fora do mapa.
     temChao :: Mapa -> Bool
@@ -44,7 +46,7 @@ valida jogo =
                 posvazio = mapaVazio mapa
 
     -- | 7. Alçapões não podem ser menos largos que o jogador.
-    -- restricoesAlcapoes = all (\(pos, direcao) -> alcapaoValido pos direcao jogadorJogo mapaJogo) (mapaAlcapoes mapaJogo)
+    restricoesAlcapoes tamanhoX mapa= all (\tamalcapoes -> tamalcapoes>tamanhoX) (tamanhoAlcapoes mapa)
 
     -- | 8. Não podem existir personagens nem colecionáveis "dentro" de plataformas ou alçapões.
       
@@ -109,3 +111,19 @@ agrupaEscadasAux ((x,y):t)
 primUltEscadas :: Mapa -> [[Posicao]]
 primUltEscadas mapa = map (\pos->[head pos,last pos]) (agrupaEscadas mapa)
 
+agrupaAlcapoes :: Mapa -> [[Posicao]]
+agrupaAlcapoes mapa =  agrupaAlcapoesAux (sortOn snd (mapaAlcapoes mapa))
+
+agrupaAlcapoesAux :: [Posicao] -> [[Posicao]]
+agrupaAlcapoesAux [] = []
+agrupaAlcapoesAux [x] = [[x]]
+agrupaAlcapoesAux ((x,y):t)
+    | elem (x+1,y) (head r) = ((x,y) : (head r)) : tail r
+    | otherwise = [(x,y)] : r
+    where r = agrupaAlcapoesAux t
+
+primUltAlcapoes :: Mapa -> [[Posicao]]
+primUltAlcapoes mapa = map (\pos->[head pos,last pos]) (agrupaAlcapoes mapa)
+
+tamanhoAlcapoes :: Mapa -> [Int]
+tamanhoAlcapoes mapa = map (\[(x1,y1),(x2,y2)]-> double2Int(x2-x1+1)) (primUltAlcapoes mapa)
