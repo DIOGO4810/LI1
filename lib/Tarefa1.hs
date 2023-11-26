@@ -16,26 +16,23 @@ jogador1 = Personagem {posicao = (14.6,1), tamanho=(1,1)}
 
 -- | Função para verificar colisões com plataformas e os limites do Mapa laterais e superior
 colisoesParede :: Mapa -> Personagem -> Bool
-colisoesParede (Mapa _ _ matriz) personagem = colide
+colisoesParede (Mapa _ _ blocos) personagem = foraDosLimitesLaterais || acimaDoLimiteSuperior || colideComBloco
   where
     (px, py) = posicao personagem
     (tamanhoX, tamanhoY) = tamanho personagem
     -- | Verifica se o personagem colide ou está fora dos limites laterais
-    foraDosLimitesLaterais = px - tamanhoX / 2 <= 0 || px + tamanhoX / 2 >= fromIntegral (length(head matriz))
+    foraDosLimitesLaterais = px - tamanhoX / 2 <= 0 || px + tamanhoX / 2 >= fromIntegral (length(head blocos))
     -- | Verifica se o personagem colide ou está fora do limite superior
     acimaDoLimiteSuperior = py - tamanhoY / 2 <= 0
     -- | Verifica se o personagem colide com plataformas ou alçapões
-    colideComBloco = any (\h1-> colisaoHitbox h1 (calculaHitbox personagem)) (hitboxesPlataformasAlcapoes(mapaPlataformasAlcapoes matriz))
-    -- | Combinando as condições na função principal
-    colide = foraDosLimitesLaterais || acimaDoLimiteSuperior || colideComBloco
+    colideComBloco = any (\h1-> colisaoHitbox h1 (calculaHitbox personagem)) (hitboxesBlocos(mapaPlataformasAlcapoes blocos))
 
 
 colisoesPersonagens :: Personagem -> Personagem -> Bool
-colisoesPersonagens p1 p2 = colide
+colisoesPersonagens p1 p2 = colisaoHitbox hitboxP1 hitboxP2
   where
     hitboxP1 = calculaHitbox p1
     hitboxP2 = calculaHitbox p2
-    colide = colisaoHitbox hitboxP1 hitboxP2
 
 -- | Funções auxiliares
 
@@ -58,8 +55,8 @@ colisaoHitboxAux ((x1,y1), (x2,y2)) ((x3,y3),(x4,y4)) = pointInBox (double2Float
                                                     || pointInBox (double2Float x4,double2Float y3) (double2Float x1,double2Float y1) (double2Float x2,double2Float y2)
 
 -- | Função que retorna uma lista com as hitboxes dos blocos de plataforma e alçapão
-hitboxesPlataformasAlcapoes :: [Posicao] -> [Hitbox]
-hitboxesPlataformasAlcapoes = map (\(x,y) -> ((x,y),(x+1,y+1))) 
+hitboxesBlocos :: [Posicao] -> [Hitbox]
+hitboxesBlocos = map (\(x,y) -> ((x,y),(x+1,y+1))) 
 
 -- | Função que retorna a lista de posições das plataformas e dos alçapões
 mapaPlataformasAlcapoes :: [[Bloco]] -> [Posicao]

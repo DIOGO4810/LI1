@@ -14,29 +14,28 @@ import GHC.Float (double2Int)
 
 valida :: Jogo -> Bool
 valida jogo =
-  temChao (mapa jogo) && inimigosRessaltam && posicoesIniciaisValidas && numeroMinimoInimigos && vidasFantasmas && semBlocosEmPersCole (mapa jogo) (colecionaveis jogo)
+  temChao && inimigosRessaltam && posicoesIniciaisValidas && numeroMinimoInimigos && vidasFantasmas && semBlocosEmPersCole
   where
-    mapaJogo = mapa jogo
-    listainimigos = inimigos jogo
+    (Mapa ((xi,yi),dir) (xf,yf) blocos) = mapa jogo
+    listaInimigos = inimigos jogo
     jogadorJogo = jogador jogo
-    listadecolecionaveis = colecionaveis jogo
+    listaColecionaveis = colecionaveis jogo
     (tamanhoX, tamanhoY) = tamanho (jogador jogo)
 
     -- | 1. O mapa tem "chão", ou seja, uma plataforma que impede que o jogador ou outro personagem caia fora do mapa.
-    temChao :: Mapa -> Bool
-    temChao (Mapa _ _ blocos) = any (elem Plataforma) blocos
+    temChao = any (elem Plataforma) blocos
 
     -- | 2. Todos os inimigos têm a propriedade ressalta a True, enquanto que o jogador a tem a False.
-    inimigosRessaltam = all (\inimigo -> ressalta inimigo) listainimigos && not (ressalta jogadorJogo)
+    inimigosRessaltam = all (\inimigo -> ressalta inimigo) listaInimigos && not (ressalta jogadorJogo)
 
     -- | 3. A posição inicial de um jogador não pode colidir com a posição inicial de outro personagem.
-    posicoesIniciaisValidas = all (\inimigo -> posicao inimigo /= posicao jogadorJogo) listainimigos
+    posicoesIniciaisValidas = all (\inimigo -> posicao inimigo /= posicao jogadorJogo) listaInimigos
 
     -- | 4. Número mínimo de inimigos: 2 (dois).
-    numeroMinimoInimigos = length listainimigos >= 2
+    numeroMinimoInimigos = length listaInimigos >= 2
 
     -- | 5. Inimigos Fantasma têm exatamente 1 (uma) vida.
-    vidasFantasmas = all (\inimigo -> if tipo inimigo == Fantasma then vida inimigo == 1 else True) listainimigos
+    vidasFantasmas = all (\inimigo -> if tipo inimigo == Fantasma then vida inimigo == 1 else True) listaInimigos
 
     -- | 6. Escadas não podem começar/terminar em alçapões, e pelo menos uma das suas extremidades tem que ser do tipo Plataforma.
     restricoesEscadas mapa = all (\[(x1,y1),(x2,y2)] -> (if (elem (x1,y1-1) posplataformas) then (notElem (x2,y2+1) posalcapoes) else if (elem (x1,y1-1) posvazio) then (elem (x2,y2+1) posplataformas) else False)) (escadasadj)
@@ -50,11 +49,10 @@ valida jogo =
 
     -- | 8. Não podem existir personagens nem colecionáveis "dentro" de plataformas ou alçapões.
       
-    semBlocosEmPersCole :: Mapa -> [(Colecionavel, Posicao)] -> Bool
-    semBlocosEmPersCole (Mapa ((x1, y1), _) _ matriz) listadecolecionaveis = emvazio y1 x1 matriz && all (\(x2, y2) -> emvazio y2 x2 matriz) listaposcolecionaveis
+    semBlocosEmPersCole = emvazio yi xi blocos && all (\(x2, y2) -> emvazio y2 x2 blocos) listaposcolecionaveis
         where
-            listaposcolecionaveis = map snd listadecolecionaveis
-            emvazio i j matriz = case matriz !! floor i !! floor j of
+            listaposcolecionaveis = map snd listaColecionaveis
+            emvazio i j blocos = case blocos !! floor i !! floor j of
                                     Vazio -> True
                                     _     -> False
 
