@@ -29,7 +29,7 @@ valida jogo =
     inimigosRessaltam = all (\inimigo -> ressalta inimigo) listaInimigos && not (ressalta jogadorJogo)
 
     -- | 3. A posição inicial de um jogador não pode colidir com a posição inicial de outro personagem.
-    posicoesIniciaisValidas = all (\inimigo -> posicao inimigo /= posicao jogadorJogo) listaInimigos
+    posicoesIniciaisValidas = all (\inimigo -> posicao inimigo /= (xi,yi)) listaInimigos
 
     -- | 4. Número mínimo de inimigos: 2 (dois).
     numeroMinimoInimigos = length listaInimigos >= 2

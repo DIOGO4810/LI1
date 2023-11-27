@@ -18,9 +18,9 @@ movimenta :: Semente -> Tempo -> Jogo -> Jogo
 movimenta semente tempo jogo = 
   Jogo 
     { mapa = tiraAlcapoes (mapa jogo)
-    , inimigos = tiraVidaInimigos $ map aplicaGravidade listaInimigos
-    , colecionaveis = listaColecionaveis
-    , jogador = tiraVidaJogador $ aplicaGravidade jogadorJogo
+    , inimigos = isInimigoDead $ tiraVidaInimigos $ map aplicaGravidade listaInimigos
+    , colecionaveis = tiraColecionaveis listaColecionaveis
+    , jogador = tiraVidaJogador $ aplicaEfeitos $ aplicaGravidade jogadorJogo
     }
 
   where 
@@ -32,7 +32,7 @@ movimenta semente tempo jogo =
     (tamanhoX, tamanhoY) = tamanho jogadorJogo
     (armado, tempoarmado) = aplicaDano jogadorJogo
 
-    -- |1. Função que retira 1 vida aos inimigos se eles colidirem com a hitbox de dano de um jogador armado
+    -- | 1. Função que retira 1 vida aos inimigos se eles colidirem com a hitbox de dano de um jogador armado
     tiraVidaInimigos :: [Personagem] -> [Personagem]
     tiraVidaInimigos listaInimigos = 
       if armado == True && tempoarmado > 0 && colide
@@ -41,6 +41,14 @@ movimenta semente tempo jogo =
       where 
         colide = any colinimigo (listaInimigos) 
         colinimigo inimigo = colisaoHitbox (calculaHitboxDano jogadorJogo) (calculaHitbox inimigo)
+
+    -- | 2. Função que faz os inimigos desaparecer do mapa quando perdem todas as vidas
+    isInimigoDead :: [Personagem] -> [Personagem]
+    isInimigoDead listaInimigos =
+      if isDead
+        then map (\(Personagem {vida=v, posicao = (x,y)}) -> if v == 0 then Personagem {vida=0, posicao = (-100,-100)} else Personagem {vida=v, posicao = (x,y)}) listaInimigos
+      else listaInimigos
+      where isDead = any (\Personagem{vida=v} -> v==0) listaInimigos
 
     -- | 3. Função que aplica um efeito de gravidade aos personagens se eles não se encontrarem numa plataforma ou num alçapão
     aplicaGravidade :: Personagem -> Personagem
@@ -59,6 +67,23 @@ movimenta semente tempo jogo =
         colide = any colinimigo (listaInimigos) 
         colinimigo inimigo = colisaoHitbox (calculaHitbox jogadorJogo) (calculaHitbox inimigo)
     
+    -- | 5. Função que retira os colecionáveis quando são coletados e aplica os seus efeitos
+    tiraColecionaveis :: [(Colecionavel,Posicao)] -> [(Colecionavel,Posicao)]
+    tiraColecionaveis listaColecionaveis = 
+      if colide 
+        then filter (\(col,(x,y)) -> not (colisaoHitbox (calculaHitbox jogadorJogo) ((x-0.5,y+0.5),(x+0.5,y-0.5)))) listaColecionaveis
+      else listaColecionaveis
+      where 
+        colide = any (\hitboxescolecionavel -> colisaoHitbox (calculaHitbox jogadorJogo) hitboxescolecionavel) hitboxescolecionaveis
+        hitboxescolecionaveis = hitboxesColecionaveis listaColecionaveis
+
+    aplicaEfeitos :: Personagem -> Personagem
+    aplicaEfeitos Personagem {pontos=p,aplicaDano=(a,ta)} =
+      case cos of
+        Moeda -> Personagem {pontos=p+100,aplicaDano=(a,ta)}
+        Martelo -> Personagem {pontos=p,aplicaDano=(True,10)}
+      where [(cos,pos)] = filter (\(col,(x,y)) -> colisaoHitbox (calculaHitbox jogadorJogo) ((x-0.5,y+0.5),(x+0.5,y-0.5))) listaColecionaveis
+
     -- | 6. Função que faz um alcapão desaparecer depois do jogador o pisar
     tiraAlcapoes :: Mapa -> Mapa
     tiraAlcapoes (Mapa ((xi,yi),dir) (xf,yf) blocos) =
@@ -70,6 +95,8 @@ movimenta semente tempo jogo =
         posalcapoes = mapaAlcapoes (Mapa ((xi,yi),dir) (xf,yf) blocos)
         hitboxesalcapoes = hitboxesBlocos posalcapoes
 
+    -- | 7. Função que impede os personagens de sair dos limites do mapa e atravessar plataformas
+    
 
 -- | Funções auxiliares
 
@@ -121,6 +148,10 @@ replaceVazio :: [Bloco] -> Int -> [Bloco]
 replaceVazio [] _ = []
 replaceVazio (x:xs) 0 = Vazio : xs
 replaceVazio (x:xs) n = x : replaceVazio xs (n - 1)
+
+-- | Função que retorna uma lista com as hitboxes dos colecionaveis
+hitboxesColecionaveis :: [(Colecionavel,Posicao)] -> [Hitbox]
+hitboxesColecionaveis = map (\(col,(x,y)) -> ((x-0.5,y+0.5),(x+0.5,y-0.5))) 
 
 -- | Função que retorna uma lista com as hitboxes dos blocos de plataforma e alçapão
 hitboxesBlocos :: [Posicao] -> [Hitbox]
