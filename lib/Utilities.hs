@@ -56,6 +56,10 @@ colisaoHitboxAux ((x1,y1), (x2,y2)) ((x3,y3),(x4,y4)) = pointInBox (double2Float
 hitboxesBlocos :: [Posicao] -> [Hitbox]
 hitboxesBlocos = map (\(x,y) -> ((x,y),(x+1,y+1))) 
 
+-- | Função que retorna uma lista com as hitboxes dos blocos de plataforma e alçapão
+hitboxesPlataformasAlcapoes :: [Posicao] -> [Hitbox]
+hitboxesPlataformasAlcapoes = map (\(x,y) -> ((x,y),(x+1,y+1)))
+
 -- | Função que retorna uma lista com as hitboxes dos colecionaveis
 hitboxesColecionaveis :: [(Colecionavel,Posicao)] -> [Hitbox]
 hitboxesColecionaveis = map (\(col,(x,y)) -> ((x-0.5,y+0.5),(x+0.5,y-0.5))) 
