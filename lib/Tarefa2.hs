@@ -10,7 +10,7 @@ module Tarefa2 where
 
 import LI12324
 import Data.List
-import GHC.Float (double2Int)
+import Utilities
 
 valida :: Jogo -> Bool
 valida jogo =
@@ -56,72 +56,3 @@ valida jogo =
                                     Vazio -> True
                                     _     -> False
 
--- | Funções auxiliares
-
-mapaEscadas :: Mapa -> [Posicao]
-mapaEscadas (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isEscada (getBloco pos blocos)]
-
-mapaAlcapoes :: Mapa -> [Posicao]
-mapaAlcapoes (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isAlcapao (getBloco pos blocos)]
-
-mapaPlataformas :: Mapa -> [Posicao]
-mapaPlataformas (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isPlataforma (getBloco pos blocos)]
-
-mapaVazio :: Mapa -> [Posicao]
-mapaVazio (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isVazio (getBloco pos blocos)]
-
-indicesBlocos :: [[Bloco]] -> [Posicao]
-indicesBlocos blocos = [(fromIntegral j, fromIntegral i) | i<- [0..height-1], j <- [0..width-1]]
-  where
-    height = length blocos
-    width = length (head blocos)
-
-getBloco :: Posicao -> [[Bloco]] -> Bloco
-getBloco (i, j) blocos = (blocos !! floor j) !! floor i
-
-isEscada :: Bloco -> Bool
-isEscada Escada = True
-isEscada _ = False
-
-isAlcapao :: Bloco -> Bool
-isAlcapao Alcapao = True
-isAlcapao _ = False
-
-isPlataforma :: Bloco -> Bool
-isPlataforma Plataforma = True
-isPlataforma _ = False
-
-isVazio :: Bloco -> Bool
-isVazio Vazio = True
-isVazio _ = False
-
-agrupaEscadas :: Mapa -> [[Posicao]]
-agrupaEscadas mapa =  agrupaEscadasAux (sortOn fst (mapaEscadas mapa))
-
-agrupaEscadasAux :: [Posicao] -> [[Posicao]]
-agrupaEscadasAux [] = []
-agrupaEscadasAux [x] = [[x]]
-agrupaEscadasAux ((x,y):t)
-    | elem (x,y+1) (head r) = ((x,y) : (head r)) : tail r
-    | otherwise = [(x,y)] : r
-    where r = agrupaEscadasAux t
-
-primUltEscadas :: Mapa -> [[Posicao]]
-primUltEscadas mapa = map (\pos->[head pos,last pos]) (agrupaEscadas mapa)
-
-agrupaAlcapoes :: Mapa -> [[Posicao]]
-agrupaAlcapoes mapa =  agrupaAlcapoesAux (sortOn snd (mapaAlcapoes mapa))
-
-agrupaAlcapoesAux :: [Posicao] -> [[Posicao]]
-agrupaAlcapoesAux [] = []
-agrupaAlcapoesAux [x] = [[x]]
-agrupaAlcapoesAux ((x,y):t)
-    | elem (x+1,y) (head r) = ((x,y) : (head r)) : tail r
-    | otherwise = [(x,y)] : r
-    where r = agrupaAlcapoesAux t
-
-primUltAlcapoes :: Mapa -> [[Posicao]]
-primUltAlcapoes mapa = map (\pos->[head pos,last pos]) (agrupaAlcapoes mapa)
-
-tamanhoAlcapoes :: Mapa -> [Int]
-tamanhoAlcapoes mapa = map (\[(x1,y1),(x2,y2)]-> double2Int(x2-x1+1)) (primUltAlcapoes mapa)

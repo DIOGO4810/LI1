@@ -51,6 +51,7 @@ library
         Tarefa3
         Tarefa4
         Mapas
+        Utilities
 
     -- Modules included in this library but not exported.
     -- other-modules:
