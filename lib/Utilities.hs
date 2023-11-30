@@ -1,3 +1,12 @@
+{-|
+Module      : Utilities
+Description : Funções auxiliares
+Copyright   : Diogo José Ribeiro Ribeiro <a106906@alunos.uminho.pt>
+              Heitor Araújo Fernandes <a106933@alunos.uminho.pt>
+
+Módulo com as funções auxiliares utilizadas no desenvolvimento das Tarefas.
+-}
+
 module Utilities where
 
 import LI12324
