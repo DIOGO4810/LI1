@@ -21,6 +21,7 @@ colisoesParede (Mapa _ _ blocos) personagem = foraDosLimitesLaterais || acimaDoL
     (tamanhoX, tamanhoY) = tamanho personagem
     -- | Verifica se o personagem colide ou está fora dos limites laterais
     foraDosLimitesLaterais = px - tamanhoX / 2 <= 0 || px + tamanhoX / 2 >= fromIntegral (length(head blocos))
+    foraDosLimitesLaterais = px - tamanhoX / 2 <= 0 || px + tamanhoX / 2 >= fromIntegral (length(head blocos))
     -- | Verifica se o personagem colide ou está fora do limite superior
     acimaDoLimiteSuperior = py - tamanhoY / 2 <= 0
     -- | Verifica se o personagem colide com plataformas ou alçapões

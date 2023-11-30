@@ -9,6 +9,7 @@ Módulo para a realização da Tarefa 2 de LI1 em 2023/24.
 module Tarefa2 where
 
 import LI12324
+import Utilities
 import Data.List
 import Utilities
 
@@ -55,4 +56,5 @@ valida jogo =
             emvazio i j blocos = case blocos !! floor i !! floor j of
                                     Vazio -> True
                                     _     -> False
+
 
