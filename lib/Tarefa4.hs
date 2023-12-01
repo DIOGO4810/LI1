@@ -11,6 +11,8 @@ module Tarefa4 where
 import Data.Maybe
 
 import LI12324
+import GHC.Float (double2Float)
+
 
 atualiza :: [Maybe Acao] -> Maybe Acao -> Jogo -> Jogo
 atualiza acoesInimigos acaoJogador jogo =
@@ -21,18 +23,37 @@ atualiza acoesInimigos acaoJogador jogo =
     , colecionaveis = colecionaveis jogo
     }
 
-atualizaJogador ::  Personagem ->Mapa -> Maybe Acao -> Personagem
-atualizaJogador jogador (Mapa ((x,y),_) _ matriz) Nothing = jogador -- Inércia do movimento
-atualizaJogador jogador (Mapa ((x,y),d) _ matriz) (Just acao) =
+atualizaJogador ::  Personagem-> Mapa -> Maybe Acao -> Personagem
+atualizaJogador jogador (Mapa ((x, y), _) _ matriz) Nothing = jogador -- Inércia do movimento
+atualizaJogador jogador (Mapa ((x, y), d) _ matriz) (Just acao) =
   case acao of
-    Subir -> if (emEscad y x matriz) then jogador { velocidade = (0, -1), direcao = Norte } else jogador
-    Descer -> if (emEscad y x matriz) then jogador { velocidade = (0, 1), direcao = Sul } else jogador
-    AndarDireita ->if (not (tlvsubirEdescer jogador)) && ressalta && (x+tamanhoX) < fromIntegral(length (head matriz)) then jogador { velocidade = (0, 1), direcao = Este} else jogador
-    AndarEsquerda -> jogador { velocidade = (0, -1)}
-    Saltar -> if not (emEscad y x matriz) then jogador { velocidade = (0, -1) } else jogador
-    Parar -> jogador { velocidade = (0, 0) }
-    where (tamanhoX, tamanhoY) = Personagem {tamanho}
-          ressaltando = ressalta Personagem
+    Subir ->
+      if emEscad y x matriz
+        then jogador {velocidade = (0, -1), direcao = Norte}
+        else jogador
+    Descer ->
+      if emEscad y x matriz
+        then jogador {velocidade = (0, 1), direcao = Sul}
+        else jogador
+    AndarDireita ->
+      if (not (tlvsubirEdescer jogador)) && ressaltando && (x + tamanhoX) < (fromIntegral (length (head matriz)))
+        then jogador {velocidade = (1, 0), direcao = Este}
+        else jogador
+    AndarEsquerda -> 
+      if (not (tlvsubirEdescer jogador)) && ressaltando && (x + tamanhoX) < (fromIntegral (length (head matriz)))
+        then jogador {velocidade = (-1, 0), direcao = Oeste }
+        else jogador
+    Saltar ->
+      if (not (emEscad y x matriz))
+        then jogador {velocidade = (0, -1)}
+        else jogador
+    Parar -> jogador {velocidade = (0, 0)}
+  where
+    tamanhoX = fst $ tamanho jogador
+    tamanhoY = snd $ tamanho jogador
+    ressaltando = ressalta jogador
+
+
           
           
 
@@ -43,13 +64,22 @@ atualizaInimigo inimigo (Mapa ((x,y),_) _ matriz) (Just acao) =
   case acao of
     Subir -> if (emEscad y x matriz) then inimigo { velocidade = (0, -1), direcao = Norte } else inimigo
     Descer -> if (emEscad y x matriz) then inimigo { velocidade = (0, 1), direcao = Sul } else inimigo
-    AndarDireita -> inimigo { velocidade = (0, 1)}
-    AndarEsquerda -> inimigo { velocidade = (0, -1)}
-    Saltar -> inimigo { velocidade = (0, -1) }
+    AndarDireita -> 
+      if (not (tlvsubirEdescer inimigo)) && ressaltando && (x + tamanhoX) < (fromIntegral (length (head matriz)))
+        then inimigo {velocidade = (1, 0), direcao = Este}
+        else inimigo
+    AndarEsquerda -> 
+      if (not (tlvsubirEdescer inimigo)) && ressaltando && (x + tamanhoX) < (fromIntegral (length (head matriz)))
+        then inimigo {velocidade = (-1, 0), direcao = Oeste }
+        else inimigo
+    Saltar -> if not (emEscad y x matriz)
+        then inimigo {velocidade = (0, -1)}
+        else inimigo
     Parar -> inimigo { velocidade = (0, 0) }
-
-
-
+  where
+    tamanhoX = fst $ tamanho inimigo
+    tamanhoY = snd $ tamanho inimigo
+    ressaltando = ressalta inimigo
 
 
 tlvsubirEdescer :: Personagem -> Bool
