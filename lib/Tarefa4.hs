@@ -36,11 +36,11 @@ atualizaJogador jogador (Mapa ((x, y), d) _ matriz) (Just acao) =
         then jogador {velocidade = (0, 1), direcao = Sul}
         else jogador
     AndarDireita ->
-      if (not (tlvsubirEdescer jogador)) && ressaltando && (x + tamanhoX) < (fromIntegral (length (head matriz)))
+      if (not (tlvsubirEdescer jogador)) && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head matriz)))-0.001)
         then jogador {velocidade = (1, 0), direcao = Este}
         else jogador
     AndarEsquerda -> 
-      if (not (tlvsubirEdescer jogador)) && ressaltando && (x + tamanhoX) < (fromIntegral (length (head matriz)))
+      if (not (tlvsubirEdescer jogador)) && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head matriz)))-0.001)
         then jogador {velocidade = (-1, 0), direcao = Oeste }
         else jogador
     Saltar ->
@@ -65,11 +65,11 @@ atualizaInimigo inimigo (Mapa ((x,y),_) _ matriz) (Just acao) =
     Subir -> if (emEscad y x matriz) then inimigo { velocidade = (0, -1), direcao = Norte } else inimigo
     Descer -> if (emEscad y x matriz) then inimigo { velocidade = (0, 1), direcao = Sul } else inimigo
     AndarDireita -> 
-      if (not (tlvsubirEdescer inimigo)) && ressaltando && (x + tamanhoX) < (fromIntegral (length (head matriz)))
+      if (not (tlvsubirEdescer inimigo)) && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head matriz)))-0.001)
         then inimigo {velocidade = (1, 0), direcao = Este}
         else inimigo
     AndarEsquerda -> 
-      if (not (tlvsubirEdescer inimigo)) && ressaltando && (x + tamanhoX) < (fromIntegral (length (head matriz)))
+      if (not (tlvsubirEdescer inimigo)) && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head matriz)))-0.001)
         then inimigo {velocidade = (-1, 0), direcao = Oeste }
         else inimigo
     Saltar -> if not (emEscad y x matriz)
