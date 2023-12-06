@@ -11,6 +11,7 @@ module Tarefa4 where
 import Data.Maybe
 
 import LI12324
+import Utilities
 import GHC.Float (double2Float)
 
 
@@ -24,73 +25,68 @@ atualiza acoesInimigos acaoJogador jogo =
     }
 
 atualizaJogador ::  Personagem-> Mapa -> Maybe Acao -> Personagem
-atualizaJogador jogador (Mapa ((x, y), _) _ matriz) Nothing = jogador -- Inércia do movimento
-atualizaJogador jogador (Mapa ((x, y), d) _ matriz) (Just acao) =
+atualizaJogador jogador (Mapa _ _ blocos) Nothing = jogador -- Inércia do movimento
+atualizaJogador jogador (Mapa _ _ blocos) (Just acao) =
   case acao of
     Subir ->
-      if emEscad y x matriz
-        then jogador {velocidade = (0, -1), direcao = Norte}
-        else jogador
+      if inEscada 
+        then jogador {velocidade = (0, -2), direcao = Norte}
+      else jogador
     Descer ->
-      if emEscad y x matriz
-        then jogador {velocidade = (0, 1), direcao = Sul}
-        else jogador
+      if inEscada
+        then jogador {velocidade = (0, 2), direcao = Sul}
+      else jogador
     AndarDireita ->
-      if (not (tlvsubirEdescer jogador)) && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head matriz)))-0.001)
-        then jogador {velocidade = (1, 0), direcao = Este}
-        else jogador
+      if not inEscada && (px + tamanhoX/2) < fromIntegral(length (head blocos))
+        then jogador {velocidade = (5, 0), direcao = Este}
+      else jogador
     AndarEsquerda -> 
-      if (not (tlvsubirEdescer jogador)) && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head matriz)))-0.001)
-        then jogador {velocidade = (-1, 0), direcao = Oeste }
-        else jogador
+      if not inEscada && (px + tamanhoX/2) < fromIntegral (length (head blocos))
+        then jogador {velocidade = (-5, 0), direcao = Oeste }
+      else jogador
     Saltar ->
-      if (not (emEscad y x matriz))
+      if not inEscada
         then jogador {velocidade = (0, -1)}
-        else jogador
+      else jogador
     Parar -> jogador {velocidade = (0, 0)}
   where
+    (px,py) = posicao jogador
+    inEscada = emEscada jogador
     tamanhoX = fst $ tamanho jogador
     tamanhoY = snd $ tamanho jogador
     ressaltando = ressalta jogador
 
 
-          
-          
-
-
 atualizaInimigo :: Personagem -> Mapa -> Maybe Acao -> Personagem
-atualizaInimigo inimigo (Mapa ((x,y),_) _ matriz) Nothing = inimigo -- Inércia do movimento
-atualizaInimigo inimigo (Mapa ((x,y),_) _ matriz) (Just acao) =
+atualizaInimigo inimigo (Mapa ((x,y),_) _ blocos) Nothing = inimigo -- Inércia do movimento
+atualizaInimigo inimigo (Mapa ((x,y),_) _ blocos) (Just acao) =
   case acao of
-    Subir -> if (emEscad y x matriz) then inimigo { velocidade = (0, -1), direcao = Norte } else inimigo
-    Descer -> if (emEscad y x matriz) then inimigo { velocidade = (0, 1), direcao = Sul } else inimigo
+    Subir -> 
+      if inEscada
+        then inimigo { velocidade = (0, -1), direcao = Norte} 
+      else inimigo
+    Descer -> 
+      if inEscada 
+        then inimigo { velocidade = (0, 1), direcao = Sul} 
+      else inimigo
     AndarDireita -> 
-      if (not (tlvsubirEdescer inimigo)) && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head matriz)))-0.001)
+      if not inEscada && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head blocos)))-0.001)
         then inimigo {velocidade = (1, 0), direcao = Este}
         else inimigo
     AndarEsquerda -> 
-      if (not (tlvsubirEdescer inimigo)) && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head matriz)))-0.001)
+      if not inEscada && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head blocos)))-0.001)
         then inimigo {velocidade = (-1, 0), direcao = Oeste }
         else inimigo
-    Saltar -> if not (emEscad y x matriz)
+    Saltar -> 
+      if not inEscada
         then inimigo {velocidade = (0, -1)}
-        else inimigo
+      else inimigo
     Parar -> inimigo { velocidade = (0, 0) }
   where
+    (px,py) = posicao inimigo
+    inEscada = emEscada inimigo
     tamanhoX = fst $ tamanho inimigo
     tamanhoY = snd $ tamanho inimigo
     ressaltando = ressalta inimigo
-
-
-tlvsubirEdescer :: Personagem -> Bool
-tlvsubirEdescer  Personagem {direcao = x}= case x of 
-            Norte -> True
-            Sul -> True
-            _ -> False
  
             
-
-emEscad :: Double -> Double -> [[Bloco]] -> Bool
-emEscad i j matriz = case matriz !! floor i !! floor j of
-                                    Escada -> True
-                                    _     -> False
