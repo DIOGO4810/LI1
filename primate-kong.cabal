@@ -51,6 +51,7 @@ library
         Tarefa3
         Tarefa4
         Mapas
+        Utilities
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -75,7 +76,8 @@ executable primate-kong
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    -- other-modules:
+    other-modules:
+      DrawMap
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
