@@ -80,6 +80,9 @@ replaceVazio (x:xs) 0 = Vazio : xs
 replaceVazio (x:xs) n = x : replaceVazio xs (n - 1)
 
 -- | Função que retorna a lista de posições dos blocos
+mapaBlocos :: Mapa -> Bloco -> [Posicao]
+mapaBlocos (Mapa _ _ blocos) bloco = [pos | pos <- centerOfBlocos blocos, isBloco bloco (getBloco pos blocos)]
+
 mapaEscadas :: Mapa -> [Posicao]
 mapaEscadas (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isEscada (getBloco pos blocos)]
 
@@ -128,6 +131,9 @@ primUltAlcapoes mapa = map (\pos->[head pos,last pos]) (agrupaAlcapoes mapa)
 tamanhoAlcapoes :: Mapa -> [Int]
 tamanhoAlcapoes mapa = map (\[(x1,y1),(x2,y2)]-> double2Int(x2-x1+1)) (primUltAlcapoes mapa)
 
+centerOfBlocos :: [[Bloco]] -> [Posicao]
+centerOfBlocos blocos = map (\(x,y) -> (x+0.5,y+0.5)) (indicesBlocos blocos)
+
 indicesBlocos :: [[Bloco]] -> [Posicao]
 indicesBlocos blocos = [(fromIntegral j, fromIntegral i) | i<- [0..height-1], j <- [0..width-1]]
   where
@@ -153,3 +159,5 @@ isVazio :: Bloco -> Bool
 isVazio Vazio = True
 isVazio _ = False
 
+isBloco :: Bloco -> Bloco -> Bool
+isBloco bloco1 bloco2 = bloco1 == bloco2
