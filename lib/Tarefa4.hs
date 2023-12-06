@@ -37,11 +37,11 @@ atualizaJogador jogador (Mapa _ _ blocos) (Just acao) =
         then jogador {velocidade = (0, 2), direcao = Sul}
       else jogador
     AndarDireita ->
-      if not inEscada && (px + tamanhoX/2) < fromIntegral(length (head blocos))
+      if not inEscada && (px + tamanhoX/2) < fromIntegral(length (head blocos)) && not ((any (\hitboxbloco -> colisaoHitbox (calculaHitboxObstaculo jogador) hitboxbloco) (hitboxesBlocos $ mapaPlataformasAlcapoes blocos))&& direcaojogador == Este)
         then jogador {velocidade = (5, 0), direcao = Este}
       else jogador
     AndarEsquerda -> 
-      if not inEscada && (px + tamanhoX/2) < fromIntegral (length (head blocos))
+      if not inEscada && (px + tamanhoX/2) < fromIntegral (length (head blocos)) && not ((any (\hitboxbloco -> colisaoHitbox (calculaHitboxObstaculo jogador) hitboxbloco) (hitboxesBlocos $ mapaPlataformasAlcapoes blocos))&& direcaojogador == Oeste)
         then jogador {velocidade = (-5, 0), direcao = Oeste }
       else jogador
     Saltar ->
@@ -55,6 +55,7 @@ atualizaJogador jogador (Mapa _ _ blocos) (Just acao) =
     tamanhoX = fst $ tamanho jogador
     tamanhoY = snd $ tamanho jogador
     ressaltando = ressalta jogador
+    direcaojogador = direcao jogador
 
 
 atualizaInimigo :: Personagem -> Mapa -> Maybe Acao -> Personagem
@@ -70,7 +71,7 @@ atualizaInimigo inimigo (Mapa ((x,y),_) _ blocos) (Just acao) =
         then inimigo { velocidade = (0, 1), direcao = Sul} 
       else inimigo
     AndarDireita -> 
-      if not inEscada && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head blocos)))-0.001)
+      if not inEscada && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head blocos)))-0.001) 
         then inimigo {velocidade = (1, 0), direcao = Este}
         else inimigo
     AndarEsquerda -> 

@@ -29,6 +29,13 @@ calculaHitboxObstaculo jogador = ((px-tx/2,py-ty/3),(px+tx/2,py+ty/3))
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
 
+-- | Função que verifica se está a colidir com as laterais das plataformas e alçapoes
+hitlaterais :: Personagem -> Hitbox -> Mapa -> Bool
+hitlaterais jogador (Mapa ((x,y),_) _ matriz) = calculaHitboxObstaculo jogador (colideComBloco jogador (Mapa _ _ matriz))
+  where 
+    (px,py) = posicao jogador
+    (tx,ty) = tamanho jogador
+
 -- | Função que calcula a hitbox de dano do jogador armado
 calculaHitboxDano :: Personagem -> Hitbox
 calculaHitboxDano jogador = 
