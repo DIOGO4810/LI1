@@ -25,7 +25,7 @@ valida jogo =
     (tamanhoX, tamanhoY) = tamanho (jogador jogo)
 
     -- | 1. O mapa tem "chão", ou seja, uma plataforma que impede que o jogador ou outro personagem caia fora do mapa.
-    temChao = if (all isPlataforma (last blocos)) == True then True else False
+    temChao = all isPlataforma (last blocos)
 
     -- | 2. Todos os inimigos têm a propriedade ressalta a True, enquanto que o jogador a tem a False.
     inimigosRessaltam = all (\inimigo -> ressalta inimigo) listaInimigos && not (ressalta jogadorJogo)
