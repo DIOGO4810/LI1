@@ -8,7 +8,7 @@ Módulo para a realização da Tarefa 1 de LI1 em 2023/24.
 -}
 module Tarefa1 where
 
-import LI12324
+import LI12324 
 import Utilities
 import Mapas
 

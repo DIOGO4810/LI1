@@ -13,6 +13,7 @@ import Data.Maybe
 import LI12324
 import Utilities
 import GHC.Float (double2Float)
+import Mapas (jog)
 
 
 atualiza :: [Maybe Acao] -> Maybe Acao -> Jogo -> Jogo
@@ -25,31 +26,32 @@ atualiza acoesInimigos acaoJogador jogo =
     }
 
 atualizaJogador ::  Personagem-> Mapa -> Maybe Acao -> Personagem
-atualizaJogador jogador (Mapa _ _ blocos) Nothing = jogador -- Inércia do movimento
-atualizaJogador jogador (Mapa _ _ blocos) (Just acao) =
+atualizaJogador jogador _ Nothing = jogador -- Inércia do movimento
+atualizaJogador jogador (Mapa pidi pf blocos) (Just acao) =
   case acao of
     Subir ->
-      if inEscada 
-        then jogador {velocidade = (0, -2), direcao = Norte}
+      if inEscada
+        then jogador {velocidade = (0, -3), direcao = Norte}
       else jogador
     Descer ->
-      if inEscada
-        then jogador {velocidade = (0, 2), direcao = Sul}
+      if inEscada || ((any (\pos -> (fromIntegral(floor px),fromIntegral(ceiling py)) == pos) (mapaPlataformasAlcapoes blocos)) && (any (\escadabaixo -> (fromIntegral(floor px),fromIntegral(ceiling (py+1))) == escadabaixo) (mapaEscadas (mapa))))
+        then jogador {velocidade = (0, 3), direcao = Sul}
       else jogador
-    AndarDireita ->
-      if not inEscada && (px + tamanhoX/2) < fromIntegral(length (head blocos)) && not ((any (\hitboxbloco -> colisaoHitbox (calculaHitboxObstaculo jogador) hitboxbloco) (hitboxesBlocos $ mapaPlataformasAlcapoes blocos))&& direcaojogador == Este)
-        then jogador {velocidade = (5, 0), direcao = Este}
-      else jogador
-    AndarEsquerda -> 
-      if not inEscada && (px + tamanhoX/2) < fromIntegral (length (head blocos)) && not ((any (\hitboxbloco -> colisaoHitbox (calculaHitboxObstaculo jogador) hitboxbloco) (hitboxesBlocos $ mapaPlataformasAlcapoes blocos))&& direcaojogador == Oeste)
-        then jogador {velocidade = (-5, 0), direcao = Oeste }
-      else jogador
+    AndarDireita -> 
+      if (snd $ velocidade jogador) /= 0 || (inEscada && not( any (\hitboxbloco -> colisaoHitbox (calculaHitbox jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformas(mapa)))))
+        then jogador 
+      else jogador {velocidade = (4, 0), direcao = Este}
+    AndarEsquerda ->
+      if (snd $ velocidade jogador) /= 0  || (inEscada && not( any (\hitboxbloco -> colisaoHitbox (calculaHitbox jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformas(mapa)))))
+        then jogador 
+      else jogador {velocidade = (-4, 0), direcao = Oeste}
     Saltar ->
-      if not inEscada
-        then jogador {velocidade = (0, -1)}
+      if (not inEscada || ((any (\primult -> elem (fromIntegral(floor px), fromIntegral(floor py)) primult) (primUltEscadas mapa)) && (fst $ velocidade jogador) /=0)) && any (\hitboxesbloco -> colisaoHitbox (calculaHitbox jogador) hitboxesbloco) (hitboxesBlocos(mapaPlataformasAlcapoes blocos))
+        then jogador {velocidade = (fst $ velocidade jogador, -4)}
       else jogador
     Parar -> jogador {velocidade = (0, 0)}
   where
+    mapa = (Mapa pidi pf blocos)
     (px,py) = posicao jogador
     inEscada = emEscada jogador
     tamanhoX = fst $ tamanho jogador
@@ -64,11 +66,11 @@ atualizaInimigo inimigo (Mapa ((x,y),_) _ blocos) (Just acao) =
   case acao of
     Subir -> 
       if inEscada
-        then inimigo { velocidade = (0, -1), direcao = Norte} 
+        then inimigo {velocidade = (0, -1), direcao = Norte} 
       else inimigo
     Descer -> 
       if inEscada 
-        then inimigo { velocidade = (0, 1), direcao = Sul} 
+        then inimigo {velocidade = (0, 1), direcao = Sul} 
       else inimigo
     AndarDireita -> 
       if not inEscada && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head blocos)))-0.001) 
@@ -76,13 +78,13 @@ atualizaInimigo inimigo (Mapa ((x,y),_) _ blocos) (Just acao) =
         else inimigo
     AndarEsquerda -> 
       if not inEscada && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head blocos)))-0.001)
-        then inimigo {velocidade = (-1, 0), direcao = Oeste }
+        then inimigo {velocidade = (-1, 0), direcao = Oeste}
         else inimigo
     Saltar -> 
       if not inEscada
         then inimigo {velocidade = (0, -1)}
       else inimigo
-    Parar -> inimigo { velocidade = (0, 0) }
+    Parar -> inimigo {velocidade = (0, 0)}
   where
     (px,py) = posicao inimigo
     inEscada = emEscada inimigo
