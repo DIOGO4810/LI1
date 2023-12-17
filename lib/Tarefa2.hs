@@ -12,6 +12,7 @@ import LI12324
 import Utilities
 import Data.List
 import Utilities
+import Mapas
 
 valida :: Jogo -> Bool
 valida jogo =
@@ -24,7 +25,7 @@ valida jogo =
     (tamanhoX, tamanhoY) = tamanho (jogador jogo)
 
     -- | 1. O mapa tem "chão", ou seja, uma plataforma que impede que o jogador ou outro personagem caia fora do mapa.
-    temChao = any (elem Plataforma) blocos
+    temChao = if (all isPlataforma (last blocos)) == True then True else False
 
     -- | 2. Todos os inimigos têm a propriedade ressalta a True, enquanto que o jogador a tem a False.
     inimigosRessaltam = all (\inimigo -> ressalta inimigo) listaInimigos && not (ressalta jogadorJogo)
@@ -57,4 +58,6 @@ valida jogo =
                                     Vazio -> True
                                     _     -> False
 
-
+--temChao2 :: Mapa -> Bool
+--temChao2  = if (all isPlataforma (last blocos)) == True then True else False
+--posicoesIniciaisValidas = all (\inimigo -> posicao inimigo /= (xi,yi)) listaInimigos

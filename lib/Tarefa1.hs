@@ -10,8 +10,11 @@ module Tarefa1 where
 
 import LI12324
 import Utilities
+import Mapas
 
-jogador1 = Personagem {posicao = (14.6,1), tamanho=(1,1)}
+jogador1 = Personagem {posicao = (11.6,3), tamanho=(1,1)}
+jogador2 = Personagem {posicao = (1.6,3), tamanho=(1,1)}
+
 
 -- | Função para verificar colisões com plataformas e os limites do Mapa laterais e superior
 colisoesParede :: Mapa -> Personagem -> Bool

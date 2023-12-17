@@ -103,10 +103,10 @@ test-suite primate-kong-test
     type:             exitcode-stdio-1.0
 
     -- Directories containing source files.
-    hs-source-dirs:   lib test
+    hs-source-dirs:   lib test 
 
     -- The entrypoint to the test suite.
     main-is:          Spec.hs
 
     -- Test dependencies.
-    build-depends:    base ^>=4.16.4.0, random ^>=1.2.1.1, HUnit
+    build-depends:    base ^>=4.16.4.0, random ^>=1.2.1.1, HUnit, gloss ^>=1.13.2.2 

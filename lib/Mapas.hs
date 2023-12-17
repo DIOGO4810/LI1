@@ -14,7 +14,7 @@ import LI12324
 
 -- | Matriz do mapa do nível 1
 
-mapa1 = Mapa ((1.5, 18.5), Este) (7.5, 2.5)
+mapa1 = Mapa ((1.5, 3.5), Este) (7.5, 2.5)
     [[Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio]
     ,[Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio]
     ,[Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio]
