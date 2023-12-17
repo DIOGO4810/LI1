@@ -11,7 +11,6 @@ module Tarefa2 where
 import LI12324
 import Utilities
 import Data.List
-import Utilities
 
 valida :: Jogo -> Bool
 valida jogo =

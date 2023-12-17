@@ -22,9 +22,23 @@ calculaHitbox personagem =
     (px, py) = posicao personagem
     (tamanhoX, tamanhoY) = tamanho personagem
 
--- | Função que calcula as hitboxes que verificam colisões laterais com obstáculos
-calculaHitboxObstaculo :: Personagem -> Hitbox
-calculaHitboxObstaculo jogador = ((px-tx/2,py-ty/3),(px+tx/2,py+ty/3))
+-- | Função que calcula as hitboxes que verificam colisões à esquerda com obstáculos
+calculaHitboxEsquerda :: Personagem -> Hitbox
+calculaHitboxEsquerda jogador = ((px-tx/1.9,py-ty/3),(px,py+ty/3))
+  where 
+    (px,py) = posicao jogador
+    (tx,ty) = tamanho jogador
+
+-- | Função que calcula as hitboxes que verificam colisões à direita com obstáculos
+calculaHitboxDireita :: Personagem -> Hitbox
+calculaHitboxDireita jogador = ((px,py-ty/5),(px+tx/1.9,py+ty/5))
+  where 
+    (px,py) = posicao jogador
+    (tx,ty) = tamanho jogador
+
+-- | Função que calcula as hitboxes que verificam se o jogador está dentro de um bloco 
+calculaHitboxDentro :: Personagem -> Hitbox
+calculaHitboxDentro jogador = ((px-tx/2.5,py-ty/2.5),(px+tx/2.5,py+ty/2.5))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
@@ -52,7 +66,7 @@ colisaoHitboxAux ((x1,y1), (x2,y2)) ((x3,y3),(x4,y4)) = pointInBox (double2Float
                                                     || pointInBox (double2Float x3,double2Float y4) (double2Float x1,double2Float y1) (double2Float x2,double2Float y2)
                                                     || pointInBox (double2Float x4,double2Float y3) (double2Float x1,double2Float y1) (double2Float x2,double2Float y2)
 
--- | Função que retorna uma lista com as hitboxes dos blocos de plataforma e alçapão
+-- | Função que retorna uma lista com as hitboxes dos blocos
 hitboxesBlocos :: [Posicao] -> [Hitbox]
 hitboxesBlocos = map (\(x,y) -> ((x,y),(x+1,y+1))) 
 
