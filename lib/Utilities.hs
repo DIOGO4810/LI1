@@ -10,9 +10,24 @@ Módulo com as funções auxiliares utilizadas no desenvolvimento das Tarefas.
 module Utilities where
 
 import LI12324
+import Graphics.Gloss
 import Graphics.Gloss.Data.Point (pointInBox)
 import GHC.Float 
 import Data.List
+import Mapas (jogoSamp)
+
+data State = State {
+  jogo :: Jogo,
+  images :: Images
+}
+
+initialState :: State
+initialState = State {
+  jogo = jogoSamp,
+  images = []
+}
+
+type Images = [(String, Picture)]
 
 -- | Função para calcular a hitbox de um personagem considerando que px e py estão no respetivo centro
 calculaHitbox :: Personagem -> Hitbox

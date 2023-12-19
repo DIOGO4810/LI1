@@ -49,11 +49,9 @@ valida jogo =
 
     -- | 8. Não podem existir personagens nem colecionáveis "dentro" de plataformas ou alçapões.
       
-    semBlocosEmPersCole = emvazio yi xi blocos && all (\(x2, y2) -> emvazio y2 x2 blocos) listaposcolecionaveis
-        where
-            listaposcolecionaveis = map snd listaColecionaveis
-            emvazio i j blocos = case blocos !! floor i !! floor j of
-                                    Vazio -> True
-                                    _     -> False
+    semBlocosEmPersCole = emvazio (xi,yi) blocos && all (\posinim -> emvazio posinim blocos) posinimigos && all (\(x2, y2) -> emvazio (x2,y2) blocos) listaposcolecionaveis
+        where listaposcolecionaveis = map snd listaColecionaveis
+              emvazio (i,j) blocos = getBloco (i,j) blocos == Vazio
+              posinimigos = map posicao listaInimigos
 
 
