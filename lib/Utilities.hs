@@ -10,9 +10,24 @@ Módulo com as funções auxiliares utilizadas no desenvolvimento das Tarefas.
 module Utilities where
 
 import LI12324
+import Graphics.Gloss
 import Graphics.Gloss.Data.Point (pointInBox)
 import GHC.Float 
 import Data.List
+import Mapas (jogoSamp)
+
+data State = State {
+  jogo :: Jogo,
+  images :: Images
+}
+
+initialState :: State
+initialState = State {
+  jogo = jogoSamp,
+  images = []
+}
+
+type Images = [(String, Picture)]
 
 -- | Função para calcular a hitbox de um personagem considerando que px e py estão no respetivo centro
 calculaHitbox :: Personagem -> Hitbox
@@ -22,16 +37,30 @@ calculaHitbox personagem =
     (px, py) = posicao personagem
     (tamanhoX, tamanhoY) = tamanho personagem
 
+-- | Função que calcula as hitboxes que verificam colisões embaixo com obstáculos
+calculaHitboxEmbaixo :: Personagem -> Hitbox
+calculaHitboxEmbaixo jogador = ((px-tx/2,py),(px+tx/2,py+ty/2))
+  where 
+    (px,py) = posicao jogador
+    (tx,ty) = tamanho jogador
+
+-- | Função que calcula as hitboxes que verificam colisões em cima com obstáculos
+calculaHitboxEmCima :: Personagem -> Hitbox
+calculaHitboxEmCima jogador = ((px-tx/2,py-ty/2),(px+tx/2,py))
+  where 
+    (px,py) = posicao jogador
+    (tx,ty) = tamanho jogador
+
 -- | Função que calcula as hitboxes que verificam colisões à esquerda com obstáculos
 calculaHitboxEsquerda :: Personagem -> Hitbox
-calculaHitboxEsquerda jogador = ((px-tx/1.9,py-ty/3),(px,py+ty/3))
+calculaHitboxEsquerda jogador = ((px-tx/1.9,py-ty/2.5),(px,py+ty/2.5))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
 
 -- | Função que calcula as hitboxes que verificam colisões à direita com obstáculos
 calculaHitboxDireita :: Personagem -> Hitbox
-calculaHitboxDireita jogador = ((px,py-ty/5),(px+tx/1.9,py+ty/5))
+calculaHitboxDireita jogador = ((px,py-ty/2.5),(px+tx/1.9,py+ty/2.5))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
@@ -48,10 +77,10 @@ calculaHitboxDentro jogador = ((px-tx/2.5,py-ty/2.5),(px+tx/2.5,py+ty/2.5))
 calculaHitboxDano :: Personagem -> Hitbox
 calculaHitboxDano jogador = 
   case dir of 
-    Este -> (((px+tx/2),(py+ty/2)),((px+tx*1.5),(py-ty/2)))
-    Oeste -> (((px-tx*1.5),(py+ty/2)),((px-tx/2),(py-ty/2)))
-    Norte -> (((px-tx/2),(py+ty*1.5)),((px+tx/2),(py+ty/2)))
-    Sul -> (((px-tx/2),(py-ty/2)),((px+tx/2),(py-ty*1.5)))
+    Este -> (((px+tx/2),(py+ty/2)),((px+tx),(py-ty/2)))
+    Oeste -> (((px-tx),(py+ty/2)),((px-tx/2),(py-ty/2)))
+    Norte -> (((px-tx/2),(py-ty)),((px+tx/2),(py+ty/2)))
+    Sul -> (((px-tx/2),(py+ty/2)),((px+tx/2),(py+ty)))
   where 
     (px,py) = posicao jogador
     dir = direcao jogador
