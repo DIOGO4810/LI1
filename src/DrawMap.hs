@@ -18,26 +18,32 @@ windowSize = (((length $ head blocos) * scaleGame),((length blocos) * scaleGame)
 posMapToGloss :: Posicao -> (Float,Float)
 posMapToGloss (x,y) = (((double2Float x)*fromIntegral scaleGame)-(fromIntegral $ (fst windowSize))/2, ((fromIntegral $ (snd windowSize))/2 - (double2Float y) * fromIntegral scaleGame))
 
-drawBlocks :: Mapa -> [(String,Picture)] -> [Picture]
-drawBlocks mapa images = map (\pos -> Color red $ Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ plataforma) (mapaBlocos mapa Plataforma) ++ map (\pos -> Color blue $ Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ alcapao) (mapaBlocos mapa Alcapao) ++ map (\pos -> Color orange $ Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ escada) (mapaBlocos mapa Escada) 
+drawBlocks :: Mapa -> Images -> Picture
+drawBlocks mapa images = Pictures [Pictures $ map (\pos -> Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ plataforma) (mapaBlocos mapa Plataforma),
+  Pictures $ map (\pos -> Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) alcapao) (mapaBlocos mapa Alcapao),
+  Pictures $ map (\pos -> Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) escada) (mapaBlocos mapa Escada)]
   where plataforma = fromJust(lookup ("plataforma") images)
         alcapao = fromJust(lookup ("alcapao") images)
         escada = fromJust(lookup ("escada") images)
 
-
-
-drawPlayer :: Jogo -> [(String,Picture)] -> Picture
-drawPlayer jogo images = Color white $ Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) $ mario
+drawPlayer :: Jogo -> Images -> Picture
+drawPlayer jogo images = 
+  if (direcao $ jogador jogo) == Oeste
+    then Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) $ scale (-1) (1) mario
+  else Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) mario
   where 
     (px,py) = posicao $ jogador jogo
     mario = scale 2 2 (fromJust(lookup ("mario") images))
 
-drawColec :: Jogo -> [(String,Picture)] -> [Picture]
-drawColec jogo images = map (\(colec,pos) -> if colec == Martelo then (Color green $ Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ martelo) else (Color yellow $ Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ moeda)) (colecionaveis jogo)
+drawEnemies :: Jogo -> Images -> Picture
+drawEnemies jogo images = Pictures $ map (\inimigo -> Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ fantasma) (inimigos jogo)
+  where fantasma = fromJust(lookup ("fantasma") images)
+
+drawColec :: Jogo -> Images -> Picture
+drawColec jogo images = Pictures (map (\(colec,pos) -> if colec == Martelo then (Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ martelo) else ( Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ moeda)) (colecionaveis jogo))
   where martelo = fromJust(lookup ("martelo") images)
         moeda = fromJust(lookup ("moeda") images)
 
 
-drawGame :: Jogo -> [(String,Picture)] -> Picture
-drawGame jogo images= Pictures (drawBlocks (mapa jogo) images ++ drawColec jogo images ++ [drawPlayer jogo images])
-
+drawGame :: State -> Picture
+drawGame state = Pictures [drawBlocks (mapa (jogo state)) (images state), drawColec (jogo state) (images state), drawPlayer (jogo state) (images state),  drawEnemies (jogo state) (images state)]

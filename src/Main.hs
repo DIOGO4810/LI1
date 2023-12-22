@@ -3,7 +3,7 @@ module Main where
 import LI12324
 import Mapas
 import Tarefa4
-
+import Utilities
 import DrawMap
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
@@ -14,7 +14,7 @@ window :: Display
 window = InWindow
   "Primate Kong"
   windowSize
-  (700, 150)
+  (650, 0)
 
 bgColor :: Color
 bgColor = black
@@ -22,37 +22,62 @@ bgColor = black
 fr :: Int
 fr = 60
 
-react :: Event -> Jogo -> IO Jogo
-react (EventKey (SpecialKey KeyRight) Down _ _) jogo = return $ atualiza [Nothing, Nothing, Nothing] (Just AndarDireita) jogo
-react (EventKey (SpecialKey KeyRight) Up _ _) jogo = return $ atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo
-react (EventKey (SpecialKey KeyLeft) Down _ _) jogo = return $ atualiza [Nothing, Nothing, Nothing] (Just AndarEsquerda) jogo
-react (EventKey (SpecialKey KeyLeft) Up _ _) jogo = return $ atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo
-react (EventKey (SpecialKey KeyUp) Down _ _) jogo = return $ atualiza [Nothing, Nothing, Nothing] (Just Subir) jogo
-react (EventKey (SpecialKey KeyUp) Up _ _) jogo = return $ atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo
-react (EventKey (SpecialKey KeyDown) Down _ _) jogo = return $ atualiza [Nothing, Nothing, Nothing] (Just Descer) jogo
-react (EventKey (SpecialKey KeyDown) Up _ _) jogo = return $ atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo
-react (EventKey (SpecialKey KeySpace) Down _ _) jogo = return $ atualiza [Nothing, Nothing, Nothing] (Just Saltar) jogo
-react event jogo = return jogo
+react :: Event -> State -> IO State
+react e state = return $ state {
+  jogo = reactInGame e (jogo state)
+}
 
-time :: Float -> Jogo -> IO Jogo
-time tempo jogo = return $ movimenta 1 (float2Double tempo) jogo
+reactInGame :: Event -> Jogo -> Jogo
+reactInGame (EventKey (SpecialKey KeyRight) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just AndarDireita) jogo
+reactInGame (EventKey (SpecialKey KeyRight) Up _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo
+reactInGame (EventKey (SpecialKey KeyLeft) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just AndarEsquerda) jogo
+reactInGame (EventKey (SpecialKey KeyLeft) Up _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo
+reactInGame (EventKey (SpecialKey KeyUp) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Subir) jogo
+reactInGame (EventKey (SpecialKey KeyUp) Up _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo
+reactInGame (EventKey (SpecialKey KeyDown) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Descer) jogo
+reactInGame (EventKey (SpecialKey KeyDown) Up _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo
+reactInGame (EventKey (SpecialKey KeySpace) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Saltar) jogo
+reactInGame event jogo = jogo
 
-draw :: [(String,Picture)] -> Jogo -> IO Picture
-draw images jogo = do
-  return $ drawGame jogo images
+time :: Float -> State -> IO State
+time tempo state = return $ state {
+  jogo = movimenta 1 (float2Double tempo) (jogo state)
+  }
 
-loadImages :: IO [(String,Picture)]
-loadImages = do
-  mario <- loadBMP "assets/mario_andar_direita1.bmp"
-  plataforma <- loadBMP "assets/blocofeito2.bmp"
-  alcapao <- loadBMP "assets/alcapaofeito2_convert.io.bmp"
-  escada <- loadBMP "assets/escadafeita2.bmp"
-  martelo <- loadBMP "assets/Martelo.bmp"
-  moeda <- loadBMP "assets/Moeda.bmp"
+draw :: State -> IO Picture
+draw state = do
 
-  return [("mario",mario),("plataforma",plataforma),("alcapao",alcapao),("escada",escada),("martelo",martelo),("moeda",moeda)]
+  putStrLn ("pontos: " ++ (show $ pontos $ jogador $ jogo state))
+  putStrLn ("vida: " ++ (show $ vida $ jogador $ jogo state))
+  putStrLn ("armado: " ++ (show $ aplicaDano $ jogador $ jogo state))
+  putStrLn ("velocidade: " ++ (show $ velocidade $ jogador $ jogo state))
+  putStrLn ("emEscada: " ++ (show $ emEscada $ jogador $ jogo state))
+
+  return (drawGame state)
+
+loadImages :: State -> IO State
+loadImages state = do
+  mario <- loadBMP "assets/marioparado.bmp"
+  plataforma <- loadBMP "assets/plataforma.bmp"
+  alcapao <- loadBMP "assets/alcapao.bmp"
+  escada <- loadBMP "assets/escada.bmp"
+  martelo <- loadBMP "assets/martelo.bmp"
+  moeda <- loadBMP "assets/moeda.bmp"
+  fantasma <- loadBMP "assets/fantasma1.bmp"
+
+  return state {
+    images = [
+      ("mario",mario),
+      ("plataforma",plataforma),
+      ("alcapao",alcapao),
+      ("escada",escada),
+      ("martelo",martelo),
+      ("moeda",moeda),
+      ("fantasma", fantasma)
+      ]
+    }
 
 main :: IO ()
 main = do
-  images <- loadImages
-  playIO window bgColor fr jogoSamp (draw images) react time
+  initState <- loadImages initialState
+  playIO window bgColor fr initState draw react time
