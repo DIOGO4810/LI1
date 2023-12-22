@@ -30,7 +30,7 @@ drawPlayer :: Jogo -> [(String,Picture)] -> Picture
 drawPlayer jogo images = Color white $ Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) $ mario
   where 
     (px,py) = posicao $ jogador jogo
-    mario = fromJust(lookup ("mario") images)
+    mario = scale 2 2 (fromJust(lookup ("mario") images))
 
 drawColec :: Jogo -> [(String,Picture)] -> [Picture]
 drawColec jogo images = map (\(colec,pos) -> if colec == Martelo then (Color green $ Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ martelo) else (Color yellow $ Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ moeda)) (colecionaveis jogo)

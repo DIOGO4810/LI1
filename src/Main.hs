@@ -20,7 +20,7 @@ bgColor :: Color
 bgColor = black
 
 fr :: Int
-fr = 120
+fr = 60
 
 react :: Event -> Jogo -> IO Jogo
 react (EventKey (SpecialKey KeyRight) Down _ _) jogo = return $ atualiza [Nothing, Nothing, Nothing] (Just AndarDireita) jogo
@@ -43,10 +43,10 @@ draw images jogo = do
 
 loadImages :: IO [(String,Picture)]
 loadImages = do
-  mario <- loadBMP "assets/Marioandar.bmp"
-  plataforma <- loadBMP "assets/Plataforma.bmp"
-  alcapao <- loadBMP "assets/Alcapao.bmp"
-  escada <- loadBMP "assets/ladder.bmp"
+  mario <- loadBMP "assets/mario_andar_direita1.bmp"
+  plataforma <- loadBMP "assets/blocofeito2.bmp"
+  alcapao <- loadBMP "assets/alcapaofeito2_convert.io.bmp"
+  escada <- loadBMP "assets/escadafeita2.bmp"
   martelo <- loadBMP "assets/Martelo.bmp"
   moeda <- loadBMP "assets/Moeda.bmp"
 
