@@ -27,13 +27,17 @@ drawBlocks mapa images = Pictures [Pictures $ map (\pos -> Translate (fst(posMap
         escada = fromJust(lookup ("escada") images)
 
 drawPlayer :: Jogo -> Images -> Picture
-drawPlayer jogo images = Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) mario
+drawPlayer jogo images = 
+  if (direcao $ jogador jogo) == Oeste
+    then Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) $ scale (-1) (1) mario
+  else Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) mario
   where 
     (px,py) = posicao $ jogador jogo
     mario = fromJust(lookup ("mario") images)
 
 drawEnemies :: Jogo -> Images -> Picture
-drawEnemies jogo images = Pictures $ map (\inimigo -> Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ Color red $ rectangleSolid 50 60) (inimigos jogo)
+drawEnemies jogo images = Pictures $ map (\inimigo -> Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ fantasma) (inimigos jogo)
+  where fantasma = fromJust(lookup ("fantasma") images)
 
 drawColec :: Jogo -> Images -> Picture
 drawColec jogo images = Pictures (map (\(colec,pos) -> if colec == Martelo then (Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ martelo) else ( Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ moeda)) (colecionaveis jogo))
@@ -42,5 +46,4 @@ drawColec jogo images = Pictures (map (\(colec,pos) -> if colec == Martelo then 
 
 
 drawGame :: State -> Picture
-drawGame state = Pictures [drawBlocks (mapa (jogo state)) (images state), drawColec (jogo state) (images state), drawPlayer (jogo state) (images state),  drawEnemies (jogo state) []]
-  where mario = fromJust(lookup ("mario") (images state))
+drawGame state = Pictures [drawBlocks (mapa (jogo state)) (images state), drawColec (jogo state) (images state), drawPlayer (jogo state) (images state),  drawEnemies (jogo state) (images state)]

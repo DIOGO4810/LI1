@@ -14,7 +14,7 @@ window :: Display
 window = InWindow
   "Primate Kong"
   windowSize
-  (700, 150)
+  (650, 0)
 
 bgColor :: Color
 bgColor = black
@@ -50,17 +50,20 @@ draw state = do
   putStrLn ("pontos: " ++ (show $ pontos $ jogador $ jogo state))
   putStrLn ("vida: " ++ (show $ vida $ jogador $ jogo state))
   putStrLn ("armado: " ++ (show $ aplicaDano $ jogador $ jogo state))
+  putStrLn ("velocidade: " ++ (show $ velocidade $ jogador $ jogo state))
+  putStrLn ("emEscada: " ++ (show $ emEscada $ jogador $ jogo state))
 
   return (drawGame state)
 
 loadImages :: State -> IO State
 loadImages state = do
-  mario <- loadBMP "assets/Marioandar.bmp"
-  plataforma <- loadBMP "assets/Plataforma.bmp"
-  alcapao <- loadBMP "assets/Alcapao.bmp"
-  escada <- loadBMP "assets/ladder.bmp"
-  martelo <- loadBMP "assets/Martelo.bmp"
-  moeda <- loadBMP "assets/Moeda.bmp"
+  mario <- loadBMP "assets/marioparado.bmp"
+  plataforma <- loadBMP "assets/plataforma.bmp"
+  alcapao <- loadBMP "assets/alcapao.bmp"
+  escada <- loadBMP "assets/escada.bmp"
+  martelo <- loadBMP "assets/martelo.bmp"
+  moeda <- loadBMP "assets/moeda.bmp"
+  fantasma <- loadBMP "assets/fantasma1.bmp"
 
   return state {
     images = [
@@ -69,7 +72,8 @@ loadImages state = do
       ("alcapao",alcapao),
       ("escada",escada),
       ("martelo",martelo),
-      ("moeda",moeda)
+      ("moeda",moeda),
+      ("fantasma", fantasma)
       ]
     }
 

@@ -10,39 +10,30 @@ module Tarefa3 where
 
 import LI12324
 import Utilities
+import Tarefa1
 import Data.Maybe
 import Graphics.Gloss.Data.Point (pointInBox)
 import GHC.Float (double2Float, int2Double)
 
--- TODO: Adicionar inimigosWrapper ao movimenta depois de resolver memory leak
 movimenta :: Semente -> Tempo -> Jogo -> Jogo
 movimenta semente tempo jogo = ((jogadorWrapper tempo)(inimigosWrapper tempo (mapaWrapper jogo)))
-
 
 jogadorWrapper :: Tempo -> Jogo -> Jogo
 jogadorWrapper tempo jogoW = jogoW {
   colecionaveis = tiraColecionaveis (jogador jogoW) (colecionaveis jogoW),
-  jogador = moveJogador tempo $ colideEscada (mapa jogoW) $ tiraVidaJogador (inimigos jogoW) $ aplicaEfeitos (colecionaveis jogoW) $ stopLimites (mapa jogoW) $ ejeta (mapa jogoW) $ aplicaGravidade tempo (mapa jogoW) (jogador jogoW)
+  jogador = moveJogador tempo $ colideEscada (mapa jogoW) $ tiraVidaJogador tempo (inimigos jogoW) $ aplicaEfeitos (colecionaveis jogoW) $ stopLimites (mapa jogoW) (inimigos jogoW) $ ejeta (mapa jogoW) $ aplicaGravidade tempo (mapa jogoW) (jogador jogoW)
 }
-
 
 inimigosWrapper :: Tempo -> Jogo -> Jogo
 inimigosWrapper tempo jogoW = jogoW {
   --inimigos = isInimigoDead $ tiraVidaInimigos (jogador jogoW) $ map (\i -> colideEscada $ stopLimites (mapa jogoW) $ aplicaGravidade i) (inimigos jogoW)
-  inimigos = isInimigoDead $ tiraVidaInimigos (jogador jogoW) $ map (\i -> colideEscada (mapa jogoW) $ stopLimites (mapa jogoW) $ aplicaGravidade tempo (mapa jogoW) i) (inimigos jogoW)
+  inimigos = isInimigoDead $ tiraVidaInimigos (jogador jogoW) $ map (\i -> colideEscada (mapa jogoW) $ aplicaGravidade tempo (mapa jogoW) i) (inimigos jogoW)
 }
+
 mapaWrapper :: Jogo -> Jogo
 mapaWrapper jogoW = jogoW {
   mapa = tiraAlcapoes (jogador jogoW) (mapa jogoW)
 }
-
-    -- (Mapa ((xi,yi),dir) (xf,yf) blocos) = mapa jogo
-    -- listaInimigos = inimigos jogo
-    -- jogadorJogo = jogador jogo
-    -- listaColecionaveis = colecionaveis jogo
-    -- (px,py) = posicao jogadorJogo
-    --(tamanhoX, tamanhoY) = tamanho jogadorJogo
-    -- (armado, tempoarmado) = aplicaDano jogadorJogo
 
 -- | 1. Função que retira 1 vida aos inimigos se eles colidirem com a hitbox de dano de um jogador armado
 tiraVidaInimigos :: Personagem -> [Personagem] -> [Personagem]
@@ -63,7 +54,7 @@ isInimigoDead listaInimigos =
 -- | 3. Função que aplica um efeito de gravidade aos personagens se eles não se encontrarem numa plataforma ou num alçapão
 aplicaGravidade :: Tempo -> Mapa -> Personagem -> Personagem
 aplicaGravidade tempo mapa personagem =
-  if (emEscada personagem == False) && (colideComBloco personagem mapa) && (snd $ velocidade personagem)>=0 
+  if (emEscada personagem == False && not((any (\hitboxbloco -> colisaoHitbox (calculaHitbox personagem) hitboxbloco) (hitboxesBlocos(mapaPlataformas mapa))) && (any (\pos -> (fromIntegral $ floor (fst $ posicao personagem),fromIntegral $ ceiling ((snd $ posicao personagem) + 1)) == pos) (mapaEscadas mapa)) && ((snd $ velocidade personagem) >= 3) && (snd $ velocidade personagem) < 4)) && (colideComBloco personagem mapa) && (snd $ velocidade personagem)>=0 
     then personagem {velocidade=(fst $ velocidade personagem,0)}
   else if emEscada personagem == False
     then personagem {velocidade=(fst $ velocidade personagem, (snd $ velocidade personagem) + (snd gravidade)*tempo)}
@@ -72,10 +63,14 @@ aplicaGravidade tempo mapa personagem =
   else personagem {velocidade=(fst $ velocidade personagem, snd $ velocidade personagem)}
 
 -- | 4. Função que retira uma vida ao jogador quando ele colide com um inimigo e está desarmado
-tiraVidaJogador :: [Personagem] -> Personagem -> Personagem
-tiraVidaJogador listaInimigos personagem = 
-  if armado == False && any (\inimigo -> colisaoHitbox (calculaHitbox personagem) (calculaHitbox inimigo)) listaInimigos
-    then personagem{vida=vida personagem-1} 
+tiraVidaJogador :: Tempo -> [Personagem] -> Personagem -> Personagem
+tiraVidaJogador tempo listaInimigos personagem = 
+  if any (\inimigo -> colisoesPersonagens personagem inimigo) listaInimigos && (direcao personagem) == Este && (fst $ velocidade personagem)>0
+    then personagem{vida=vida personagem-1, velocidade=(-3,(-3)+(snd gravidade)*tempo)} 
+  else if any (\inimigo -> colisoesPersonagens personagem inimigo) listaInimigos && (direcao personagem) == Oeste && (fst $ velocidade personagem)<0
+    then personagem{vida=vida personagem-1, velocidade=(3,(-3)+(snd gravidade)*tempo)} 
+  else if any (\inimigo -> colisoesPersonagens personagem inimigo) listaInimigos && (fst $ velocidade personagem)== 0
+    then personagem{vida=vida personagem-1, velocidade=(-4,(-4)+(snd gravidade)*tempo)} 
   else personagem{vida=vida personagem}
   where (armado, tempoarmado) = aplicaDano personagem
     
@@ -101,13 +96,13 @@ tiraAlcapoes jogadorJogo (Mapa ((xi,yi),dir) (xf,yf) blocos) =
     (px,py) = posicao jogadorJogo
 
 -- | 7. Função que impede os personagens de sair dos limites do mapa e atravessar plataformas
-stopLimites :: Mapa -> Personagem -> Personagem
-stopLimites mapa personagem = 
-  if (((px + tamanhoX/2) >= fromIntegral(length (head blocos))) || (any (\hitboxbloco -> colisaoHitbox (calculaHitboxDireita personagem) hitboxbloco) (hitboxesBlocos (mapaPlataformasAlcapoes blocos)))) && (fst $ (velocidade personagem)) > 0 
+stopLimites :: Mapa -> [Personagem] -> Personagem -> Personagem
+stopLimites mapa listaInimigos personagem= 
+  if (((px + tamanhoX/2) >= fromIntegral(length (head blocos))) || (any (\hitboxbloco -> colisaoHitbox (calculaHitboxDireita personagem) hitboxbloco) (hitboxesBlocos (mapaPlataformasAlcapoes blocos)))) && (fst $ (velocidade personagem)) > 0
     then personagem {velocidade = (0, snd $ velocidade personagem), direcao = Oeste}
-  else if ((px - tamanhoX/2) <= 0 || (any (\hitboxbloco -> colisaoHitbox (calculaHitboxEsquerda personagem) hitboxbloco) (hitboxesBlocos (mapaPlataformasAlcapoes blocos)))) && (fst $ (velocidade personagem)) < 0 
+  else if ((px - tamanhoX/2) <= 0 || (any (\hitboxbloco -> colisaoHitbox (calculaHitboxEsquerda personagem) hitboxbloco) (hitboxesBlocos (mapaPlataformasAlcapoes blocos)))) && (fst $ (velocidade personagem)) < 0
     then personagem {velocidade = (0, snd $ velocidade personagem), direcao = Este}
-  else if emEscada personagem && any (\hitboxbloco -> colisaoHitbox (calculaHitbox personagem) hitboxbloco) (hitboxesBlocos(mapaPlataformas mapa)) && not (any (\escadabaixo -> (fromIntegral(floor px),fromIntegral(ceiling (py+1))) == escadabaixo) (mapaEscadas mapa)) && (snd $ velocidade personagem)>0
+  else if emEscada personagem && colideComBloco personagem mapa && (snd $ velocidade personagem)>0 && not(any (\pos -> (fromIntegral $ floor (fst $ posicao personagem),fromIntegral $ ceiling ((snd $ posicao personagem) + 1)) == pos) (mapaEscadas mapa)) 
     then personagem {velocidade = (0,0)}
   else if py - tamanhoY / 2 <= 0
     then personagem {velocidade = (fst $ velocidade personagem,10)}
@@ -119,7 +114,7 @@ stopLimites mapa personagem =
 -- | Função que verifica se um personagem está numa escada
 colideEscada :: Mapa -> Personagem -> Personagem
 colideEscada mapa personagem= 
-  if any (\(xe,ye) -> fromIntegral(floor $ fst $ posicao personagem) == xe && fromIntegral(floor $ snd $ posicao personagem) == ye) (mapaEscadas mapa)
+  if any (\(xe,ye) -> fromIntegral(floor $ fst $ posicao personagem) == xe && fromIntegral(floor $ snd $ posicao personagem) == ye) (mapaEscadas mapa) || ((any (\hitboxbloco -> colisaoHitbox (calculaHitbox personagem) hitboxbloco) (hitboxesBlocos(mapaPlataformas mapa))) && (any (\pos -> (fromIntegral $ floor (fst $ posicao personagem),fromIntegral $ ceiling ((snd $ posicao personagem) + 1)) == pos) (mapaEscadas mapa)) && (any (\hitboxbloco -> colisaoHitbox (calculaHitboxDentro personagem) hitboxbloco) (hitboxesBlocos(mapaPlataformas mapa))))
     then personagem{emEscada=True}
   else personagem {emEscada = False}
 
@@ -132,6 +127,15 @@ moveJogador tempo personagem=
 -- | Função que ejeta o jogador se ele ficar preso num bloco
 ejeta :: Mapa -> Personagem -> Personagem
 ejeta mapa personagem = 
-  if any (\hitboxbloco -> colisaoHitbox (calculaHitboxDentro personagem) hitboxbloco) (hitboxesBlocos(mapaPlataformas mapa))
+  if not (emEscada personagem) && any (\hitboxbloco -> colisaoHitbox (calculaHitboxDentro personagem) hitboxbloco) (hitboxesBlocos(mapaPlataformas mapa)) && not((any (\hitboxbloco -> colisaoHitbox (calculaHitbox personagem) hitboxbloco) (hitboxesBlocos(mapaPlataformas mapa))) && (any (\pos -> (fromIntegral $ floor (fst $ posicao personagem),fromIntegral $ ceiling ((snd $ posicao personagem) + 1)) == pos) (mapaEscadas mapa)))
     then personagem {velocidade = (fst $ (velocidade personagem), -3)}
+  else personagem
+
+-- | Função que aplica atrito ao jogador
+atrito :: Tempo -> Personagem -> Personagem
+atrito tempo personagem =
+  if (fst $ velocidade personagem) /= 4 && (fst $ velocidade personagem) > 0 
+    then personagem {velocidade = (((fst $ velocidade personagem) - 10*tempo), (snd $ velocidade personagem))}
+  else if (fst $ velocidade personagem) /= -4 && (fst $ velocidade personagem) < 0
+    then personagem {velocidade = (((fst $ velocidade personagem) + 10*tempo), (snd $ velocidade personagem))}
   else personagem
