@@ -39,14 +39,14 @@ calculaHitbox personagem =
 
 -- | Função que calcula as hitboxes que verificam colisões embaixo com obstáculos
 calculaHitboxEmbaixo :: Personagem -> Hitbox
-calculaHitboxEmbaixo jogador = ((px-tx/2,py),(px+tx/2,py+ty/2))
+calculaHitboxEmbaixo jogador = ((px-tx/2.5,py),(px+tx/2.5,py+ty/2))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
 
 -- | Função que calcula as hitboxes que verificam colisões em cima com obstáculos
 calculaHitboxEmCima :: Personagem -> Hitbox
-calculaHitboxEmCima jogador = ((px-tx/2,py-ty/2),(px+tx/2,py))
+calculaHitboxEmCima jogador = ((px-tx/2.5,py-ty/2),(px+tx/2.5,py))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
@@ -84,7 +84,7 @@ calculaHitboxDano jogador =
   where 
     (px,py) = posicao jogador
     dir = direcao jogador
-    (tx,ty) = tamanho jogador
+    (tx,ty) = tamanho jogador  
 
 -- | Função para verificar a colisão entre duas hitboxes
 colisaoHitbox :: Hitbox -> Hitbox -> Bool

@@ -28,15 +28,30 @@ drawBlocks mapa images = Pictures [Pictures $ map (\pos -> Translate (fst(posMap
 
 drawPlayer :: Jogo -> Images -> Picture
 drawPlayer jogo images = 
-  if (direcao $ jogador jogo) == Oeste
-    then Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) $ scale (-1) (1) mario
-  else Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) mario
+  if (direcao $ jogador jogo) == Oeste && (fst $ velocidade $ jogador jogo) == 0 && (snd $ velocidade $ jogador jogo) == 0
+    then Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) $ scale (-1) (1) marioparado
+  else if (direcao $ jogador jogo) == Este && (fst $ velocidade $ jogador jogo) == 0 && (snd $ velocidade $ jogador jogo) == 0
+    then Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) marioparado
+  else if (direcao $ jogador jogo) == Oeste && (fst $ velocidade $ jogador jogo) /= 0 && (snd $ velocidade $ jogador jogo) == 0
+    then Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) $ scale (-1) (1) marioandar
+  else if (direcao $ jogador jogo) == Este && (fst $ velocidade $ jogador jogo) /= 0 && (snd $ velocidade $ jogador jogo) == 0
+    then Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) marioandar
+  else if ((direcao $ jogador jogo) == Norte  || (direcao $ jogador jogo) == Sul) && (emEscada $ jogador jogo)
+    then Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) marioescada
+  else if (direcao $ jogador jogo) == Este && (snd $ velocidade $ jogador jogo) /= 0
+    then Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) mariosaltar
+  else if (direcao $ jogador jogo) == Oeste && (snd $ velocidade $ jogador jogo) /= 0
+    then Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) $ scale (-1) (1) mariosaltar
+  else Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) marioparado
   where 
     (px,py) = posicao $ jogador jogo
-    mario =(fromJust(lookup ("mario") images))
+    marioparado = fromJust(lookup ("marioparado") images)
+    marioandar = fromJust(lookup ("marioandar") images)
+    marioescada = fromJust(lookup ("marioescada") images)
+    mariosaltar = fromJust(lookup ("mariosaltar") images)
 
 drawEnemies :: Jogo -> Images -> Picture
-drawEnemies jogo images = Pictures $ map (\inimigo -> Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ fantasma) (inimigos jogo)
+drawEnemies jogo images = Pictures $ map (\inimigo -> if direcao inimigo == Este then Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ fantasma else Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ scale (-1) (1) fantasma) (inimigos jogo)
   where fantasma = fromJust(lookup ("fantasma") images)
 
 drawColec :: Jogo -> Images -> Picture
