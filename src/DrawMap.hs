@@ -33,7 +33,7 @@ drawPlayer jogo images =
   else Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) mario
   where 
     (px,py) = posicao $ jogador jogo
-    mario = scale 2 2 (fromJust(lookup ("mario") images))
+    mario =(fromJust(lookup ("mario") images))
 
 drawEnemies :: Jogo -> Images -> Picture
 drawEnemies jogo images = Pictures $ map (\inimigo -> Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ fantasma) (inimigos jogo)
