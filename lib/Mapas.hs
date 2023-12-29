@@ -40,6 +40,7 @@ mapa1 = Mapa ((1.5, 15.5), Este) (7.5, 2.5)
     ,[Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Escada,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio,Vazio]
     ,[Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma]
     ]
+    
 
 
 inm :: [Personagem]

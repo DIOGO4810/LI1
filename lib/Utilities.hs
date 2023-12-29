@@ -14,7 +14,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Data.Point (pointInBox)
 import GHC.Float 
 import Data.List
-import Mapas (jogoSamp)
+import Mapas
 
 data State = State {
   jogo :: Jogo,
@@ -205,3 +205,8 @@ isVazio _ = False
 
 isBloco :: Bloco -> Bloco -> Bool
 isBloco bloco1 bloco2 = bloco1 == bloco2
+
+
+contalinhas :: Mapa -> Int
+contalinhas blocos = length (head blocos)
+      where (Mapa _ _ blocos) = mapa1
