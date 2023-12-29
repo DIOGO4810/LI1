@@ -31,11 +31,11 @@ atualizaJogador jogador mapa (Just acao) =
   case acao of
     Subir ->
       if inEscada
-        then jogador {velocidade = (0, -3), direcao = Norte}
+        then jogador {posicao = ((fromIntegral(floor px) + 0.5),py), velocidade = (0, -3), direcao = Norte}
       else jogador
     Descer ->
       if inEscada || ((any (\hitboxbloco -> colisaoHitbox (calculaHitbox jogador) hitboxbloco) (hitboxesBlocos((mapaPlataformas mapa)))) && (any (\escadabaixo -> (fromIntegral(floor px),fromIntegral(ceiling (py+2))) == escadabaixo) (mapaEscadas (mapa))))
-        then jogador {velocidade = (0, 3), direcao = Sul}
+        then jogador {posicao = ((fromIntegral(floor px) + 0.5),py), velocidade = (0, 3), direcao = Sul}
       else jogador
     AndarDireita -> 
       if (snd $ velocidade jogador) /= 0 || (inEscada && not(any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmbaixo jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformas(mapa))))) || any (\hitboxbloco -> colisaoHitbox (calculaHitboxDentro jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformasAlcapoes(blocos)))
@@ -46,8 +46,8 @@ atualizaJogador jogador mapa (Just acao) =
         then jogador 
       else jogador {velocidade = (-4, snd $ velocidade jogador), direcao = Oeste}
     Saltar ->
-      if (not inEscada || ((any (\primult -> elem (fromIntegral(floor px), fromIntegral(floor py)) primult) (primUltEscadas mapa)) && (fst $ velocidade jogador) /=0)) && any (\hitboxesbloco -> colisaoHitbox (calculaHitbox jogador) hitboxesbloco) (hitboxesBlocos(mapaPlataformasAlcapoes blocos))
-        then jogador {velocidade = (fst $ velocidade jogador, -4.5)}
+      if (not inEscada || ((any (\primult -> elem (fromIntegral(floor px), fromIntegral(floor py)) primult) (primUltEscadas mapa)) && (fst $ velocidade jogador) /=0)) && any (\hitboxesbloco -> colisaoHitbox (calculaHitboxEmbaixo jogador) hitboxesbloco) (hitboxesBlocos(mapaPlataformasAlcapoes blocos))
+        then jogador {velocidade = (fst $ velocidade jogador, -5)}
       else jogador
     Parar -> if emEscada jogador 
               then jogador {velocidade = (0, 0)}
@@ -68,31 +68,25 @@ atualizaInimigo inimigo mapa (Just acao) =
   case acao of
     Subir -> 
       if inEscada
-        then inimigo {velocidade = (0, -1), direcao = Norte} 
+        then inimigo {velocidade = (0, -3), direcao = Norte} 
       else inimigo
     Descer -> 
       if inEscada 
-        then inimigo {velocidade = (0, 1), direcao = Sul} 
+        then inimigo {velocidade = (0, 3), direcao = Sul} 
       else inimigo
     AndarDireita -> 
-      if not inEscada && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head blocos)))-0.001)
-        then inimigo {velocidade = (1, 0), direcao = Este}
+      if not inEscada 
+        then inimigo {velocidade = (3, 0), direcao = Este}
         else inimigo
     AndarEsquerda -> 
-      if not inEscada && ressaltando && (x + tamanhoX/2) < ((fromIntegral (length (head blocos)))-0.001)
-        then inimigo {velocidade = (-1, 0), direcao = Oeste}
+      if not inEscada 
+        then inimigo {velocidade = (-3, 0), direcao = Oeste}
         else inimigo
     Saltar -> 
       if not inEscada
-        then inimigo {velocidade = (0, -1)}
+        then inimigo {velocidade = (0, -3)}
       else inimigo
     Parar -> inimigo {velocidade = (0, 0)}
-  where
-    (Mapa ((x,y),_) _ blocos) = mapa
-    (px,py) = posicao inimigo
-    inEscada = emEscada inimigo
-    tamanhoX = fst $ tamanho inimigo
-    tamanhoY = snd $ tamanho inimigo
-    ressaltando = ressalta inimigo
+  where inEscada = emEscada inimigo
  
             
