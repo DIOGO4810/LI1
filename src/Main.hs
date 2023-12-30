@@ -43,11 +43,12 @@ reactInGame (EventKey (SpecialKey KeyDown) Up _ _) jogo =  atualiza [Nothing, No
 reactInGame (EventKey (SpecialKey KeySpace) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Saltar) jogo
 reactInGame event jogo = jogo
 
-time :: Float -> State -> IO State
-time tempo state = do
+timeInGame :: Float -> State -> IO State
+timeInGame tempo state = do
   seedGenerator <- randomRIO (1,100 :: Int)
   return $ state {
-  jogo = movimenta seedGenerator (float2Double tempo) (jogo state)
+  jogo = movimenta seedGenerator (float2Double tempo) (jogo state),
+  time = time state + float2Double tempo
   }
 
 
@@ -70,9 +71,10 @@ draw state = do
 loadImages :: State -> IO State
 loadImages state = do
   marioparado <- loadBMP "assets/marioparado.bmp"
-  marioandar <- loadBMP "assets/marioandar2.bmp"
-  marioescada <- loadBMP "assets/mariosubir1.bmp"
-  mariosaltar <- loadBMP "assets/marioandar1.bmp"
+  marioandar1 <- loadBMP "assets/marioandar1.bmp"
+  marioandar2 <- loadBMP "assets/marioandar2.bmp"
+  marioescada <- loadBMP "assets/marioescada.bmp"
+  mariosaltar <- loadBMP "assets/mariosaltar.bmp"
   plataforma <- loadBMP "assets/plataforma.bmp"
   alcapao <- loadBMP "assets/alcapao.bmp"
   escada <- loadBMP "assets/escada.bmp"
@@ -83,7 +85,8 @@ loadImages state = do
   return state {
     images = [
       ("marioparado",marioparado),
-      ("marioandar",marioandar),
+      ("marioandar1",marioandar1),
+      ("marioandar2",marioandar2),
       ("marioescada",marioescada),
       ("mariosaltar",mariosaltar),
       ("plataforma",plataforma),
@@ -98,4 +101,4 @@ loadImages state = do
 main :: IO ()
 main = do
     initState <- loadImages initialState
-    playIO window bgColor fr initState draw react time
+    playIO window bgColor fr initState draw react timeInGame
