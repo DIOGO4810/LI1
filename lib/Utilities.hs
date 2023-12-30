@@ -18,13 +18,15 @@ import Mapas (jogoSamp)
 
 data State = State {
   jogo :: Jogo,
-  images :: Images
+  images :: Images,
+  time :: Tempo
 }
 
 initialState :: State
 initialState = State {
   jogo = jogoSamp,
-  images = []
+  images = [],
+  time = 0
 }
 
 type Images = [(String, Picture)]
@@ -75,11 +77,9 @@ calculaHitboxDentro jogador = ((px-tx/2.5,py-ty/2.5),(px+tx/2.5,py+ty/2.5))
 -- | Função que calcula a hitbox de dano do jogador armado
 calculaHitboxDano :: Personagem -> Hitbox
 calculaHitboxDano jogador = 
-  case dir of 
-    Este -> (((px+tx/2),(py+ty/2)),((px+tx),(py-ty/2)))
-    Oeste -> (((px-tx),(py+ty/2)),((px-tx/2),(py-ty/2)))
-    Norte -> (((px-tx/2),(py-ty)),((px+tx/2),(py+ty/2)))
-    Sul -> (((px-tx/2),(py+ty/2)),((px+tx/2),(py+ty)))
+    if dir == Este || (dir == Norte && not(emEscada jogador)) then (((px+tx/2),(py+ty/2.1)),((px+tx*1.5),(py-ty/2.1)))
+    else if dir == Oeste then (((px-tx*1.5),(py+ty/2.1)),((px-tx/2),(py-ty/2.1)))
+    else ((px,py),(px,py))
   where 
     (px,py) = posicao jogador
     dir = direcao jogador

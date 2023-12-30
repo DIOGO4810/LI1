@@ -42,7 +42,7 @@ atualizaJogador jogador mapa (Just acao) =
         then jogador 
       else jogador {velocidade = (4, snd $ velocidade jogador), direcao = Este}
     AndarEsquerda ->
-      if (snd $ velocidade jogador) /= 0  || (inEscada && not(any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmbaixo jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformas(mapa)))))
+      if (snd $ velocidade jogador) /= 0  || (inEscada && not(any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmbaixo jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformas(mapa))))) || any (\hitboxbloco -> colisaoHitbox (calculaHitboxDentro jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformasAlcapoes(blocos)))
         then jogador 
       else jogador {velocidade = (-4, snd $ velocidade jogador), direcao = Oeste}
     Saltar ->

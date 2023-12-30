@@ -78,17 +78,17 @@ jog :: Personagem
 jog = Personagem {  velocidade = (0,0),
                     tipo = Jogador,
                     emEscada = False, 
-                    vida = 1, 
+                    vida = 3, 
                     pontos = 0, 
                     ressalta = False, 
                     posicao = (1.5,22.5), 
-                    tamanho = (0.8,1), 
+                    tamanho = (0.5,1), 
                     aplicaDano = (False, 0), 
                     direcao = Este}
 
 
 colec :: [(Colecionavel, Posicao)]
-colec = [(Moeda,(3.5,10.0)),(Moeda,(4.5,10.0)),(Moeda,(5.5,10.0)),(Moeda,(6.5,10.0)),(Moeda,(7.5,10.0)),(Moeda,(8.5,10.0)),(Moeda,(9.5,10.0)),(Moeda,(10.5,10.0)),(Moeda,(11.5,10.0)),(Moeda,(3.5,18.0)),(Moeda,(4.5,18.0)),(Moeda,(5.5,18.0)),(Moeda,(6.5,18.0)),(Moeda,(7.5,18.0)),(Moeda,(8.5,18.0)),(Moeda,(9.5,18.0)),(Moeda,(10.5,18.0)),(Moeda,(11.5,18.0)),(Moeda,(1.5,6.0)),(Moeda,(13.5,6.0)),(Martelo,(7.5,14.0))]
+colec = [(Moeda,(3.5,10.5)),(Moeda,(4.5,10.5)),(Moeda,(5.5,10.5)),(Moeda,(6.5,10.5)),(Moeda,(7.5,10.5)),(Moeda,(8.5,10.5)),(Moeda,(9.5,10.5)),(Moeda,(10.5,10.5)),(Moeda,(11.5,10.5)),(Moeda,(3.5,18.5)),(Moeda,(4.5,18.5)),(Moeda,(5.5,18.5)),(Moeda,(6.5,18.5)),(Moeda,(7.5,18.5)),(Moeda,(8.5,18.5)),(Moeda,(9.5,18.5)),(Moeda,(10.5,18.5)),(Moeda,(11.5,18.5)),(Moeda,(1.5,6.5)),(Moeda,(13.5,6.5)),(Martelo,(7.5,14.5))]
 
 jogoSamp ::Jogo
 jogoSamp = Jogo mapa1 inm colec jog
