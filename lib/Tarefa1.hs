@@ -10,7 +10,7 @@ module Tarefa1 where
 
 import LI12324 
 import Utilities
-import Mapas
+import Niveis
 
 
 

@@ -50,7 +50,7 @@ library
         Tarefa2
         Tarefa3
         Tarefa4
-        Mapas
+        Niveis
         Utilities
 
     -- Modules included in this library but not exported.
@@ -78,6 +78,7 @@ executable primate-kong
     -- Modules included in this executable, other than Main.
     other-modules:
       DrawMap
+      DrawMenu
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
