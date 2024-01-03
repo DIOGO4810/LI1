@@ -7,6 +7,7 @@ import Tarefa3
 import Tarefa4
 import Utilities
 import Test.HUnit
+import Data.List
 
 
 testColisoesParede :: Test
@@ -35,6 +36,10 @@ testColisoesPersonagem = test
         let personagem1 = Personagem {posicao = (2,3), tamanho= (1,1)}
         let personagem2 = Personagem {posicao = (3,3), tamanho= (1,1)}
         assertEqual "As duas personagens a colidir" True (colisoesPersonagens personagem1 personagem2)
+    ,"Teste para testar se ao dois personagens não estarem a colidir a função devolde False " ~: do 
+        let personagem1 = Personagem {posicao = (2,3), tamanho= (1,1)}
+        let personagem2 = Personagem {posicao = (6,3), tamanho= (1,1)}
+        assertEqual "As duas personagens a não colidir" False (colisoesPersonagens personagem1 personagem2)   
     ]
 
 
@@ -47,29 +52,81 @@ testvalida = test
             let listaInimigos = [(Personagem {posicao = (10.5,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1}),(Personagem {posicao = (1.5,2.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1})]
             let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = colecionaveis1, inimigos = listaInimigos}
             assertEqual "O jogo a validar" True (valida jogo1)
+        ,"Teste para confirmar se o jogo não é validado quando só tem um fantasma" ~: do
+            let personagem1 = Personagem {tamanho = (1,1), ressalta = False, tipo = Jogador}
+            let colecionaveis1 = [(Martelo,(3,2))]
+            let listaInimigos = [(Personagem {posicao = (1.5,2.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1})]
+            let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = colecionaveis1, inimigos = listaInimigos}
+            assertEqual "O jogo não a validar" False (valida jogo1)
+        ,"Teste para confirmar se o jogo não é validado quando um jogador nasce no mesmo sitio que outro personagem" ~: do
+            let personagem1 = Personagem {tamanho = (1,1), ressalta = False, tipo = Jogador}
+            let colecionaveis1 = [(Martelo,(3,2))]
+            let listaInimigos = [(Personagem {posicao = (1.5,15.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1}),(Personagem {posicao = (1.5,2.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1})]
+            let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = colecionaveis1, inimigos = listaInimigos}
+            assertEqual "O jogo a não validar" False (valida jogo1)
+        ,"Teste para confirmar se o jogo não é validado quando um personagem ou um colecionável nasce dentro de um bloco" ~: do
+            let personagem1 = Personagem {tamanho = (1,1), ressalta = False, tipo = Jogador, posicao = (5,23)}
+            let colecionaveis1 = [(Martelo,(2,23))]
+            let listaInimigos = [(Personagem {posicao = (10.5,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1}),(Personagem {posicao = (1.5,2.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1})]
+            let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = colecionaveis1, inimigos = listaInimigos}
+            assertEqual "O jogo a não validar" False (valida jogo1)
     ]
 
-{-testemovimenta :: Test
+testemovimenta :: Test
 testemovimenta = test
-  assertEqual "Teste movimenta" 
-    (movimenta semente1 tempo1 jogo1)
-    (Jogo { mapa = mapa1
-          , inimigos = [Personagem { vida = 1, posicao = (2, 2), velocidade = (0, 0), emEscada = False, direcao = Este }]
-          , colecionaveis = []
-          , jogador = Personagem { vida = 3, posicao = (5, 5), velocidade = (1, 0), emEscada = False, direcao = Este, pontos = 0, aplicaDano = (False, 0) }
-          })
-  where
-    semente1 = 56
-    tempo1 = 60
-    jogo1 = (Jogo{ mapa = mapa1
-          , inimigos = [Personagem { vida = 1, posicao = (2, 2), velocidade = (0, 0), emEscada = False, direcao = Este }]
-          , colecionaveis = []
-          , jogador = Personagem { vida = 3, posicao = (5, 5), velocidade = (1, 0), emEscada = False, direcao = Este, pontos = 0, aplicaDano = (False, 0) }
-          })
+    [
+        "Teste para confirmar se a funçao movimenta funciona corretamente" ~: do
+            let semente1 = 2
+            let tempo1 = 5
+            let personagem1 = Personagem {direcao = Este , emEscada = False, velocidade = (4,0),posicao =(1,22.5),tamanho = (1,1), ressalta = False, tipo = Jogador, vida = 50, aplicaDano = (False,0), pontos = 0}
+            let personagem2 = Personagem {direcao = Este , emEscada = False, velocidade = (4,0),posicao =(21,22.5),tamanho = (1,1), ressalta = False, tipo = Jogador, vida = 50, aplicaDano = (False,0), pontos = 0}
+            let listaInimigos1 = [(Personagem {direcao = Este , emEscada = False, posicao = (11,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, velocidade = (0,0),vida = 1,aplicaDano = (False,0), pontos = 0}),(Personagem {posicao = (10,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1,aplicaDano = (False,0), pontos = 0,velocidade = (0,0),direcao = Este , emEscada = False})]
+            let listaInimigos2 = [(Personagem {direcao = Oeste , emEscada = False, posicao = (11,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, velocidade = (-1.5,0),vida = 1,aplicaDano = (False,0), pontos = 0}),(Personagem {posicao = (10,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1,aplicaDano = (False,0), pontos = 0,velocidade = (1.5,0),direcao = Este , emEscada = False})]
+            let colecionaveis1 = [(Martelo,(3,2))]
+            let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = colecionaveis1, inimigos = listaInimigos1}
+            let jogo2 = Jogo {mapa = mapa1, jogador = personagem2,colecionaveis = colecionaveis1 ,inimigos = listaInimigos2 }
+            assertEqual "O jogo a movimentar" jogo2 (movimenta semente1 tempo1 jogo1)
 
--}
+        ,"Teste para confirmar se a funçao movimenta funciona corretamente mesmo com uma instancia de tempo igual a 0" ~: do
+            let semente1 = 2
+            let tempo1 = 0
+            let personagem1 = Personagem {direcao = Este , emEscada = False, velocidade = (4,0),posicao =(1,22.5),tamanho = (1,1), ressalta = False, tipo = Jogador, vida = 50, aplicaDano = (False,0), pontos = 0}
+            let personagem2 = Personagem {direcao = Este , emEscada = False, velocidade = (4,0),posicao =(1,22.5),tamanho = (1,1), ressalta = False, tipo = Jogador, vida = 50, aplicaDano = (False,0), pontos = 0}
+            let listaInimigos1 = [(Personagem {direcao = Este , emEscada = False, posicao = (11,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, velocidade = (0,0),vida = 1,aplicaDano = (False,0), pontos = 0}),(Personagem {posicao = (10,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1,aplicaDano = (False,0), pontos = 0,velocidade = (0,0),direcao = Este , emEscada = False})]
+            let listaInimigos2 = [(Personagem {direcao = Oeste , emEscada = False, posicao = (11,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, velocidade = (-1.5,0),vida = 1,aplicaDano = (False,0), pontos = 0}),(Personagem {posicao = (10,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1,aplicaDano = (False,0), pontos = 0,velocidade = (1.5,0),direcao = Este , emEscada = False})]
+            let colecionaveis1 = [(Martelo,(3,2))]
+            let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = colecionaveis1, inimigos = listaInimigos1}
+            let jogo2 = Jogo {mapa = mapa1, jogador = personagem2,colecionaveis = colecionaveis1 ,inimigos = listaInimigos2 }
+            assertEqual "O jogo a movimentar" jogo2 (movimenta semente1 tempo1 jogo1)
+    ]
+
+
+  
+
+
+
+
+
+testAtualiza :: Test
+testAtualiza = test
+ [
+    "Teste para confirmar se o jogo foi atualizado" ~: do
+        let listacoesinimigos = [(Just AndarDireita),(Just AndarDireita)]
+        let acoesjogador = (Just AndarDireita)
+        let personagem1 = Personagem {direcao = Este , emEscada = False, velocidade = (0,0),posicao =(1,22.5),tamanho = (1,1), ressalta = False, tipo = Jogador, vida = 50, aplicaDano = (False,0), pontos = 0}
+        let personagem2 = Personagem {direcao = Este , emEscada = False, velocidade = (4,0),posicao =(1,22.5),tamanho = (1,1), ressalta = False, tipo = Jogador, vida = 50, aplicaDano = (False,0), pontos = 0}
+        let colecionaveis1 = [(Martelo,(3,2))]
+        let listaInimigos1 = [(Personagem {direcao = Este , emEscada = False, posicao = (11,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, velocidade = (0,0),vida = 1,aplicaDano = (False,0), pontos = 0}),(Personagem {posicao = (10,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1,aplicaDano = (False,0), pontos = 0,velocidade = (0,0),direcao = Este , emEscada = False})]
+        let listaInimigos2 = [(Personagem {direcao = Este , emEscada = False, posicao = (11,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, velocidade = (3,0),vida = 1,aplicaDano = (False,0), pontos = 0}),(Personagem {posicao = (10,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1,aplicaDano = (False,0),velocidade=(3,0), direcao = Este , emEscada = False, pontos = 0})]
+        let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = colecionaveis1, inimigos = listaInimigos1}
+        let jogo2 = Jogo {mapa = mapa1, jogador = personagem2 , colecionaveis = colecionaveis1, inimigos = listaInimigos2}
+        assertEqual "Verificar se a funçao atualiza funciona" jogo2 (atualiza listacoesinimigos acoesjogador jogo1)
+ ]
+
+
 
 test_suite_01 = test ["Basic Test" ~: True ~=? True]
 
 main :: IO ()
-main = runTestTTAndExit $ test [test_suite_01,testColisoesParede,testColisoesPersonagem,testvalida]
+main = runTestTTAndExit $ test [test_suite_01,testColisoesParede,testColisoesPersonagem,testvalida,testAtualiza,testemovimenta]
+

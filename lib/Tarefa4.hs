@@ -13,7 +13,7 @@ import Data.Maybe
 import LI12324
 import Utilities
 import GHC.Float (double2Float)
-import Mapas (jog)
+import Mapas 
 
 
 atualiza :: [Maybe Acao] -> Maybe Acao -> Jogo -> Jogo
@@ -90,3 +90,6 @@ atualizaInimigo inimigo mapa (Just acao) =
   where inEscada = emEscada inimigo
  
             
+
+
+
