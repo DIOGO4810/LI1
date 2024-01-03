@@ -12,7 +12,7 @@ import LI12324
 import Utilities
 import Data.List
 import Utilities
-import Mapas
+import Niveis
 
 valida :: Jogo -> Bool
 valida jogo =

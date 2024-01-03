@@ -14,20 +14,43 @@ import Graphics.Gloss
 import Graphics.Gloss.Data.Point (pointInBox)
 import GHC.Float 
 import Data.List
-import Mapas
+import Niveis
 
 data State = State {
-  jogo :: Jogo,
-  images :: Images
+  images :: Images,
+  time :: Tempo,
+  levelsList :: Levels,
+  currentLevel :: Int,
+  currentTheme :: Theme,
+  currentMenu :: Menu,
+  selectedButton :: Int,
+  exitGame :: Bool
 }
+
+data Menu = InGame | Home | Options | Levels | Pause | GameOver deriving(Show,Eq)
+
+data Theme = Mario | MarioCat | MarioBear | MarioFrog | MarioAstronaut deriving(Show,Eq)
+
+type Levels = [Jogo]
+
+type Images = [(Theme,[(String, Picture)])]
 
 initialState :: State
 initialState = State {
-  jogo = jogoSamp,
-  images = []
+  images = [],
+  time = 0,
+  levelsList = [jogo1,jogo1],
+  currentLevel = 0,
+  currentTheme = Mario,
+  currentMenu = Home,
+  selectedButton = 0,
+  exitGame = False
 }
 
-type Images = [(String, Picture)]
+-- | Função que troca um elemento de uma lista num determinado indice
+updateLevel :: [a] -> (Int,a) -> [a]
+updateLevel lvs (i, j) = before ++ [j] ++ after 
+  where (before,_:after) = splitAt i lvs
 
 -- | Função para calcular a hitbox de um personagem considerando que px e py estão no respetivo centro
 calculaHitbox :: Personagem -> Hitbox
@@ -67,7 +90,7 @@ calculaHitboxDireita jogador = ((px,py-ty/2.5),(px+tx/1.9,py+ty/2.5))
 
 -- | Função que calcula as hitboxes que verificam se o jogador está dentro de um bloco 
 calculaHitboxDentro :: Personagem -> Hitbox
-calculaHitboxDentro jogador = ((px-tx/2.5,py-ty/2.5),(px+tx/2.5,py+ty/2.5))
+calculaHitboxDentro jogador = ((px-tx/2.5,py-ty/2.7),(px+tx/2.5,py+ty/2.7))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
@@ -76,15 +99,14 @@ calculaHitboxDentro jogador = ((px-tx/2.5,py-ty/2.5),(px+tx/2.5,py+ty/2.5))
 -- | Função que calcula a hitbox de dano do jogador armado
 calculaHitboxDano :: Personagem -> Hitbox
 calculaHitboxDano jogador = 
-  case dir of 
-    Este -> (((px+tx/2),(py+ty/2)),((px+tx),(py-ty/2)))
-    Oeste -> (((px-tx),(py+ty/2)),((px-tx/2),(py-ty/2)))
-    Norte -> (((px-tx/2),(py-ty)),((px+tx/2),(py+ty/2)))
-    Sul -> (((px-tx/2),(py+ty/2)),((px+tx/2),(py+ty)))
+    if dir == Este || (dir == Norte && not(emEscada jogador)) then (((px+tx/2),(py+ty/2.2)),((px+tx*1.5),(py-ty/2.2)))
+    else if dir == Oeste then (((px-tx*1.5),(py+ty/2.1)),((px-tx/2),(py-ty/2.1)))
+    else ((px,py),(px,py))
   where 
     (px,py) = posicao jogador
     dir = direcao jogador
     (tx,ty) = tamanho jogador  
+
 
 -- | Função para verificar a colisão entre duas hitboxes
 colisaoHitbox :: Hitbox -> Hitbox -> Bool

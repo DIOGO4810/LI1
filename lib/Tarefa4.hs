@@ -9,11 +9,10 @@ Módulo para a realização da Tarefa 4 de LI1 em 2023/24.
 module Tarefa4 where
 
 import Data.Maybe
-
 import LI12324
 import Utilities
 import GHC.Float (double2Float)
-import Mapas 
+import Niveis
 
 
 atualiza :: [Maybe Acao] -> Maybe Acao -> Jogo -> Jogo
@@ -42,7 +41,7 @@ atualizaJogador jogador mapa (Just acao) =
         then jogador 
       else jogador {velocidade = (4, snd $ velocidade jogador), direcao = Este}
     AndarEsquerda ->
-      if (snd $ velocidade jogador) /= 0  || (inEscada && not(any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmbaixo jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformas(mapa)))))
+      if (snd $ velocidade jogador) /= 0  || (inEscada && not(any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmbaixo jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformas(mapa))))) || any (\hitboxbloco -> colisaoHitbox (calculaHitboxDentro jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformasAlcapoes(blocos)))
         then jogador 
       else jogador {velocidade = (-4, snd $ velocidade jogador), direcao = Oeste}
     Saltar ->
