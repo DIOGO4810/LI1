@@ -29,27 +29,29 @@ fr = 60
 
 react :: Event -> State -> IO State
 react (EventKey (SpecialKey KeyEsc) Down _ _) jogo = exitSuccess
-react (EventKey (Char 'p') Down _ _) state = return $ state {currentMenu = Pause}
+react (EventKey (Char 'p') Down _ _) state = if (currentMenu state)== InGame then return $ state {currentMenu = Pause} else return state
 react e state 
   | currentMenu state == InGame = return $ state {levelsList = updateLevel (levelsList state) (currentLevel state,jogoS)}
   | currentMenu state == Pause = return $ reactPause e state
-  | currentMenu state == GameOver = return $ reactGameOver e state
   | currentMenu state == Options = return $ reactOptions e state
+  | currentMenu state == Mode = return $ reactMode e state
+  | currentMenu state == Themes = return $ reactThemes e state
+  | currentMenu state == GameOver = return $ reactGameOver e state
   | otherwise = return $ reactMenu e state
   where jogoS = reactInGame e (jogo)
         jogo = (levelsList state) !! currentLevel state
 
 
 reactInGame :: Event -> Jogo -> Jogo
-reactInGame (EventKey (SpecialKey KeyRight) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just AndarDireita) jogo
-reactInGame (EventKey (SpecialKey KeyRight) Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
-reactInGame (EventKey (SpecialKey KeyLeft) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just AndarEsquerda) jogo
-reactInGame (EventKey (SpecialKey KeyLeft) Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
-reactInGame (EventKey (SpecialKey KeyUp) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Subir) jogo
-reactInGame (EventKey (SpecialKey KeyUp) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
-reactInGame (EventKey (SpecialKey KeyDown) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Descer) jogo
-reactInGame (EventKey (SpecialKey KeyDown) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
-reactInGame (EventKey (SpecialKey KeySpace) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Saltar) jogo
+reactInGame (EventKey (SpecialKey KeyRight) Down _ _) jogo =  atualiza (replicate (length(inimigos jogo)) Nothing) (Just AndarDireita) jogo
+reactInGame (EventKey (SpecialKey KeyRight) Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza (replicate (length(inimigos jogo)) Nothing) (Just Parar) jogo else jogo
+reactInGame (EventKey (SpecialKey KeyLeft) Down _ _) jogo =  atualiza (replicate (length(inimigos jogo)) Nothing) (Just AndarEsquerda) jogo
+reactInGame (EventKey (SpecialKey KeyLeft) Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza (replicate (length(inimigos jogo)) Nothing) (Just Parar) jogo else jogo
+reactInGame (EventKey (SpecialKey KeyUp) Down _ _) jogo =  atualiza (replicate (length(inimigos jogo)) Nothing) (Just Subir) jogo
+reactInGame (EventKey (SpecialKey KeyUp) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length(inimigos jogo)) Nothing) (Just Parar) jogo else jogo
+reactInGame (EventKey (SpecialKey KeyDown) Down _ _) jogo =  atualiza (replicate (length(inimigos jogo)) Nothing) (Just Descer) jogo
+reactInGame (EventKey (SpecialKey KeyDown) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length(inimigos jogo)) Nothing) (Just Parar) jogo else jogo
+reactInGame (EventKey (SpecialKey KeySpace) Down _ _) jogo =  atualiza (replicate (length(inimigos jogo)) Nothing) (Just Saltar) jogo
 reactInGame event jogo = jogo
 
 timeInGame :: Float -> State -> IO State
@@ -57,19 +59,23 @@ timeInGame tempo state = do
   seedGenerator <- randomRIO (1,100 :: Int)
   if exitGame state 
     then exitSuccess 
-  else if (vida $ jogador $ jogo) == 0
+  else if (vida $ jogador jogo) == 0
     then return state {currentMenu=GameOver}
-  else if (posicao $ jogador $ jogo) == (posf)
+  else if ( fromIntegral $ floor px,fromIntegral $ floor py)  == (fromIntegral $ floor xf,fromIntegral $ floor yf)
     then return $ state {currentLevel = currentLevel state + 1}
   else if currentMenu state == InGame
     then 
     return $ state {
-    levelsList = updateLevel (levelsList state) (currentLevel state,movimenta seedGenerator (float2Double tempo) (jogo)),
-    time = time state + float2Double tempo
+    levelsList = updateLevel (levelsList state) (currentLevel state,movimenta seedGenerator (float2Double tempo) jogo),
+    time = time state + float2Double tempo,
+    currentPoints = sum (map (\jogo -> pontos $ jogador jogo) (levelsList state)),
+    highScore = max (currentPoints state) (highScore state)
     }
   else return state
-  where (Mapa (posi,diri) posf blocos) = mapa $ jogo
+  where (Mapa (posi,diri) (xf,yf) blocos) = mapa $ jogo
         jogo = (levelsList state) !! currentLevel state
+        (px,py) = (posicao $ jogador jogo)
+    
 
 
 draw :: State -> IO Picture
@@ -79,12 +85,9 @@ draw state = do
   putStrLn ("vida: " ++ (show $ vida $ jogador $ jogo))
   putStrLn ("armado: " ++ (show $ aplicaDano $ jogador $ jogo))
   putStrLn ("velocidade: " ++ (show $ velocidade $ jogador $ jogo))
-  putStrLn ("velocidadeInims: " ++ (show (map velocidade (inimigos $ jogo))))
-  putStrLn ("emEscadaInims: " ++ (show (map emEscada (inimigos $ jogo))))
   putStrLn ("emEscada: " ++ (show $ emEscada $ jogador $ jogo))
+  putStrLn ("impulsao: " ++ (show $ impulsao $ jogador $ jogo))
   putStrLn ("posicao: " ++ (show $ posicao $ jogador $ jogo))
-  putStrLn ("emEscadaInims: " ++ (show (map (podeDescer (mapa $ jogo)) (inimigos $ jogo))))
-  putStrLn ("selected: " ++ (show (selectedButton state)))
 
   if currentMenu state == InGame
     then return (drawGame state)
@@ -109,14 +112,21 @@ loadImages state = do
   sete <- loadBMP "assets/7.bmp"
   oito <- loadBMP "assets/8.bmp"
   nove <- loadBMP "assets/9.bmp"
+  escuro <- loadBMP "assets/escuro.bmp"
   botao1Home <- loadBMP "assets/menuplay.bmp"
-  botao2Home <- loadBMP "assets/menuoption.bmp"
+  botao2Home <- loadBMP "assets/menuoptions.bmp"
   botao3Home <- loadBMP "assets/menuexit.bmp"
   botao1Options <- loadBMP "assets/botao1Options.bmp"
   botao2Options <- loadBMP "assets/botao2Options.bmp"
   botao3Options <- loadBMP "assets/botao3Options.bmp"
-  botao4Options <- loadBMP "assets/botao4Options.bmp"
-  botao5Options <- loadBMP "assets/botao5Options.bmp"
+  botao1Mode <- loadBMP "assets/botao1Mode.bmp"
+  botao2Mode <- loadBMP "assets/botao2Mode.bmp"
+  botao3Mode <- loadBMP "assets/botao3Mode.bmp"
+  botao1Themes <- loadBMP "assets/botao1Themes.bmp"
+  botao2Themes <- loadBMP "assets/botao2Themes.bmp"
+  botao3Themes <- loadBMP "assets/botao3Themes.bmp"
+  botao4Themes <- loadBMP "assets/botao4Themes.bmp"
+  botao5Themes <- loadBMP "assets/botao5Themes.bmp"
   botao1Pause <- loadBMP "assets/pausedresume.bmp"
   botao2Pause <- loadBMP "assets/pausedrestart.bmp"
   botao3Pause <- loadBMP "assets/pausedmenu.bmp"
@@ -129,6 +139,7 @@ loadImages state = do
   marioescada <- loadBMP "assets/marioescada.bmp"
   mariosaltar <- loadBMP "assets/mariosaltar.bmp"
   plataforma <- loadBMP "assets/plataforma.bmp"
+  trampolim <- loadBMP "assets/trampolim.bmp"
   alcapao <- loadBMP "assets/alcapao.bmp"
   escada <- loadBMP "assets/escada.bmp"
   estrela <- loadBMP "assets/estrela.bmp"
@@ -141,6 +152,7 @@ loadImages state = do
   marioescadaCat <- loadBMP "assets/marioescadaCat.bmp"
   mariosaltarCat <- loadBMP "assets/mariosaltarCat.bmp"
   plataformaCat <- loadBMP "assets/plataformaCat.bmp"
+  trampolimCat <- loadBMP "assets/trampolimCat.bmp"
   alcapaoCat <- loadBMP "assets/alcapaoCat.bmp"
   escadaCat <- loadBMP "assets/escadaCat.bmp"
   estrelaCat <- loadBMP "assets/estrelaCat.bmp"
@@ -153,6 +165,7 @@ loadImages state = do
   marioescadaBear <- loadBMP "assets/marioescadaBear.bmp"
   mariosaltarBear <- loadBMP "assets/mariosaltarBear.bmp"
   plataformaBear <- loadBMP "assets/plataformaBear.bmp"
+  trampolimBear <- loadBMP "assets/trampolimBear.bmp"
   alcapaoBear <- loadBMP "assets/alcapaoBear.bmp"
   escadaBear <- loadBMP "assets/escadaBear.bmp"
   estrelaBear <- loadBMP "assets/estrelaBear.bmp"
@@ -165,6 +178,7 @@ loadImages state = do
   marioescadaFrog <- loadBMP "assets/marioescadaFrog.bmp"
   mariosaltarFrog <- loadBMP "assets/mariosaltarFrog.bmp"
   plataformaFrog <- loadBMP "assets/plataformaFrog.bmp"
+  trampolimFrog <- loadBMP "assets/trampolimFrog.bmp"
   alcapaoFrog <- loadBMP "assets/alcapaoFrog.bmp"
   escadaFrog <- loadBMP "assets/escadaFrog.bmp"
   estrelaFrog <- loadBMP "assets/estrelaFrog.bmp"
@@ -177,6 +191,7 @@ loadImages state = do
   marioescadaAstronaut <- loadBMP "assets/marioescadaAstronaut.bmp"
   mariosaltarAstronaut <- loadBMP "assets/mariosaltarAstronaut.bmp"
   plataformaAstronaut <- loadBMP "assets/plataformaAstronaut.bmp"
+  trampolimAstronaut <- loadBMP "assets/trampolimAstronaut.bmp"
   alcapaoAstronaut <- loadBMP "assets/alcapaoAstronaut.bmp"
   escadaAstronaut <- loadBMP "assets/escadaAstronaut.bmp"
   estrelaAstronaut <- loadBMP "assets/estrelaAstronaut.bmp"
@@ -201,14 +216,21 @@ loadImages state = do
         ("9",nove),
         ("martelo",martelo),
         ("moeda",moeda),
+        ("escuro",escuro),
         ("botao1Home", botao1Home),
         ("botao2Home", botao2Home),
         ("botao3Home", botao3Home),
         ("botao1Options", botao1Options),
         ("botao2Options", botao2Options),
         ("botao3Options", botao3Options),
-        ("botao4Options", botao4Options),
-        ("botao5Options", botao5Options),
+        ("botao1Mode", botao1Mode),
+        ("botao2Mode", botao2Mode),
+        ("botao3Mode", botao3Mode),
+        ("botao1Themes", botao1Themes),
+        ("botao2Themes", botao2Themes),
+        ("botao3Themes", botao3Themes),
+        ("botao4Themes", botao4Themes),
+        ("botao5Themes", botao5Themes),
         ("botao1Pause", botao1Pause),
         ("botao2Pause", botao2Pause),
         ("botao3Pause", botao3Pause),
@@ -221,6 +243,7 @@ loadImages state = do
         ("marioescada",marioescada),
         ("mariosaltar",mariosaltar),
         ("plataforma",plataforma),
+        ("trampolim",trampolim),
         ("alcapao",alcapao), 
         ("escada",escada),
         ("estrela",estrela),
@@ -234,6 +257,7 @@ loadImages state = do
         ("marioescada",marioescadaCat),
         ("mariosaltar",mariosaltarCat),
         ("plataforma",plataformaCat),
+        ("trampolim",trampolimCat),
         ("alcapao",alcapaoCat), 
         ("escada",escadaCat),
         ("estrela",estrelaCat),
@@ -247,6 +271,7 @@ loadImages state = do
         ("marioescada",marioescadaBear),
         ("mariosaltar",mariosaltarBear),
         ("plataforma",plataformaBear),
+        ("trampolim",trampolimBear),
         ("alcapao",alcapaoBear), 
         ("escada",escadaBear),
         ("estrela",estrelaBear),
@@ -260,6 +285,7 @@ loadImages state = do
         ("marioescada",marioescadaFrog),
         ("mariosaltar",mariosaltarFrog),
         ("plataforma",plataformaFrog),
+        ("trampolim",trampolimFrog),
         ("alcapao",alcapaoFrog), 
         ("escada",escadaFrog),
         ("estrela",estrelaFrog),
@@ -273,6 +299,7 @@ loadImages state = do
         ("marioescada",marioescadaAstronaut),
         ("mariosaltar",mariosaltarAstronaut),
         ("plataforma",plataformaAstronaut),
+        ("trampolim",trampolimAstronaut),
         ("alcapao",alcapaoAstronaut), 
         ("escada",escadaAstronaut),
         ("estrela",estrelaAstronaut),

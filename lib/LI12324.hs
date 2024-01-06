@@ -27,6 +27,7 @@ data Bloco
   = Escada       -- ^ Permite ao jogador mover-se verticalmente
   | Plataforma   -- ^ Bloco sólido que pode ser utilizado como superfície
   | Alcapao      -- ^ Bloco que desaparece após ser atravessado pelo jogador
+  | Trampolim    -- ^ Bloco que impulsiona o jogador para cima
   | Vazio        -- ^ Espaço
   deriving (Ord, Eq, Read, Show)
 
@@ -78,6 +79,7 @@ data Personagem =
     , tamanho    :: (Double, Double)
     , emEscada   :: Bool -- ^ se está numa escada
     , ressalta   :: Bool
+    , impulsao   :: Bool
     , vida       :: Int -- ^ não negativo
     , pontos     :: Int
     , aplicaDano :: (Bool, Double) -- ^ se está armado e por quanto tempo ainda
