@@ -79,11 +79,21 @@ drawPlayer state=
 
 
 drawEnemies :: State -> Picture
-drawEnemies state = Pictures $ map (\inimigo -> if direcao inimigo == Este then Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ fantasma else Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ scale (-1) (1) fantasma) (inimigos $ jogo)
+drawEnemies state = Pictures $ map (\inimigo -> if (direcao inimigo == Este ||  direcao inimigo == Norte || direcao inimigo == Sul) && tipo inimigo == Fantasma then Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ fantasma else if direcao inimigo == Oeste && tipo inimigo == Fantasma then Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ scale (-1) (1) fantasma else if tipo inimigo == MacacoMalvado then Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ macacomalvado else Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ barril) (inimigos $ jogo)
   where 
     fantasma =if mod' (time state) (1/4) < (1/8)
       then fromJust(lookup ("fantasma1") imagesTheme)
     else fromJust(lookup ("fantasma2") imagesTheme)
+    macacomalvado =if any (\i ->any (\b -> if tipo b== Barril then((fst $ posicao i),(snd $ posicao i)-1.3) == posicao b else False) (inimigos jogo) && tipo i == MacacoMalvado) (inimigos jogo) 
+      then fromJust(lookup ("donkeykong1") imagesTheme)
+    else fromJust(lookup ("donkeykong2") imagesTheme)
+    barril = 
+      if any (\i ->any (\b -> if tipo b== Barril then((fst $ posicao i),(snd $ posicao i)-1.3) == posicao b else False) (inimigos jogo) && tipo i == MacacoMalvado) (inimigos jogo) 
+        then fromJust(lookup ("barril1") imagesTheme)
+      else if mod' (time state) (1/4) < (1/8)
+             then fromJust(lookup ("barril1") imagesTheme)
+          else fromJust(lookup ("barril2") imagesTheme)
+
     imagesTheme = fromJust (lookup (currentTheme state) (images state))
     jogo = (levelsList state) !! currentLevel state
 

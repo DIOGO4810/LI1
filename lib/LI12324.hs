@@ -61,6 +61,7 @@ data Entidade
   = MacacoMalvado
   | Fantasma
   | Jogador
+  | Barril
   deriving (Ord, Eq, Read, Show)
 
 -- | Tipos de items passiveis de ser colecionaveis por um 'Personagem'.

@@ -82,6 +82,6 @@ drawHighScore state =
   else blank
   where
     drawPoints :: Int -> [Picture]
-    drawPoints p = foldl (\pic n -> [Translate ((fromIntegral(length pic)*50-(27*fromIntegral(length ps-1)))) (-500) $ scale (0.8) (0.8) $ (fromJust(lookup ([n]) imagesThemeDef))] ++ pic) [] ps
+    drawPoints p = foldl (\pic n -> [Translate ((fromIntegral(length pic)*50-(27*fromIntegral(length ps-1)))) (-525) $ scale (0.8) (0.8) $ (fromJust(lookup ([n]) imagesThemeDef))] ++ pic) [] ps
       where ps = show p
     imagesThemeDef = fromJust (lookup Mario (images state))

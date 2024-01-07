@@ -66,7 +66,7 @@ timeInGame tempo state = do
   else if currentMenu state == InGame
     then 
     return $ state {
-    levelsList = updateLevel (levelsList state) (currentLevel state,movimenta seedGenerator (float2Double tempo) jogo),
+    levelsList = updateLevel (levelsList state) (currentLevel state, (movimenta seedGenerator (float2Double tempo) jogo)),
     time = time state + float2Double tempo,
     currentPoints = sum (map (\jogo -> pontos $ jogador jogo) (levelsList state)),
     highScore = max (currentPoints state) (highScore state)
@@ -75,6 +75,7 @@ timeInGame tempo state = do
   where (Mapa (posi,diri) (xf,yf) blocos) = mapa $ jogo
         jogo = (levelsList state) !! currentLevel state
         (px,py) = (posicao $ jogador jogo)
+
     
 
 
@@ -88,6 +89,8 @@ draw state = do
   putStrLn ("emEscada: " ++ (show $ emEscada $ jogador $ jogo))
   putStrLn ("impulsao: " ++ (show $ impulsao $ jogador $ jogo))
   putStrLn ("posicao: " ++ (show $ posicao $ jogador $ jogo))
+  putStrLn ("aplicaDano: " ++ (show $ map (aplicaDano) (inimigos jogo)))
+
 
   if currentMenu state == InGame
     then return (drawGame state)
@@ -145,6 +148,10 @@ loadImages state = do
   estrela <- loadBMP "assets/estrela.bmp"
   fantasma1 <- loadBMP "assets/fantasma1.bmp"
   fantasma2 <- loadBMP "assets/fantasma2.bmp"
+  donkeykong1 <- loadBMP "assets/donkeykong1.bmp"
+  donkeykong2 <- loadBMP "assets/donkeykong2.bmp"
+  barril1 <- loadBMP "assets/barril1.bmp"
+  barril2 <- loadBMP "assets/barril2.bmp"
   -- ! MarioCat
   marioparadoCat <- loadBMP "assets/marioparadoCat.bmp"
   marioandar1Cat <- loadBMP "assets/marioandar1Cat.bmp"
@@ -158,6 +165,10 @@ loadImages state = do
   estrelaCat <- loadBMP "assets/estrelaCat.bmp"
   fantasma1Cat <- loadBMP "assets/fantasma1Cat.bmp"
   fantasma2Cat <- loadBMP "assets/fantasma2Cat.bmp"
+  donkeykong1Cat <- loadBMP "assets/donkeykong1Cat.bmp"
+  donkeykong2Cat <- loadBMP "assets/donkeykong2Cat.bmp"
+  barril1Cat <- loadBMP "assets/barril1Cat.bmp"
+  barril2Cat <- loadBMP "assets/barril2Cat.bmp"
   -- ! MarioBear
   marioparadoBear <- loadBMP "assets/marioparadoBear.bmp"
   marioandar1Bear <- loadBMP "assets/marioandar1Bear.bmp"
@@ -171,6 +182,10 @@ loadImages state = do
   estrelaBear <- loadBMP "assets/estrelaBear.bmp"
   fantasma1Bear <- loadBMP "assets/fantasma1Bear.bmp"
   fantasma2Bear <- loadBMP "assets/fantasma2Bear.bmp"
+  donkeykong1Bear <- loadBMP "assets/donkeykong1Bear.bmp"
+  donkeykong2Bear <- loadBMP "assets/donkeykong2Bear.bmp"
+  barril1Bear <- loadBMP "assets/barril1Bear.bmp"
+  barril2Bear <- loadBMP "assets/barril2Bear.bmp"
   -- ! MarioFrog
   marioparadoFrog <- loadBMP "assets/marioparadoFrog.bmp"
   marioandar1Frog <- loadBMP "assets/marioandar1Frog.bmp"
@@ -184,6 +199,10 @@ loadImages state = do
   estrelaFrog <- loadBMP "assets/estrelaFrog.bmp"
   fantasma1Frog <- loadBMP "assets/fantasma1Frog.bmp"
   fantasma2Frog <- loadBMP "assets/fantasma2Frog.bmp"
+  donkeykong1Frog <- loadBMP "assets/donkeykong1Frog.bmp"
+  donkeykong2Frog <- loadBMP "assets/donkeykong2Frog.bmp"
+  barril1Frog <- loadBMP "assets/barril1Frog.bmp"
+  barril2Frog <- loadBMP "assets/barril2Frog.bmp"
   -- ! MarioAstronaut
   marioparadoAstronaut <- loadBMP "assets/marioparadoAstronaut.bmp"
   marioandar1Astronaut <- loadBMP "assets/marioandar1Astronaut.bmp"
@@ -197,6 +216,10 @@ loadImages state = do
   estrelaAstronaut <- loadBMP "assets/estrelaAstronaut.bmp"
   fantasma1Astronaut <- loadBMP "assets/fantasma1Astronaut.bmp"
   fantasma2Astronaut <- loadBMP "assets/fantasma2Astronaut.bmp"
+  donkeykong1Astronaut <- loadBMP "assets/donkeykong1Astronaut.bmp"
+  donkeykong2Astronaut <- loadBMP "assets/donkeykong2Astronaut.bmp"
+  barril1Astronaut <- loadBMP "assets/barril1Astronaut.bmp"
+  barril2Astronaut <- loadBMP "assets/barril2Astronaut.bmp"
 
 
   return state {
@@ -248,7 +271,11 @@ loadImages state = do
         ("escada",escada),
         ("estrela",estrela),
         ("fantasma1", fantasma1),
-        ("fantasma2", fantasma2)
+        ("fantasma2", fantasma2),
+        ("donkeykong1", donkeykong1),
+        ("donkeykong2", donkeykong2),
+        ("barril1", barril1),
+        ("barril2", barril2)
       ]),
       (MarioCat,[
         ("marioparado",marioparadoCat),
@@ -262,7 +289,11 @@ loadImages state = do
         ("escada",escadaCat),
         ("estrela",estrelaCat),
         ("fantasma1", fantasma1Cat),
-        ("fantasma2", fantasma2Cat)
+        ("fantasma2", fantasma2Cat),
+        ("donkeykong1", donkeykong1Cat),
+        ("donkeykong2", donkeykong2Cat),
+        ("barril1", barril1Cat),
+        ("barril2", barril2Cat)
       ]),
       (MarioBear,[
         ("marioparado",marioparadoBear),
@@ -276,7 +307,11 @@ loadImages state = do
         ("escada",escadaBear),
         ("estrela",estrelaBear),
         ("fantasma1", fantasma1Bear),
-        ("fantasma2", fantasma2Bear)
+        ("fantasma2", fantasma2Bear),
+        ("donkeykong1", donkeykong1Bear),
+        ("donkeykong2", donkeykong2Bear),
+        ("barril1", barril1Bear),
+        ("barril2", barril2Bear)
       ]),
       (MarioFrog,[
         ("marioparado",marioparadoFrog),
@@ -290,7 +325,11 @@ loadImages state = do
         ("escada",escadaFrog),
         ("estrela",estrelaFrog),
         ("fantasma1", fantasma1Frog),
-        ("fantasma2", fantasma2Frog)
+        ("fantasma2", fantasma2Frog),
+        ("donkeykong1", donkeykong1Frog),
+        ("donkeykong2", donkeykong2Frog),
+        ("barril1", barril1Frog),
+        ("barril2", barril2Frog)
       ]),
       (MarioAstronaut,[
         ("marioparado",marioparadoAstronaut),
@@ -304,7 +343,11 @@ loadImages state = do
         ("escada",escadaAstronaut),
         ("estrela",estrelaAstronaut),
         ("fantasma1", fantasma1Astronaut),
-        ("fantasma2", fantasma2Astronaut)
+        ("fantasma2", fantasma2Astronaut),
+        ("donkeykong1", donkeykong1Astronaut),
+        ("donkeykong2", donkeykong2Astronaut),
+        ("barril1", barril1Astronaut),
+        ("barril2", barril2Astronaut)
       ])
       ]
     }

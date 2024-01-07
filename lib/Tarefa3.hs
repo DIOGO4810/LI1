@@ -27,7 +27,7 @@ jogadorWrapper tempo jogoW = jogoW {
 inimigosWrapper :: Semente -> Tempo -> Jogo -> Jogo
 inimigosWrapper semente tempo jogoW = jogoW {
   --inimigos = isInimigoDead $ tiraVidaInimigos (jogador jogoW) $ map (\i -> colideEscada $ stopLimites (mapa jogoW) $ aplicaGravidade i) (inimigos jogoW)
-  inimigos = isInimigoDead (jogador jogoW) $ tiraVidaInimigos (jogador jogoW) $ aplicaMovimento semente (mapa jogoW) $ map (\i -> movePersonagem tempo $ controlaInimigo (mapa jogoW) $ paraSubirDescer (mapa jogoW) i) (inimigos jogoW)
+  inimigos = isInimigoDead (jogador jogoW) $ tiraVidaInimigos (jogador jogoW) $ retornaBarris (mapa jogoW) $ lancaBarris (jogador jogoW) $ temporizadorBarris tempo $ aplicaMovimento semente (mapa jogoW) $ map (\i -> movePersonagem tempo $ controlaInimigo (mapa jogoW) $ paraSubirDescer (mapa jogoW) i) (inimigos jogoW)
 }
 
 mapaWrapper :: Jogo -> Jogo
@@ -39,7 +39,7 @@ mapaWrapper jogoW = jogoW {
 tiraVidaInimigos :: Personagem -> [Personagem] -> [Personagem]
 tiraVidaInimigos jogador listaInimigos = 
   if isArmado && tempoArmado > 0 
-    then map (\personagem -> if ((colisaoHitbox (calculaHitboxDano jogador) (calculaHitbox personagem))) then (personagem{vida=vida personagem-1}) else personagem) (listaInimigos)
+    then map (\personagem -> if ((colisaoHitbox (calculaHitboxDano jogador) (calculaHitbox personagem))) && tipo personagem == Fantasma then (personagem{vida=vida personagem-1}) else personagem) (listaInimigos)
   else listaInimigos
   where (isArmado, tempoArmado) = aplicaDano jogador
 
@@ -64,6 +64,7 @@ aplicaGravidade tempo mapa personagem =
   where (Mapa _ _ blocos) = mapa
 
 -- | 4. Função que retira uma vida e aplica um efeito de bounce back ao jogador quando ele colide com um inimigo e está desarmado
+-- TODO: Fix na colisao na escada dentro da plataforma
 tiraVidaJogador :: Tempo -> Mapa -> [Personagem] -> Personagem -> Personagem
 tiraVidaJogador tempo mapa listaInimigos personagem = 
   -- Colisão à beira de um muro
@@ -162,9 +163,9 @@ movePersonagem tempo personagem= personagem {posicao = (px+(fst $ velocidade per
 -- | Função que controla a direção dos inimigos
 controlaInimigo :: Mapa -> Personagem -> Personagem
 controlaInimigo mapa inimigo = 
-  if ((any (\hitboxbloco -> colisaoHitbox (calculaHitboxDireita inimigo) hitboxbloco) (hitboxesBlocos(mapaPlataformasAlcapoes blocos)) || (px + tamanhoX/2) >= fromIntegral(length (head blocos)) || any (\(x,y) -> (fromIntegral(ceiling px-1),fromIntegral(ceiling py)) == (x,y)) (mapaVazio mapa))) && (fst $ velocidade inimigo) > 0
+  if ((any (\hitboxbloco -> colisaoHitbox (calculaHitboxDireita inimigo) hitboxbloco) (hitboxesBlocos(mapaPlataformasAlcapoes blocos)) || (px + tamanhoX/2) >= fromIntegral(length (head blocos)) || any (\(x,y) -> (fromIntegral(ceiling px-1),fromIntegral(ceiling py)) == (x,y)) (mapaVazio mapa))) && (fst $ velocidade inimigo) > 0 && tipo inimigo == Fantasma
       then inimigo {velocidade = (-1.5, 0), direcao = Oeste}
-  else if ((any (\hitboxbloco -> colisaoHitbox (calculaHitboxEsquerda inimigo) hitboxbloco) (hitboxesBlocos(mapaPlataformasAlcapoes blocos)) || (px - tamanhoX/2) <= 0 || any (\(x,y) -> (fromIntegral(floor px),fromIntegral(ceiling py)) == (x,y)) (mapaVazio mapa))) && (fst $ velocidade inimigo) < 0
+  else if ((any (\hitboxbloco -> colisaoHitbox (calculaHitboxEsquerda inimigo) hitboxbloco) (hitboxesBlocos(mapaPlataformasAlcapoes blocos)) || (px - tamanhoX/2) <= 0 || any (\(x,y) -> (fromIntegral(floor px),fromIntegral(ceiling py)) == (x,y)) (mapaVazio mapa))) && (fst $ velocidade inimigo) < 0 && tipo inimigo == Fantasma
     then inimigo {velocidade = (1.5, 0), direcao = Este}
   else inimigo
   where 
@@ -175,7 +176,7 @@ controlaInimigo mapa inimigo =
 -- | Função que escolhe aleatoriamente a trajetória de um inimigo
 iniciaMovimento :: Mapa -> (Personagem, Int) -> Personagem
 iniciaMovimento mapa (inim, int) =
-  if velocidade inim == (0,0)
+  if velocidade inim == (0,0) 
     then if even int 
           then inim{velocidade=(1.5,0),direcao=Este} 
          else inim{velocidade=(-1.5,0),direcao=Oeste}
@@ -188,7 +189,7 @@ iniciaMovimento mapa (inim, int) =
 
 -- | Função que aplica a função iniciaMovimento juntamente com a semente à lista de inimigos
 aplicaMovimento :: Semente -> Mapa -> [Personagem] -> [Personagem]
-aplicaMovimento s mapa inimigos = map (iniciaMovimento mapa) inimint
+aplicaMovimento s mapa inimigos = map (\(inim,int) -> if tipo inim == Fantasma then iniciaMovimento mapa (inim,int) else inim) inimint
   where inimint = zip inimigos (geraAleatorios s (length inimigos))
 
 -- | Funções que controlam a subida e descida de escadas dos inimigos
@@ -202,11 +203,25 @@ podeSubir mapa inimigo =  any (\(xe,ye) -> fromIntegral(floor $ fst $ posicao in
 
 paraSubirDescer :: Mapa -> Personagem -> Personagem
 paraSubirDescer mapa inimigo = 
-  if (snd $ velocidade inimigo) > 0 && not(podeDescer mapa inimigo)
+  if (snd $ velocidade inimigo) > 0 && not(podeDescer mapa inimigo) && tipo inimigo == Fantasma
     then inimigo{velocidade =((fst $ velocidade inimigo),0)}
-  else if (snd $ velocidade inimigo) < 0 && not(podeSubir mapa inimigo)
+  else if (snd $ velocidade inimigo) < 0 && not(podeSubir mapa inimigo) && tipo inimigo == Fantasma
     then inimigo{velocidade =((fst $ velocidade inimigo),0)}
   else inimigo
+
+-- | Função que faz o macaco lançar barris
+lancaBarris :: Personagem -> [Personagem] -> [Personagem]
+lancaBarris jogador listaInimigos = 
+  if any (\i ->tipo i == MacacoMalvado && not(fst $ aplicaDano i)) listaInimigos
+   then map (\i -> if tipo i == Barril then i{velocidade=((fst(posicao jogador)-fst(posicao i))/2.5,(snd(posicao jogador)-snd(posicao i))/2.5)} else if tipo i == MacacoMalvado then i{aplicaDano=(True,6.0)} else i) listaInimigos
+  else listaInimigos
+
+temporizadorBarris :: Tempo -> [Personagem] -> [Personagem]
+temporizadorBarris tempo listaInimigos = map (\i -> if tipo i == MacacoMalvado && (snd $ aplicaDano i) > 0 then i{aplicaDano = (True,(snd $ aplicaDano i)-tempo)} else if (snd $ aplicaDano i) <= 0 then i{aplicaDano = (False,0)} else i) listaInimigos 
+
+retornaBarris :: Mapa -> [Personagem] -> [Personagem]
+retornaBarris (Mapa _ _ blocos) listaInimigos=map (\i -> if tipo i == Barril && ((fst $ posicao i)<0 || (fst $ posicao i)>fromIntegral(length(head blocos)) || (snd $ posicao i)<0 || (snd $ posicao i)> fromIntegral(length blocos) || all (\i -> (snd $ aplicaDano i)<0.1) listaInimigos) then i{posicao=(px,py-1.3),velocidade=(0,0)} else i) listaInimigos
+  where (px,py) = foldl (\(px,py) i -> if tipo i == MacacoMalvado then (posicao i) else (px,py)) (0,0) listaInimigos
 
 -- | Função que ejeta o jogador se ele ficar preso num bloco
 ejeta :: Mapa -> Tempo -> Personagem -> Personagem

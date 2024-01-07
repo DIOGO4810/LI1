@@ -58,6 +58,28 @@ mapa1 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
 
 inim1 :: [Personagem]
 inim1 = [Personagem {velocidade = (0,0), 
+                    tipo = MacacoMalvado, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    posicao = (7.5,6.0), 
+                    tamanho = (1.6,2), 
+                    aplicaDano = (True, 3.0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
+                    tipo = Barril, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    posicao = (7.5,4.7), 
+                    tamanho = (1,0.5), 
+                    aplicaDano = (False,0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
                     tipo = Fantasma, 
                     emEscada = False, 
                     vida = 1, 
@@ -103,10 +125,10 @@ jogo1 = Jogo mapa1 inim1 colec1 jog{posicao = posi,direcao=diri}
 -- | Nível 2
 
 mapa2 = Mapa ((1.5, 22.5), Este) (13.5, 2.0) (abreviaBlocos $
-    [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','P','P','P','P','P','A','P']
+    [['V','V','V','P','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','P','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','P','V','V','V','V','V','V','V','V','V','V','V']
+    ,['P','P','P','P','V','V','V','V','P','P','P','P','P','A','P']
     ,['V','V','V','V','V','V','T','V','V','V','V','V','V','V','P']
     ,['V','V','V','V','V','P','P','V','V','V','V','V','V','V','P']
     ,['V','V','V','P','P','P','P','V','V','V','V','V','V','T','P']
@@ -131,6 +153,28 @@ mapa2 = Mapa ((1.5, 22.5), Este) (13.5, 2.0) (abreviaBlocos $
 
 inim2 :: [Personagem]
 inim2 = [Personagem {velocidade = (0,0), 
+                    tipo = MacacoMalvado, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    posicao = (1.5,2.0), 
+                    tamanho = (1.6,2), 
+                    aplicaDano = (True, 3.0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
+                    tipo = Barril, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    posicao = (1.5,0.7), 
+                    tamanho = (1,0.5), 
+                    aplicaDano = (False,0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
                     tipo = Fantasma, 
                     emEscada = False, 
                     vida = 1, 
