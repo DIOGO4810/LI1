@@ -68,6 +68,7 @@ data Entidade
 data Colecionavel
   = Moeda
   | Martelo
+  | Escudo
   deriving (Ord, Eq, Read, Show)
 
 -- | Personagem do 'Jogo'.
@@ -81,6 +82,7 @@ data Personagem =
     , emEscada   :: Bool -- ^ se está numa escada
     , ressalta   :: Bool
     , impulsao   :: Bool
+    , escudo     :: (Bool, Double)
     , vida       :: Int -- ^ não negativo
     , pontos     :: Int
     , aplicaDano :: (Bool, Double) -- ^ se está armado e por quanto tempo ainda

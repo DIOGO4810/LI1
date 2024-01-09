@@ -29,6 +29,16 @@ fr = 60
 
 react :: Event -> State -> IO State
 react (EventKey (SpecialKey KeyEsc) Down _ _) jogo = exitSuccess
+react (EventKey (Char 't') Down _ _) state 
+  | currentTheme state == Mario = return $ state {currentTheme=MarioCat}
+  | currentTheme state == MarioCat = return $ state {currentTheme=MarioBear}
+  | currentTheme state == MarioBear = return $ state {currentTheme=MarioFrog}
+  | currentTheme state == MarioFrog = return $ state {currentTheme=MarioAstronaut}
+  | currentTheme state == MarioAstronaut = return $ state {currentTheme=Mario}
+react (EventKey (Char 'm') Down _ _) state 
+  | currentMode state == Easy = return $ state {currentMode=Medium}
+  | currentMode state == Medium = return $ state {currentMode=Hard}
+  | currentMode state == Hard = return $ state {currentMode=Easy}
 react (EventKey (Char 'p') Down _ _) state = if (currentMenu state)== InGame then return $ state {currentMenu = Pause} else return state
 react e state 
   | currentMenu state == InGame = return $ state {levelsList = updateLevel (levelsList state) (currentLevel state,jogoS)}
@@ -58,7 +68,9 @@ timeInGame :: Float -> State -> IO State
 timeInGame tempo state = do
   seedGenerator <- randomRIO (1,100 :: Int)
   if exitGame state 
-    then exitSuccess 
+    then do
+      writeFile "highscore.txt" (show (highScore state))
+      exitSuccess 
   else if (vida $ jogador jogo) == 0
     then return state {currentMenu=GameOver}
   else if ( fromIntegral $ floor px,fromIntegral $ floor py)  == (fromIntegral $ floor xf,fromIntegral $ floor yf)
@@ -89,7 +101,7 @@ draw state = do
   putStrLn ("emEscada: " ++ (show $ emEscada $ jogador $ jogo))
   putStrLn ("impulsao: " ++ (show $ impulsao $ jogador $ jogo))
   putStrLn ("posicao: " ++ (show $ posicao $ jogador $ jogo))
-  putStrLn ("aplicaDano: " ++ (show $ map (aplicaDano) (inimigos jogo)))
+  putStrLn ("escudo: " ++ (show $ escudo $ jogador $ jogo))
 
 
   if currentMenu state == InGame
@@ -103,7 +115,6 @@ loadImages :: State -> IO State
 loadImages state = do
   -- ! Assets Gerais
   heart <- loadBMP "assets/heart.bmp"
-  martelo <- loadBMP "assets/martelo.bmp"
   moeda <- loadBMP "assets/moeda.bmp"
   zero <- loadBMP "assets/0.bmp"
   um <- loadBMP "assets/1.bmp"
@@ -146,6 +157,8 @@ loadImages state = do
   alcapao <- loadBMP "assets/alcapao.bmp"
   escada <- loadBMP "assets/escada.bmp"
   estrela <- loadBMP "assets/estrela.bmp"
+  martelo <- loadBMP "assets/martelo.bmp"
+  shield <- loadBMP "assets/escudo.bmp"
   fantasma1 <- loadBMP "assets/fantasma1.bmp"
   fantasma2 <- loadBMP "assets/fantasma2.bmp"
   donkeykong1 <- loadBMP "assets/donkeykong1.bmp"
@@ -163,6 +176,8 @@ loadImages state = do
   alcapaoCat <- loadBMP "assets/alcapaoCat.bmp"
   escadaCat <- loadBMP "assets/escadaCat.bmp"
   estrelaCat <- loadBMP "assets/estrelaCat.bmp"
+  marteloCat <- loadBMP "assets/marteloCat.bmp"
+  shieldCat <- loadBMP "assets/escudoCat.bmp"
   fantasma1Cat <- loadBMP "assets/fantasma1Cat.bmp"
   fantasma2Cat <- loadBMP "assets/fantasma2Cat.bmp"
   donkeykong1Cat <- loadBMP "assets/donkeykong1Cat.bmp"
@@ -180,6 +195,8 @@ loadImages state = do
   alcapaoBear <- loadBMP "assets/alcapaoBear.bmp"
   escadaBear <- loadBMP "assets/escadaBear.bmp"
   estrelaBear <- loadBMP "assets/estrelaBear.bmp"
+  marteloBear <- loadBMP "assets/marteloBear.bmp"
+  shieldBear <- loadBMP "assets/escudoBear.bmp"
   fantasma1Bear <- loadBMP "assets/fantasma1Bear.bmp"
   fantasma2Bear <- loadBMP "assets/fantasma2Bear.bmp"
   donkeykong1Bear <- loadBMP "assets/donkeykong1Bear.bmp"
@@ -197,6 +214,8 @@ loadImages state = do
   alcapaoFrog <- loadBMP "assets/alcapaoFrog.bmp"
   escadaFrog <- loadBMP "assets/escadaFrog.bmp"
   estrelaFrog <- loadBMP "assets/estrelaFrog.bmp"
+  marteloFrog <- loadBMP "assets/marteloFrog.bmp"
+  shieldFrog <- loadBMP "assets/escudoFrog.bmp"
   fantasma1Frog <- loadBMP "assets/fantasma1Frog.bmp"
   fantasma2Frog <- loadBMP "assets/fantasma2Frog.bmp"
   donkeykong1Frog <- loadBMP "assets/donkeykong1Frog.bmp"
@@ -214,6 +233,8 @@ loadImages state = do
   alcapaoAstronaut <- loadBMP "assets/alcapaoAstronaut.bmp"
   escadaAstronaut <- loadBMP "assets/escadaAstronaut.bmp"
   estrelaAstronaut <- loadBMP "assets/estrelaAstronaut.bmp"
+  marteloAstronaut <- loadBMP "assets/marteloAstronaut.bmp"
+  shieldAstronaut <- loadBMP "assets/escudoAstronaut.bmp"
   fantasma1Astronaut <- loadBMP "assets/fantasma1Astronaut.bmp"
   fantasma2Astronaut <- loadBMP "assets/fantasma2Astronaut.bmp"
   donkeykong1Astronaut <- loadBMP "assets/donkeykong1Astronaut.bmp"
@@ -237,7 +258,6 @@ loadImages state = do
         ("7",sete),
         ("8",oito),
         ("9",nove),
-        ("martelo",martelo),
         ("moeda",moeda),
         ("escuro",escuro),
         ("botao1Home", botao1Home),
@@ -270,6 +290,8 @@ loadImages state = do
         ("alcapao",alcapao), 
         ("escada",escada),
         ("estrela",estrela),
+        ("martelo",martelo),
+        ("shield",shield),
         ("fantasma1", fantasma1),
         ("fantasma2", fantasma2),
         ("donkeykong1", donkeykong1),
@@ -288,6 +310,8 @@ loadImages state = do
         ("alcapao",alcapaoCat), 
         ("escada",escadaCat),
         ("estrela",estrelaCat),
+        ("martelo",marteloCat),
+        ("shield",shieldCat),
         ("fantasma1", fantasma1Cat),
         ("fantasma2", fantasma2Cat),
         ("donkeykong1", donkeykong1Cat),
@@ -306,6 +330,8 @@ loadImages state = do
         ("alcapao",alcapaoBear), 
         ("escada",escadaBear),
         ("estrela",estrelaBear),
+        ("martelo",marteloBear),
+        ("shield",shieldBear),
         ("fantasma1", fantasma1Bear),
         ("fantasma2", fantasma2Bear),
         ("donkeykong1", donkeykong1Bear),
@@ -324,6 +350,8 @@ loadImages state = do
         ("alcapao",alcapaoFrog), 
         ("escada",escadaFrog),
         ("estrela",estrelaFrog),
+        ("martelo",marteloFrog),
+        ("shield",shieldFrog),
         ("fantasma1", fantasma1Frog),
         ("fantasma2", fantasma2Frog),
         ("donkeykong1", donkeykong1Frog),
@@ -342,6 +370,8 @@ loadImages state = do
         ("alcapao",alcapaoAstronaut), 
         ("escada",escadaAstronaut),
         ("estrela",estrelaAstronaut),
+        ("martelo",marteloAstronaut),
+        ("shield",shieldAstronaut),
         ("fantasma1", fantasma1Astronaut),
         ("fantasma2", fantasma2Astronaut),
         ("donkeykong1", donkeykong1Astronaut),
@@ -354,5 +384,6 @@ loadImages state = do
 
 main :: IO ()
 main = do
+    hs <- readFile "highscore.txt"
     initState <- loadImages initialState
-    playIO window bgColor fr initState draw react timeInGame
+    playIO window bgColor fr initState{highScore=read hs} draw react timeInGame
