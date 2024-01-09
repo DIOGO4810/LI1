@@ -41,14 +41,23 @@ react e state
 
 
 reactInGame :: Event -> Jogo -> Jogo
-reactInGame (EventKey (SpecialKey KeyRight) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just AndarDireita) jogo
+reactInGame (EventKey (Char 'd') Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just AndarDireita) jogo
+reactInGame (EventKey (Char 'd') Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
+reactInGame (EventKey (SpecialKey KeyRight ) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just AndarDireita) jogo
 reactInGame (EventKey (SpecialKey KeyRight) Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
+reactInGame (EventKey (Char 'a') Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just AndarEsquerda) jogo
+reactInGame (EventKey (Char 'a') Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
 reactInGame (EventKey (SpecialKey KeyLeft) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just AndarEsquerda) jogo
 reactInGame (EventKey (SpecialKey KeyLeft) Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
+reactInGame (EventKey (Char 'w') Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Subir) jogo
+reactInGame (EventKey (Char 'w') Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
 reactInGame (EventKey (SpecialKey KeyUp) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Subir) jogo
 reactInGame (EventKey (SpecialKey KeyUp) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
+reactInGame (EventKey (Char 's') Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Descer) jogo
+reactInGame (EventKey (Char 's') Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
 reactInGame (EventKey (SpecialKey KeyDown) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Descer) jogo
 reactInGame (EventKey (SpecialKey KeyDown) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
+
 reactInGame (EventKey (SpecialKey KeySpace) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Saltar) jogo
 reactInGame (EventKey (SpecialKey KeyDelete) Down _ _) jogo =  Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
   where           

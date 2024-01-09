@@ -9,8 +9,25 @@ Módulo para a realização da Tarefa 3 de LI1 em 2023/24.
 module Tarefa3 where
 
 import LI12324
-import Mapas
+import Niveis
 import Utilities
+    ( calculaHitbox,
+      calculaHitboxDano,
+      calculaHitboxDentro,
+      calculaHitboxDireita,
+      calculaHitboxEmCima,
+      calculaHitboxEmbaixo,
+      calculaHitboxEsquerda,
+      colideComBloco,
+      colisaoHitbox,
+      getBloco,
+      hitboxesBlocos,
+      mapaAlcapoes,
+      mapaEscadas,
+      mapaPlataformas,
+      mapaPlataformasAlcapoes,
+      mapaVazio,
+      replace )
 import Tarefa1
 import Data.Maybe
 import Graphics.Gloss.Data.Point (pointInBox)
@@ -228,8 +245,3 @@ atrito tempo personagem =
   else personagem
 
 
-
-personagem1 = Personagem {direcao = Este , emEscada = False, velocidade = (4,0),posicao =(1,22.5),tamanho = (1,1), ressalta = False, tipo = Jogador, vida = 50, aplicaDano = (False,0), pontos = 0}
-listaInimigos1 = [(Personagem {direcao = Este , emEscada = False, posicao = (11,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, velocidade = (0,0),vida = 1,aplicaDano = (False,0), pontos = 0}),(Personagem {posicao = (10,22.5), tamanho = (1,1), ressalta = True,tipo = Fantasma, vida = 1,aplicaDano = (False,0), pontos = 0,velocidade = (0,0),direcao = Este , emEscada = False})]
-colecionaveis1 = [(Martelo,(3,2))]
-jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = colecionaveis1, inimigos = listaInimigos1}

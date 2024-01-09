@@ -1,6 +1,6 @@
 module Main where
 import LI12324
-import Mapas
+import Niveis
 import Tarefa1
 import Tarefa2
 import Tarefa3

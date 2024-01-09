@@ -142,7 +142,7 @@ replace blocos (px, py) = takeWhile (/= linhapy) blocos ++ [replaceVazio (head $
 
 replaceVazio :: [Bloco] -> Int -> [Bloco]
 replaceVazio [] _ = []
-replaceVazio (x:xs) 0 = Vazio : xs
+replaceVazio (x:xs) 0 = Vazio : xs 
 replaceVazio (x:xs) n = x : replaceVazio xs (n - 1)
 
 -- | Função que retorna a lista de posições dos blocos
