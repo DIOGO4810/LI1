@@ -33,16 +33,20 @@ atualizaJogador jogador mapa (Just acao) =
         then jogador {posicao = ((fromIntegral(floor px) + 0.5),py), velocidade = (0, -3), direcao = Norte}
       else jogador
     Descer ->
-      if inEscada || ((any (\hitboxbloco -> colisaoHitbox (calculaHitbox jogador) hitboxbloco) (hitboxesBlocos((mapaPlataformas mapa)))) && (any (\escadabaixo -> (fromIntegral(floor px),fromIntegral(ceiling (py+2))) == escadabaixo) (mapaEscadas (mapa))))
+      if inEscada || ((any (\hitboxbloco -> colisaoHitbox (calculaHitbox jogador) hitboxbloco) (hitboxesBlocos((mapaPlataformas mapa)))) && (any (\escadabaixo -> (fromIntegral(floor px),fromIntegral(ceiling (py+1))) == escadabaixo) (mapaEscadas (mapa))))
         then jogador {posicao = ((fromIntegral(floor px) + 0.5),py), velocidade = (0, 3), direcao = Sul}
       else jogador
     AndarDireita -> 
-      if (snd $ velocidade jogador) /= 0 || (inEscada && not(any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmbaixo jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformas(mapa))))) || any (\hitboxbloco -> colisaoHitbox (calculaHitboxDentro jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformasAlcapoes(blocos)))
+      if (not(impulsao jogador) && (snd $ velocidade jogador) /= 0) || (inEscada && not(any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmbaixo jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformas(mapa))))) || any (\hitboxbloco -> colisaoHitbox (calculaHitboxDentro jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformasAlcapoes(blocos)))
         then jogador 
+      else if impulsao jogador
+        then jogador {velocidade = (2.5, snd $ velocidade jogador), direcao = Este}
       else jogador {velocidade = (4, snd $ velocidade jogador), direcao = Este}
     AndarEsquerda ->
-      if (snd $ velocidade jogador) /= 0  || (inEscada && not(any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmbaixo jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformas(mapa))))) || any (\hitboxbloco -> colisaoHitbox (calculaHitboxDentro jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformasAlcapoes(blocos)))
+      if (not(impulsao jogador) && (snd $ velocidade jogador) /= 0)  || (inEscada && not(any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmbaixo jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformas(mapa))))) || any (\hitboxbloco -> colisaoHitbox (calculaHitboxDentro jogador) hitboxbloco) (hitboxesBlocos(mapaPlataformasAlcapoes(blocos)))
         then jogador 
+      else if impulsao jogador
+        then jogador {velocidade = (-2.5, snd $ velocidade jogador), direcao = Oeste}
       else jogador {velocidade = (-4, snd $ velocidade jogador), direcao = Oeste}
     Saltar ->
       if (not inEscada || ((any (\primult -> elem (fromIntegral(floor px), fromIntegral(floor py)) primult) (primUltEscadas mapa)) && (fst $ velocidade jogador) /=0)) && any (\hitboxesbloco -> colisaoHitbox (calculaHitboxEmbaixo jogador) hitboxesbloco) (hitboxesBlocos(mapaPlataformasAlcapoes blocos))

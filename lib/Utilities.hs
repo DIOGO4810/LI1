@@ -22,14 +22,19 @@ data State = State {
   levelsList :: Levels,
   currentLevel :: Int,
   currentTheme :: Theme,
+  currentMode :: Mode,
   currentMenu :: Menu,
+  currentPoints :: Int,
+  highScore :: Int,
   selectedButton :: Int,
   exitGame :: Bool
 }
 
-data Menu = InGame | Home | Options | Levels | Pause | GameOver deriving(Show,Eq)
+data Menu = InGame | Home | Options | Mode | Themes | Levels | Pause | GameOver deriving(Show,Eq)
 
 data Theme = Mario | MarioCat | MarioBear | MarioFrog | MarioAstronaut deriving(Show,Eq)
+
+data Mode = Easy | Medium | Hard deriving(Show,Eq)
 
 type Levels = [Jogo]
 
@@ -39,10 +44,13 @@ initialState :: State
 initialState = State {
   images = [],
   time = 0,
-  levelsList = [jogo1,jogo1],
+  levelsList = [jogo1,jogo2],
   currentLevel = 0,
   currentTheme = Mario,
+  currentMode = Easy,
   currentMenu = Home,
+  currentPoints = 0,
+  highScore = 0,
   selectedButton = 0,
   exitGame = False
 }
@@ -90,7 +98,7 @@ calculaHitboxDireita jogador = ((px,py-ty/2.5),(px+tx/1.9,py+ty/2.5))
 
 -- | Função que calcula as hitboxes que verificam se o jogador está dentro de um bloco 
 calculaHitboxDentro :: Personagem -> Hitbox
-calculaHitboxDentro jogador = ((px-tx/2.5,py-ty/2.7),(px+tx/2.5,py+ty/2.7))
+calculaHitboxDentro jogador = ((px-tx/2.5,py-ty/2.5),(px+tx/2.5,py+ty/2.5))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
@@ -161,6 +169,9 @@ mapaPlataformas (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isPlataf
 mapaVazio :: Mapa -> [Posicao]
 mapaVazio (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isVazio (getBloco pos blocos)]
 
+mapaTrampolins :: Mapa -> [Posicao]
+mapaTrampolins (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isTrampolim (getBloco pos blocos)]
+
 mapaPlataformasAlcapoes :: [[Bloco]] -> [Posicao]
 mapaPlataformasAlcapoes blocos = [pos | pos <- indicesBlocos blocos, isAlcapao (getBloco pos blocos) || isPlataforma (getBloco pos blocos)]
 
@@ -220,6 +231,10 @@ isPlataforma _ = False
 isEscada :: Bloco -> Bool
 isEscada Escada = True
 isEscada _ = False
+
+isTrampolim :: Bloco -> Bool
+isTrampolim Trampolim = True
+isTrampolim _ = False
 
 isVazio :: Bloco -> Bool
 isVazio Vazio = True
