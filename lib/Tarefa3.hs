@@ -166,7 +166,7 @@ colideEscada mapa personagem=
   else personagem {emEscada = False}
 
 -- | Função que o faz o jogador mover-se
-movePersonagem :: Tempo -> Personagem  -> Personagem
+movePersonagem :: Tempo -> Personagem -> Personagem
 movePersonagem tempo personagem= personagem {posicao = (px+(fst $ velocidade personagem)*tempo,py+(snd $ velocidade personagem)*tempo)}
   where (px,py) = posicao personagem
 

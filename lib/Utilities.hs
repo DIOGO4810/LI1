@@ -44,8 +44,8 @@ initialState :: State
 initialState = State {
   images = [],
   time = 0,
-  levelsList = [jogo1,jogo2,jogo4],
-  currentLevel = 2,
+  levelsList = [jogo1,jogo2,jogo4,jogo5],
+  currentLevel = 3,
   currentTheme = Mario,
   currentMode = Easy,
   currentMenu = Home,

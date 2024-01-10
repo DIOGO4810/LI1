@@ -283,6 +283,10 @@ mapa3 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
     ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
     ])
 
+
+
+-- | Nível 4
+
 jog4 :: Personagem
 jog4 = Personagem { velocidade = (0,0),
                     tipo = Jogador,
@@ -298,11 +302,7 @@ jog4 = Personagem { velocidade = (0,0),
                     direcao = Este}
 
 
--- | Nível 4
-
-
-
-mapa4 = Mapa ((9, 6.5), Este) (7.5, 2.0) (abreviaBlocos $
+mapa4 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
     [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
     ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
     ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
@@ -326,7 +326,7 @@ mapa4 = Mapa ((9, 6.5), Este) (7.5, 2.0) (abreviaBlocos $
     ,['V','V','V','V','V','V','V','V','V','V','V','P','P','V','V']
     ,['V','V','V','V','V','V','P','P','P','V','V','V','V','V','V']
     ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['P','P','P','P','T','P','V','V','V','P','P','P','P','P','P']
+    ,['P','P','P','P','T','P','V','V','V','P','P','P','P','P','T']
     ])
     
 
@@ -384,7 +384,7 @@ inim4 = [Personagem {velocidade = (0,0),
 
 
 colec4 :: [(Colecionavel, Posicao)]
-colec4 = [(Moeda,(5.5,10.5)),(Moeda,(6.5,10.5)),(Moeda,(8.5,10.5)),(Moeda,(9.5,10.5)),(Moeda,(10.5,10.5)),(Moeda,(11.5,10.5)),(Moeda,(6.5,18.5)),(Moeda,(7.5,18.5)),(Moeda,(8.5,18.5)),(Moeda,(9.5,18.5)),(Moeda,(10.5,18.5)),(Moeda,(11.5,18.5)),(Moeda,(13.5,6.5)),(Moeda,(12.5,6.5)),(Martelo,(6.5,14.5)),(Escudo,(7.5,10.5)),(Escudo,(3.5,22.5))]
+colec4 = [(Moeda,(6.5,14.5)),(Moeda,(4.5,14.5)),(Moeda,(5.5,10.5)),(Moeda,(6.5,10.5)),(Moeda,(8.5,10.5)),(Moeda,(9.5,10.5)),(Moeda,(10.5,10.5)),(Moeda,(11.5,10.5)),(Moeda,(6.5,18.5)),(Moeda,(7.5,18.5)),(Moeda,(8.5,18.5)),(Moeda,(9.5,18.5)),(Moeda,(10.5,18.5)),(Moeda,(11.5,18.5)),(Moeda,(13.5,6.5)),(Moeda,(12.5,6.5)),(Martelo,(14,22.5)),(Escudo,(7.5,10.5)),(Escudo,(3.5,22.5))]
 
 jogo4 ::Jogo
 jogo4 = Jogo mapa4 inim4 colec4 jog4{posicao = posi,direcao=diri}
@@ -395,11 +395,194 @@ jogo4 = Jogo mapa4 inim4 colec4 jog4{posicao = posi,direcao=diri}
 
 
 
+-- | Nível 5
+
+jog5 :: Personagem
+jog5 = Personagem { velocidade = (0,0),
+                    tipo = Jogador,
+                    emEscada = False, 
+                    vida = 3, 
+                    pontos = 0, 
+                    ressalta = False, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (0,0), 
+                    tamanho = (0.7,1), 
+                    aplicaDano = (False, 0), 
+                    direcao = Este}
+
+mapa5 = Mapa ((2.5, 21.5), Este) (14, 12.5) (abreviaBlocos $
+    [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','P','A','A','P','A','A','P','P','V','V','V']
+    ,['V','V','V','V','E','V','V','P','V','V','E','P','V','V','V']
+    ,['V','V','V','V','V','V','V','P','V','V','E','P','V','V','V']
+    ,['V','V','V','V','V','V','V','P','V','V','E','P','V','V','V']
+    ,['V','V','V','V','V','V','V','P','V','V','E','P','A','A','A']
+    ,['V','T','V','V','V','V','V','P','T','P','P','P','V','V','V']
+    ,['V','V','V','V','V','V','V','P','V','V','P','V','V','V','V']
+    ,['V','V','V','V','V','V','V','P','V','V','P','V','V','V','V']
+    ,['V','V','V','T','V','V','V','P','P','P','P','P','A','A','A']
+    ,['V','V','V','V','V','V','V','P','V','V','V','E','V','V','V']
+    ,['V','V','V','V','V','V','V','P','V','V','V','E','V','V','V']
+    ,['V','V','V','V','V','V','T','P','P','P','P','P','P','P','P']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['P','P','P','T','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','T','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','P','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['P','P','P','V','V','V','P','V','V','V','P','V','V','V','V']
+    ,['P','P','P','P','P','P','P','P','P','P','P','P','T','P','P']
+    ])
+    
+
+inim5 :: [Personagem]
+inim5 = [Personagem {velocidade = (0,0), 
+                    tipo = Fantasma, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (5,22.5), 
+                    tamanho = (1,0.5), 
+                    aplicaDano = (False,0), 
+                    direcao = Este},
+          Personagem {velocidade = (0,0), 
+                    tipo = Fantasma, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (1.5,15.5), 
+                    tamanho = (1,0.5), 
+                    aplicaDano = (False,0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
+                    tipo = MacacoMalvado, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (9,9), 
+                    tamanho = (1.6,2), 
+                    aplicaDano = (True, 3.0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
+                    tipo = Barril, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (1.5,0.7), 
+                    tamanho = (1,0.5), 
+                    aplicaDano = (False,0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
+                    tipo = Fantasma, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (17,22.5), 
+                    tamanho = (1,0.5), 
+                    aplicaDano = (False,0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
+                    tipo = Fantasma, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (9,22.5), 
+                    tamanho = (1,0.5), 
+                    aplicaDano = (False,0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
+                    tipo = Fantasma, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (8,22.5), 
+                    tamanho = (1,0.5), 
+                    aplicaDano = (False,0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
+                    tipo = Fantasma, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (12.5,22.5), 
+                    tamanho = (0.8,0.8), 
+                    aplicaDano = (False, 0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
+                    tipo = Fantasma, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (4,22.5), 
+                    tamanho = (0.8,0.8), 
+                    aplicaDano = (False, 0), 
+                    direcao = Este},
+         Personagem {velocidade = (0,0), 
+                    tipo = Fantasma, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (16,5.5), 
+                    tamanho = (0.8,0.8), 
+                    aplicaDano = (False, 0), 
+                    direcao = Este},                                      
+        Personagem {velocidade = (0,0), 
+                    tipo = Fantasma, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (14,9.5), 
+                    tamanho = (0.8,0.8), 
+                    aplicaDano = (False, 0), 
+                    direcao = Este}
+                    ]  
 
 
 
 
+colec5 :: [(Colecionavel, Posicao)]
+colec5 = [(Moeda,(6.5,21.5)),(Moeda,(1.5,6.5)),(Moeda,(3.5,9.5)),(Moeda,(6.5,12.5)),(Moeda,(8.5,18.5)),(Moeda,(10.5,21.5)),(Moeda,(8.5,6.5)),(Moeda,(9.5,6.5)),(Moeda,(9.5,5.5)),(Moeda,(8.5,5.5)),(Moeda,(8.5,4.5)),(Moeda,(9.5,4.5)),(Moeda,(8.5,3.5)),(Moeda,(9.5,3.5)),(Martelo,(13.5,19.5)),(Escudo,(3.5,22.5))]
 
+jogo5 ::Jogo
+jogo5 = Jogo mapa5 inim5 colec5 jog4{posicao = posi,direcao=diri}
+  where (Mapa (posi,diri) posf blocos) = mapa5
 
 
 

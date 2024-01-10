@@ -62,43 +62,6 @@ reactInGame (EventKey (Char 'w') Up _ _) jogo =  if (emEscada $ jogador jogo) th
 reactInGame (EventKey (Char 's') Down _ _) jogo =  atualiza (replicate (length (inimigos jogo)) Nothing) (Just Descer) jogo
 reactInGame (EventKey (Char 's') Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length (inimigos jogo)) Nothing) (Just Parar) jogo else jogo
 reactInGame (EventKey (SpecialKey KeySpace) Down _ _) jogo =  atualiza (replicate (length (inimigos jogo)) Nothing) (Just Saltar) jogo
-reactInGame (EventKey (SpecialKey KeyDelete) Down _ _) jogo =  Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
-  where           
-                  (vx,vy) = velocidade jogador1
-                  (px,py) = posicao jogador1
-                  inEscada = emEscada jogador1
-                  pontosjogador = pontos jogador1
-                  (tamanhoX,tamanhoY) = tamanho jogador1
-                  ressaltando = ressalta jogador1
-                  direcaojogador = direcao jogador1
-                  listaInimigos = inimigos jogo
-                  listaColecionaveis = colecionaveis jogo
-                  vidajogador = vida jogador1
-                  impulsaojogador = impulsao jogador1
-                  (maybeEscudo,tempoescudo) = escudo jogador1
-                  jogador1 = jogador jogo
-                  mapa1 = mapa jogo
-                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (True, 100), pontos = pontosjogador,escudo = (maybeEscudo,tempoescudo), impulsao = impulsaojogador}
-                  jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
-reactInGame (EventKey (SpecialKey KeyInsert) Down _ _) jogo =  Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
-  where           
-                  (vx,vy) = velocidade jogador1
-                  (px,py) = posicao jogador1
-                  pontosjogador = pontos jogador1
-                  inEscada = emEscada jogador1
-                  impulsaojogador = impulsao jogador1
-                  (maybeEscudo,tempoescudo) = escudo jogador1
-                  (tamanhoX,tamanhoY) = tamanho jogador1
-                  ressaltando = ressalta jogador1
-                  direcaojogador = direcao jogador1
-                  listaInimigos = inimigos jogo
-                  listaColecionaveis = colecionaveis jogo
-                  vidajogador = vida jogador1
-                  jogador1 = jogador jogo
-                  mapa1 = mapa jogo
-                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (True, 100), pontos = pontosjogador,escudo = (maybeEscudo,tempoescudo), impulsao = impulsaojogador}
-                  jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
-
 reactInGame (EventKey (SpecialKey KeyRight) Down _ _) jogo =  atualiza (replicate (length(inimigos jogo)) Nothing) (Just AndarDireita) jogo
 reactInGame (EventKey (SpecialKey KeyRight) Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza (replicate (length(inimigos jogo)) Nothing) (Just Parar) jogo else jogo
 reactInGame (EventKey (SpecialKey KeyLeft) Down _ _) jogo =  atualiza (replicate (length(inimigos jogo)) Nothing) (Just AndarEsquerda) jogo
@@ -107,6 +70,81 @@ reactInGame (EventKey (SpecialKey KeyUp) Down _ _) jogo =  atualiza (replicate (
 reactInGame (EventKey (SpecialKey KeyUp) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length(inimigos jogo)) Nothing) (Just Parar) jogo else jogo
 reactInGame (EventKey (SpecialKey KeyDown) Down _ _) jogo =  atualiza (replicate (length(inimigos jogo)) Nothing) (Just Descer) jogo
 reactInGame (EventKey (SpecialKey KeyDown) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length(inimigos jogo)) Nothing) (Just Parar) jogo else jogo
+reactInGame (EventKey (SpecialKey KeyDelete) Down _ _) jogo =  jogo1
+  where           
+                  (vx,vy) = velocidade jogador1
+                  (px,py) = posicao jogador1
+                  inEscada = emEscada jogador1
+                  pontosjogador = pontos jogador1
+                  (tamanhoX,tamanhoY) = tamanho jogador1
+                  ressaltando = ressalta jogador1
+                  direcaojogador = direcao jogador1
+                  listaInimigos = inimigos jogo
+                  listaColecionaveis = colecionaveis jogo
+                  vidajogador = vida jogador1
+                  impulsaojogador = impulsao jogador1
+                  (maybeEscudo,tempoescudo) = escudo jogador1
+                  jogador1 = jogador jogo
+                  mapa1 = mapa jogo
+                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (True, 100), pontos = pontosjogador,escudo = (maybeEscudo,tempoescudo), impulsao = impulsaojogador}
+                  jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
+reactInGame (EventKey (SpecialKey KeyInsert) Down _ _) jogo =  jogo1
+  where           
+                  (vx,vy) = velocidade jogador1
+                  (px,py) = posicao jogador1
+                  pontosjogador = pontos jogador1
+                  inEscada = emEscada jogador1
+                  impulsaojogador = impulsao jogador1
+                  (maybeEscudo,tempoescudo) = escudo jogador1
+                  (tamanhoX,tamanhoY) = tamanho jogador1
+                  ressaltando = ressalta jogador1
+                  direcaojogador = direcao jogador1
+                  listaInimigos = inimigos jogo
+                  listaColecionaveis = colecionaveis jogo
+                  vidajogador = vida jogador1
+                  jogador1 = jogador jogo
+                  mapa1 = mapa jogo
+                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (False,0), pontos = pontosjogador,escudo = (maybeEscudo,tempoescudo), impulsao = impulsaojogador}
+                  jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
+
+reactInGame (EventKey (Char 'e') Down _ _) jogo =  jogo1
+  where           
+                  (vx,vy) = velocidade jogador1
+                  (px,py) = posicao jogador1
+                  inEscada = emEscada jogador1
+                  pontosjogador = pontos jogador1
+                  (tamanhoX,tamanhoY) = tamanho jogador1
+                  ressaltando = ressalta jogador1
+                  direcaojogador = direcao jogador1
+                  listaInimigos = inimigos jogo
+                  listaColecionaveis = colecionaveis jogo
+                  vidajogador = vida jogador1
+                  (maybeMartelo,tempomartelo) = aplicaDano jogador1
+                  impulsaojogador = impulsao jogador1
+                  jogador1 = jogador jogo
+                  mapa1 = mapa jogo
+                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (maybeMartelo,tempomartelo), pontos = pontosjogador,escudo = (True,100), impulsao = impulsaojogador}
+                  jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
+reactInGame (EventKey (Char 'q') Up _ _) jogo = jogo1
+  where           
+                  (vx,vy) = velocidade jogador1
+                  (px,py) = posicao jogador1
+                  pontosjogador = pontos jogador1
+                  inEscada = emEscada jogador1
+                  (maybeMartelo,tempomartelo) = aplicaDano jogador1
+                  impulsaojogador = impulsao jogador1
+                  (maybeEscudo,tempoescudo) = escudo jogador1
+                  (tamanhoX,tamanhoY) = tamanho jogador1
+                  ressaltando = ressalta jogador1
+                  direcaojogador = direcao jogador1
+                  listaInimigos = inimigos jogo
+                  listaColecionaveis = colecionaveis jogo
+                  vidajogador = vida jogador1
+                  jogador1 = jogador jogo
+                  mapa1 = mapa jogo
+                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (maybeMartelo,tempomartelo), pontos = pontosjogador,escudo = (False,0), impulsao = impulsaojogador}
+                  jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
+
 reactInGame event jogo = jogo
 
               
