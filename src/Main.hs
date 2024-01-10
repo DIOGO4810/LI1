@@ -53,44 +53,41 @@ react e state
 
 
 reactInGame :: Event -> Jogo -> Jogo
-reactInGame (EventKey (Char 'd') Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just AndarDireita) jogo
-reactInGame (EventKey (Char 'd') Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
-reactInGame (EventKey (SpecialKey KeyRight ) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just AndarDireita) jogo
-reactInGame (EventKey (SpecialKey KeyRight) Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
-reactInGame (EventKey (Char 'a') Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just AndarEsquerda) jogo
-reactInGame (EventKey (Char 'a') Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
-reactInGame (EventKey (SpecialKey KeyLeft) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just AndarEsquerda) jogo
-reactInGame (EventKey (SpecialKey KeyLeft) Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
-reactInGame (EventKey (Char 'w') Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Subir) jogo
-reactInGame (EventKey (Char 'w') Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
-reactInGame (EventKey (SpecialKey KeyUp) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Subir) jogo
-reactInGame (EventKey (SpecialKey KeyUp) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
-reactInGame (EventKey (Char 's') Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Descer) jogo
-reactInGame (EventKey (Char 's') Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
-reactInGame (EventKey (SpecialKey KeyDown) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Descer) jogo
-reactInGame (EventKey (SpecialKey KeyDown) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza [Nothing, Nothing, Nothing] (Just Parar) jogo else jogo
-
-reactInGame (EventKey (SpecialKey KeySpace) Down _ _) jogo =  atualiza [Nothing, Nothing, Nothing] (Just Saltar) jogo
+reactInGame (EventKey (Char 'd') Down _ _) jogo =  atualiza (replicate (length (inimigos jogo)) Nothing) (Just AndarDireita) jogo
+reactInGame (EventKey (Char 'd') Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza (replicate (length (inimigos jogo)) Nothing) (Just Parar) jogo else jogo
+reactInGame (EventKey (Char 'a') Down _ _) jogo =  atualiza (replicate (length (inimigos jogo)) Nothing) (Just AndarEsquerda) jogo
+reactInGame (EventKey (Char 'a') Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza (replicate (length (inimigos jogo)) Nothing) (Just Parar) jogo else jogo
+reactInGame (EventKey (Char 'w') Down _ _) jogo =  atualiza (replicate (length (inimigos jogo)) Nothing) (Just Subir) jogo
+reactInGame (EventKey (Char 'w') Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length (inimigos jogo)) Nothing) (Just Parar) jogo else jogo
+reactInGame (EventKey (Char 's') Down _ _) jogo =  atualiza (replicate (length (inimigos jogo)) Nothing) (Just Descer) jogo
+reactInGame (EventKey (Char 's') Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length (inimigos jogo)) Nothing) (Just Parar) jogo else jogo
+reactInGame (EventKey (SpecialKey KeySpace) Down _ _) jogo =  atualiza (replicate (length (inimigos jogo)) Nothing) (Just Saltar) jogo
 reactInGame (EventKey (SpecialKey KeyDelete) Down _ _) jogo =  Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
   where           
                   (vx,vy) = velocidade jogador1
                   (px,py) = posicao jogador1
                   inEscada = emEscada jogador1
+                  pontosjogador = pontos jogador1
                   (tamanhoX,tamanhoY) = tamanho jogador1
                   ressaltando = ressalta jogador1
                   direcaojogador = direcao jogador1
                   listaInimigos = inimigos jogo
                   listaColecionaveis = colecionaveis jogo
                   vidajogador = vida jogador1
+                  impulsaojogador = impulsao jogador1
+                  (maybeEscudo,tempoescudo) = escudo jogador1
                   jogador1 = jogador jogo
                   mapa1 = mapa jogo
-                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (True, 100), pontos = 0}
+                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (True, 100), pontos = pontosjogador,escudo = (maybeEscudo,tempoescudo), impulsao = impulsaojogador}
                   jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
 reactInGame (EventKey (SpecialKey KeyInsert) Down _ _) jogo =  Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
   where           
                   (vx,vy) = velocidade jogador1
                   (px,py) = posicao jogador1
+                  pontosjogador = pontos jogador1
                   inEscada = emEscada jogador1
+                  impulsaojogador = impulsao jogador1
+                  (maybeEscudo,tempoescudo) = escudo jogador1
                   (tamanhoX,tamanhoY) = tamanho jogador1
                   ressaltando = ressalta jogador1
                   direcaojogador = direcao jogador1
@@ -99,7 +96,7 @@ reactInGame (EventKey (SpecialKey KeyInsert) Down _ _) jogo =  Jogo {mapa = mapa
                   vidajogador = vida jogador1
                   jogador1 = jogador jogo
                   mapa1 = mapa jogo
-                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (False, 0), pontos = 0}
+                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (True, 100), pontos = pontosjogador,escudo = (maybeEscudo,tempoescudo), impulsao = impulsaojogador}
                   jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
 
 reactInGame (EventKey (SpecialKey KeyRight) Down _ _) jogo =  atualiza (replicate (length(inimigos jogo)) Nothing) (Just AndarDireita) jogo
@@ -110,7 +107,6 @@ reactInGame (EventKey (SpecialKey KeyUp) Down _ _) jogo =  atualiza (replicate (
 reactInGame (EventKey (SpecialKey KeyUp) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length(inimigos jogo)) Nothing) (Just Parar) jogo else jogo
 reactInGame (EventKey (SpecialKey KeyDown) Down _ _) jogo =  atualiza (replicate (length(inimigos jogo)) Nothing) (Just Descer) jogo
 reactInGame (EventKey (SpecialKey KeyDown) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length(inimigos jogo)) Nothing) (Just Parar) jogo else jogo
-reactInGame (EventKey (SpecialKey KeySpace) Down _ _) jogo =  atualiza (replicate (length(inimigos jogo)) Nothing) (Just Saltar) jogo
 reactInGame event jogo = jogo
 
               
