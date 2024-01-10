@@ -82,7 +82,7 @@ inim1 = [Personagem {velocidade = (0,0),
                     posicao = (7.5,4.7), 
                     tamanho = (1,0.5), 
                     aplicaDano = (False,0), 
-                    direcao = Este},
+                    direcao = Sul},
         Personagem {velocidade = (0,0), 
                     tipo = Fantasma, 
                     emEscada = False, 
@@ -146,10 +146,10 @@ jogo1 = Jogo mapa1 inim1 colec1 jog{posicao = posi,direcao=diri}
 -- | Nível 2
 
 mapa2 = Mapa ((1.5, 22.5), Este) (13.5, 2.0) (abreviaBlocos $
-    [['V','V','V','P','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','P','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','P','V','V','V','V','V','V','V','V','V','V','V']
-    ,['P','P','P','P','V','V','V','V','P','P','P','P','P','A','P']
+    [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['P','P','V','V','V','V','V','V','P','P','P','P','P','A','P']
     ,['V','V','V','V','V','V','T','V','V','V','V','V','V','V','P']
     ,['V','V','V','V','V','P','P','V','V','V','V','V','V','V','P']
     ,['V','V','V','P','P','P','P','V','V','V','V','V','V','T','P']
@@ -181,7 +181,7 @@ inim2 = [Personagem {velocidade = (0,0),
                     ressalta = True, 
                     impulsao = False,
                     escudo = (False,0),
-                    posicao = (1.5,2.0), 
+                    posicao = (1.0,2.0), 
                     tamanho = (1.6,2), 
                     aplicaDano = (True, 3.0), 
                     direcao = Este},
@@ -193,10 +193,10 @@ inim2 = [Personagem {velocidade = (0,0),
                     ressalta = True, 
                     impulsao = False,
                     escudo = (False,0),
-                    posicao = (1.5,0.7), 
+                    posicao = (1.0,0.7), 
                     tamanho = (1,0.5), 
                     aplicaDano = (False,0), 
-                    direcao = Este},
+                    direcao = Sul},
         Personagem {velocidade = (0,0), 
                     tipo = Fantasma, 
                     emEscada = False, 
@@ -255,8 +255,185 @@ jogo2 = Jogo mapa2 inim2 colec2 jog{posicao = posi,direcao=diri}
   where (Mapa (posi,diri) posf blocos) = mapa2
 
 
+-- | Nível 3
+mapa3 = Mapa ((3.5, 22.5), Oeste) (14.0, 2.0) (abreviaBlocos $
+    [['V','V','V','V','V','V','V','V','V','P','V','V','P','V','V']
+    ,['V','V','V','V','V','V','V','V','V','P','V','V','P','V','V']
+    ,['V','V','V','V','V','V','V','V','V','P','V','V','P','V','V']
+    ,['V','V','P','P','P','V','V','V','V','P','P','P','P','V','V']
+    ,['V','V','V','V','P','V','V','V','V','V','P','V','V','V','V']
+    ,['V','V','V','V','P','V','V','V','V','V','P','V','V','V','V']
+    ,['T','V','V','V','P','V','V','V','V','V','P','V','V','V','T']
+    ,['P','P','V','V','P','P','P','A','A','A','P','V','V','P','P']
+    ,['V','V','V','V','P','V','V','V','V','V','P','V','V','V','V']
+    ,['V','V','V','V','P','V','V','V','V','V','P','V','V','V','V']
+    ,['V','V','V','T','P','V','V','V','V','V','P','T','V','V','V']
+    ,['V','V','P','P','P','A','A','A','P','P','P','P','P','V','V']
+    ,['V','V','V','V','P','V','V','V','V','V','P','V','V','V','V']
+    ,['V','V','V','V','P','V','V','V','V','V','P','V','V','V','V']
+    ,['T','V','V','V','P','V','V','V','V','V','P','V','V','V','T']
+    ,['P','P','V','V','P','P','P','A','A','A','P','V','V','P','P']
+    ,['V','V','V','V','P','V','V','V','V','V','P','V','V','V','V']
+    ,['V','V','V','V','P','V','V','V','V','V','P','V','V','V','V']
+    ,['V','V','V','T','P','V','V','V','V','V','P','T','V','V','V']
+    ,['V','V','P','P','P','A','A','A','P','P','P','P','P','V','V']
+    ,['V','V','V','V','P','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','P','V','V','V','V','V','V','V','V','V','V']
+    ,['T','V','V','V','P','V','V','V','V','V','V','V','V','V','T']
+    ,['P','P','P','P','P','P','P','P','P','P','P','P','P','P','P']
+    ])
 
-mapa3 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
+inim3 :: [Personagem]
+inim3 = [Personagem {velocidade = (0,0), 
+                    tipo = MacacoMalvado, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (11.0,2.0), 
+                    tamanho = (1.6,2), 
+                    aplicaDano = (True, 3.0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
+                    tipo = Barril, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (11.0,0.7), 
+                    tamanho = (1,0.5), 
+                    aplicaDano = (False,0), 
+                    direcao = Sul},
+        Personagem {velocidade = (0,0), 
+                    tipo = Fantasma, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (5.5,22.5), 
+                    tamanho = (0.8,0.8), 
+                    aplicaDano = (False, 0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
+                    tipo = Fantasma, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (5.5,6.5), 
+                    tamanho = (0.8,0.8), 
+                    aplicaDano = (False, 0), 
+                    direcao = Este},
+        Personagem {velocidade = (0,0), 
+                    tipo = Fantasma, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (9.5,10.5), 
+                    tamanho = (0.8,0.8), 
+                    aplicaDano = (False, 0), 
+                    direcao = Oeste},
+        Personagem {velocidade = (0,0), 
+                    tipo = Fantasma, 
+                    emEscada = False, 
+                    vida = 1, 
+                    pontos = 0, 
+                    ressalta = True, 
+                    impulsao = False,
+                    escudo = (False,0),
+                    posicao = (5.5,14.5), 
+                    tamanho = (0.8,0.8), 
+                    aplicaDano = (False, 0), 
+                    direcao = Oeste},
+          Personagem {velocidade = (0,0), 
+                      tipo = Fantasma, 
+                      emEscada = False, 
+                      vida = 1, 
+                      pontos = 0, 
+                      ressalta = True, 
+                      impulsao = False,
+                      escudo = (False,0),
+                      posicao = (9.5,18.5), 
+                      tamanho = (0.8,0.8), 
+                      aplicaDano = (False, 0), 
+                      direcao = Oeste}]
+
+
+colec3 :: [(Colecionavel, Posicao)]
+colec3 = [(Moeda,(0.5,21.5)),(Moeda,(0.5,20.5)),(Moeda,(0.5,19.5)),(Moeda,(0.5,18.5)),(Moeda,(3.5,17.5)),(Moeda,(3.5,16.5)),(Moeda,(3.5,15.5)),(Moeda,(3.5,14.5)),(Moeda,(0.5,13.5)),(Moeda,(0.5,12.5)),(Moeda,(0.5,11.5)),(Moeda,(0.5,10.5)),(Moeda,(3.5,9.5)),(Moeda,(3.5,8.5)),(Moeda,(3.5,7.5)),(Moeda,(3.5,6.5)),(Moeda,(0.5,5.5)),(Moeda,(0.5,4.5)),(Moeda,(0.5,3.5)),(Moeda,(0.5,2.5)),(Moeda,(5.5,6.5)),(Moeda,(6.5,6.5)),(Moeda,(7.5,6.5)),(Moeda,(8.5,6.5)),(Moeda,(9.5,6.5)),(Moeda,(5.5,10.5)),(Moeda,(6.5,10.5)),(Moeda,(7.5,10.5)),(Moeda,(8.5,10.5)),(Moeda,(9.5,10.5)),(Moeda,(5.5,14.5)),(Moeda,(6.5,14.5)),(Moeda,(7.5,14.5)),(Moeda,(8.5,14.5)),(Moeda,(9.5,14.5)),(Moeda,(5.5,18.5)),(Moeda,(6.5,18.5)),(Moeda,(7.5,18.5)),(Moeda,(8.5,18.5)),(Moeda,(9.5,18.5)),(Moeda,(5.5,22.5)),(Moeda,(6.5,22.5)),(Moeda,(7.5,22.5)),(Moeda,(8.5,22.5)),(Moeda,(9.5,22.5)),(Moeda,(10.5,22.5)),(Moeda,(11.5,22.5)),(Moeda,(12.5,22.5)),(Moeda,(13.5,22.5)),(Moeda,(14.5,21.5)),(Moeda,(14.5,20.5)),(Moeda,(14.5,19.5)),(Moeda,(14.5,18.5)),(Moeda,(11.5,17.5)),(Moeda,(11.5,16.5)),(Moeda,(11.5,15.5)),(Moeda,(11.5,14.5)),(Martelo,(7.5,14.5)),(Escudo,(1.5,6.5))]
+
+jogo3 ::Jogo
+jogo3 = Jogo mapa3 inim3 colec3 jog{posicao = posi,direcao=diri}
+  where (Mapa (posi,diri) posf blocos) = mapa3
+
+
+mapa4 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
+    [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ])
+
+
+mapa5 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
+    [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
+    ])
+
+mapa6 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
     [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
     ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
     ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']

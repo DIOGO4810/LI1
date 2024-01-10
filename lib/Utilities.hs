@@ -55,6 +55,9 @@ initialState = State {
   exitGame = False
 }
 
+scaleGame :: Float
+scaleGame = 40
+
 -- | Função que troca um elemento de uma lista num determinado indice
 updateLevel :: [a] -> (Int,a) -> [a]
 updateLevel lvs (i, j) = before ++ [j] ++ after 
