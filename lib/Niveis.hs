@@ -378,60 +378,6 @@ jogo3 = Jogo mapa3 inim3 colec3 jog{posicao = posi,direcao=diri}
   where (Mapa (posi,diri) posf blocos) = mapa3
 
 
-mapa4 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
-    [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ])
-
-
-mapa5 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
-    [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
-    ])
 
 mapa6 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
     [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
@@ -464,19 +410,6 @@ mapa6 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
 
 -- | Nível 4
 
-jog4 :: Personagem
-jog4 = Personagem { velocidade = (0,0),
-                    tipo = Jogador,
-                    emEscada = False, 
-                    vida = 3, 
-                    pontos = 0, 
-                    ressalta = False, 
-                    impulsao = False,
-                    escudo = (False,0),
-                    posicao = (0,0), 
-                    tamanho = (0.7,1), 
-                    aplicaDano = (False, 0), 
-                    direcao = Este}
 
 
 mapa4 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
@@ -564,7 +497,7 @@ colec4 :: [(Colecionavel, Posicao)]
 colec4 = [(Moeda,(6.5,14.5)),(Moeda,(4.5,14.5)),(Moeda,(5.5,10.5)),(Moeda,(6.5,10.5)),(Moeda,(8.5,10.5)),(Moeda,(9.5,10.5)),(Moeda,(10.5,10.5)),(Moeda,(11.5,10.5)),(Moeda,(6.5,18.5)),(Moeda,(7.5,18.5)),(Moeda,(8.5,18.5)),(Moeda,(9.5,18.5)),(Moeda,(10.5,18.5)),(Moeda,(11.5,18.5)),(Moeda,(13.5,6.5)),(Moeda,(12.5,6.5)),(Martelo,(14,22.5)),(Escudo,(7.5,10.5)),(Escudo,(3.5,22.5))]
 
 jogo4 ::Jogo
-jogo4 = Jogo mapa4 inim4 colec4 jog4{posicao = posi,direcao=diri}
+jogo4 = Jogo mapa4 inim4 colec4 jog{posicao = posi,direcao=diri}
   where (Mapa (posi,diri) posf blocos) = mapa4
 
 
@@ -574,19 +507,6 @@ jogo4 = Jogo mapa4 inim4 colec4 jog4{posicao = posi,direcao=diri}
 
 -- | Nível 5
 
-jog5 :: Personagem
-jog5 = Personagem { velocidade = (0,0),
-                    tipo = Jogador,
-                    emEscada = False, 
-                    vida = 3, 
-                    pontos = 0, 
-                    ressalta = False, 
-                    impulsao = False,
-                    escudo = (False,0),
-                    posicao = (0,0), 
-                    tamanho = (0.7,1), 
-                    aplicaDano = (False, 0), 
-                    direcao = Este}
 
 mapa5 = Mapa ((2.5, 21.5), Este) (14, 12.5) (abreviaBlocos $
     [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
@@ -758,7 +678,7 @@ colec5 :: [(Colecionavel, Posicao)]
 colec5 = [(Moeda,(6.5,21.5)),(Moeda,(1.5,6.5)),(Moeda,(3.5,9.5)),(Moeda,(6.5,12.5)),(Moeda,(8.5,18.5)),(Moeda,(10.5,21.5)),(Moeda,(8.5,6.5)),(Moeda,(9.5,6.5)),(Moeda,(9.5,5.5)),(Moeda,(8.5,5.5)),(Moeda,(8.5,4.5)),(Moeda,(9.5,4.5)),(Moeda,(8.5,3.5)),(Moeda,(9.5,3.5)),(Martelo,(13.5,19.5)),(Escudo,(3.5,22.5))]
 
 jogo5 ::Jogo
-jogo5 = Jogo mapa5 inim5 colec5 jog4{posicao = posi,direcao=diri}
+jogo5 = Jogo mapa5 inim5 colec5 jog{posicao = posi,direcao=diri}
   where (Mapa (posi,diri) posf blocos) = mapa5
 
 
