@@ -14,7 +14,7 @@ import Graphics.Gloss.Interface.Pure.Game
 
 
 drawMenu :: State -> Picture
-drawMenu state = Pictures [selectButton (currentMenu state) (images state) (selectedButton state),drawHighScore state]
+drawMenu state = Pictures [scale (scaleGame/50) (scaleGame/50) $ selectButton (currentMenu state) (images state) (selectedButton state),scale (scaleGame/50) (scaleGame/50) $ drawHighScore state]
 
 selectButton :: Menu -> Images-> Int -> Picture
 selectButton menu images n = fromJust(lookup ("botao" ++ show (n+1) ++ show menu) imagesThemeDef)

@@ -13,7 +13,7 @@ import Tarefa3 (movimenta)
 import GHC.Float (double2Float, float2Double)
 import System.Exit
 import System.Random (randomRIO)
-import Utilities (Theme(MarioCat))
+import Utilities 
 
 window :: Display
 window = InWindow

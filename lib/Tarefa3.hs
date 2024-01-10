@@ -21,13 +21,13 @@ movimenta semente tempo jogo = ((jogadorWrapper tempo)(inimigosWrapper semente t
 jogadorWrapper :: Tempo -> Jogo -> Jogo
 jogadorWrapper tempo jogoW = jogoW {
   colecionaveis = tiraColecionaveis (jogador jogoW) (colecionaveis jogoW),
-  jogador = movePersonagem tempo $ atrito tempo $ colideEscada (mapa jogoW) $ tiraVidaJogador tempo (mapa jogoW) (inimigos jogoW) $ temporizadorEscudo tempo $ temporizadorMartelo tempo $ aplicaEfeitos (colecionaveis jogoW) $ stopLimites (mapa jogoW) (inimigos jogoW) $ bounce (mapa jogoW) tempo $ atualizaImpulsao (mapa jogoW) $ ejeta (mapa jogoW) tempo $ aplicaGravidade tempo (mapa jogoW) (jogador jogoW) 
+  jogador = movePersonagem tempo $ atrito tempo $ colideEscada (mapa jogoW) $ tiraVidaJogador tempo (mapa jogoW) (inimigos jogoW) $ temporizadorEscudo tempo $ temporizadorMartelo tempo $ aplicaEfeitos (colecionaveis jogoW) $ stopLimites (mapa jogoW)$ bounce (mapa jogoW) tempo $ atualizaImpulsao (mapa jogoW) $ ejeta (mapa jogoW) tempo $ aplicaGravidade tempo (mapa jogoW) (jogador jogoW) 
 }
 
 inimigosWrapper :: Semente -> Tempo -> Jogo -> Jogo
 inimigosWrapper semente tempo jogoW = jogoW {
   --inimigos = isInimigoDead $ tiraVidaInimigos (jogador jogoW) $ map (\i -> colideEscada $ stopLimites (mapa jogoW) $ aplicaGravidade i) (inimigos jogoW)
-  inimigos = isInimigoDead (jogador jogoW) $ tiraVidaInimigos (jogador jogoW) $ retornaBarris (mapa jogoW) $ lancaBarris (jogador jogoW) $ temporizadorBarris tempo $ aplicaMovimento semente (mapa jogoW) $ map (\i -> movePersonagem tempo $ controlaInimigo (mapa jogoW) $ paraSubirDescer (mapa jogoW) i) (inimigos jogoW)
+  inimigos = isInimigoDead $ tiraVidaInimigos (jogador jogoW) $ retornaBarris (mapa jogoW) $ lancaBarris (jogador jogoW) $ temporizadorBarris tempo $ aplicaMovimento semente (mapa jogoW) $ map (\i -> movePersonagem tempo $ controlaInimigo (mapa jogoW) $ paraSubirDescer (mapa jogoW) i) (inimigos jogoW)
 }
 
 mapaWrapper :: Jogo -> Jogo
@@ -44,12 +44,8 @@ tiraVidaInimigos jogador listaInimigos =
   where (isArmado, tempoArmado) = aplicaDano jogador
 
 -- | 2. Função que faz os inimigos desaparecer do mapa quando perdem todas as vidas
-isInimigoDead :: Personagem -> [Personagem] -> [Personagem]
-isInimigoDead jogador listaInimigos =
-  if isDead
-    then map (\personagem -> if vida personagem == 0 then personagem {vida=0, posicao = (-100,-100)} else personagem) listaInimigos
-  else listaInimigos
-  where isDead = any (\personagem -> vida personagem==0 && posicao personagem /= (-100,-100)) listaInimigos
+isInimigoDead :: [Personagem] -> [Personagem]
+isInimigoDead listaInimigos = map (\personagem -> if vida personagem == 0 then personagem {posicao = (-100,-100)} else personagem) listaInimigos
 
 -- | 3. Função que aplica um efeito de gravidade aos personagens se eles não se encontrarem numa plataforma ou num alçapão
 aplicaGravidade :: Tempo -> Mapa -> Personagem -> Personagem
@@ -83,7 +79,7 @@ tiraVidaJogador tempo mapa listaInimigos personagem =
     then personagem{vida=vida personagem-1, velocidade=(0,4)}  
   else if any (\inimigo -> colisaoHitbox (calculaHitboxEmCima personagem) (calculaHitbox inimigo)) listaInimigos && any (\pos -> (fromIntegral(floor px),fromIntegral(ceiling py)) == pos) (mapaPlataformas mapa) && (snd $ velocidade personagem) >= 0 && (fst $ velocidade personagem)==0 && emEscada personagem && not(fst $ escudo personagem)
     then personagem{vida=vida personagem-1, velocidade=(-4.5,-4+(snd gravidade)*tempo)}  
-  else if any (\inimigo -> colisaoHitbox (calculaHitboxEmCima personagem) (calculaHitbox inimigo)) listaInimigos && (fst $ velocidade personagem)==0 && emEscada personagem && not(fst $ escudo personagem)
+  else if any (\inimigo -> colisaoHitbox (calculaHitboxEmCima personagem) (calculaHitbox inimigo)) listaInimigos && (fst $ velocidade personagem)==0 && (snd $ velocidade personagem) <= 0 && emEscada personagem && not(fst $ escudo personagem)
     then personagem{vida=vida personagem-1, velocidade=(-4.5,4-(snd gravidade)*tempo)}  
   --Colisão Embaixo
   else if any (\inimigo -> colisaoHitbox (calculaHitboxEmbaixo personagem) (calculaHitbox inimigo)) listaInimigos && (snd $ velocidade personagem) >= 0 && emEscada personagem && not(fst $ escudo personagem)
@@ -140,8 +136,8 @@ tiraAlcapoes jogadorJogo (Mapa ((xi,yi),dir) (xf,yf) blocos) =
     (px,py) = posicao jogadorJogo
 
 -- | 7. Função que impede os personagens de sair dos limites do mapa e atravessar plataformas
-stopLimites :: Mapa -> [Personagem] -> Personagem -> Personagem
-stopLimites mapa listaInimigos personagem= 
+stopLimites :: Mapa -> Personagem -> Personagem
+stopLimites mapa personagem= 
   if (((px + tamanhoX/2) >= fromIntegral(length (head blocos))) || (any (\hitboxbloco -> colisaoHitbox (calculaHitboxDireita personagem) hitboxbloco) (hitboxesBlocos (mapaPlataformasAlcapoes blocos)))) && (fst $ (velocidade personagem)) > 0
     then personagem {velocidade = (0, snd $ velocidade personagem), direcao = Oeste}
   else if ((px - tamanhoX/2) <= 0 || (any (\hitboxbloco -> colisaoHitbox (calculaHitboxEsquerda personagem) hitboxbloco) (hitboxesBlocos (mapaPlataformasAlcapoes blocos)))) && (fst $ (velocidade personagem)) < 0
@@ -170,6 +166,7 @@ movePersonagem tempo personagem= personagem {posicao = (px+(fst $ velocidade per
   where (px,py) = posicao personagem
 
 -- | Função que controla a direção dos inimigos
+-- TODO: Procurar no mapa a plataforma mais próxima que não tem outra plataforma por cima
 controlaInimigo :: Mapa -> Personagem -> Personagem
 controlaInimigo mapa inimigo = 
   if any (\(x,y) -> (fromIntegral(floor (px-0.3)),fromIntegral(ceiling py)) == (x,y)) (mapaVazio mapa) && any (\(x,y) -> (fromIntegral(floor (px-1.5)),fromIntegral(ceiling py)) == (x,y)) (mapaPlataformas mapa) && tipo inimigo == Fantasma
