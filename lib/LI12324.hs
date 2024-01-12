@@ -28,6 +28,7 @@ data Bloco
   | Plataforma   -- ^ Bloco sólido que pode ser utilizado como superfície
   | Alcapao      -- ^ Bloco que desaparece após ser atravessado pelo jogador
   | Trampolim    -- ^ Bloco que impulsiona o jogador para cima
+  | Lanca        -- ^ Bloco que em contacto com o jogador remove-lhe uma vida
   | Vazio        -- ^ Espaço
   deriving (Ord, Eq, Read, Show)
 
@@ -83,6 +84,7 @@ data Personagem =
     , ressalta   :: Bool
     , impulsao   :: Bool
     , escudo     :: (Bool, Double)
+    , kickback   :: (Bool, Double)
     , vida       :: Int -- ^ não negativo
     , pontos     :: Int
     , aplicaDano :: (Bool, Double) -- ^ se está armado e por quanto tempo ainda

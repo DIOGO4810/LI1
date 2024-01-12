@@ -20,10 +20,12 @@ drawBlocks :: State -> Picture
 drawBlocks state = Pictures [Pictures $ map (\pos -> Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) plataforma) (mapaBlocos mapaD Plataforma),
   Pictures $ map (\pos -> Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) alcapao) (mapaBlocos mapaD Alcapao),
   Pictures $ map (\pos -> Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) escada) (mapaBlocos mapaD Escada),
-  Pictures $ map (\pos -> Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) trampolim) (mapaBlocos mapaD Trampolim)]
+  Pictures $ map (\pos -> Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) trampolim) (mapaBlocos mapaD Trampolim),
+  Pictures $ map (\pos -> Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) lanca) (mapaBlocos mapaD Lanca)]
   where plataforma = scale (scaleGame/50) (scaleGame/50) $ fromJust(lookup ("plataforma") imagesTheme)
         alcapao = scale (scaleGame/50) (scaleGame/50) $ fromJust(lookup ("alcapao") imagesTheme)
         escada = scale (scaleGame/50) (scaleGame/50) $ fromJust(lookup ("escada") imagesTheme)
+        lanca = scale (scaleGame/50) (scaleGame/50) $ fromJust(lookup ("spikes") imagesTheme)
         trampolim = scale (scaleGame/50) (scaleGame/50) $ fromJust(lookup ("trampolim") imagesTheme)
         imagesTheme = fromJust (lookup (currentTheme state) (images state))
         mapaD = mapa $ jogo
