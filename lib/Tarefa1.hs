@@ -27,7 +27,7 @@ colisoesParede (Mapa _ _ blocos) personagem = foraDosLimitesLaterais || acimaDoL
     -- | Verifica se o personagem colide com plataformas ou alçapões
     colideComBloco = any (\h1-> colisaoHitbox h1 (calculaHitbox personagem)) (hitboxesBlocos(mapaPlataformasAlcapoes blocos))
 
-
+-- | Função para verificar colisões entre duas personagens
 colisoesPersonagens :: Personagem -> Personagem -> Bool
 colisoesPersonagens p1 p2 = colisaoHitbox hitboxP1 hitboxP2
   where

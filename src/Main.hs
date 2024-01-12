@@ -14,6 +14,10 @@ import GHC.Float (double2Float, float2Double)
 import System.Exit
 import System.Random (randomRIO)
 import Utilities 
+import GHC.Exts (currentCallStack)
+
+
+-- | Posicionamento da janela no ecrá
 
 window :: Display
 window = InWindow
@@ -21,11 +25,17 @@ window = InWindow
   windowSize
   (650, 0)
 
+-- | Cor de fundo
+
 bgColor :: Color
 bgColor = black
 
+-- | Numero de vezes que o jogo é atualizado por segundo
+
 fr :: Int
 fr = 60
+
+-- | Função que atualiza o estado em que o jogador está no momento através das funções que reagem a cada um dos respetivos menus como também teclas de atalho que fecham o jogo, mudam de tema, de dificuldade e o de entrar no menu de pausa
 
 react :: Event -> State -> IO State
 react (EventKey (SpecialKey KeyEsc) Down _ _) jogo = exitSuccess
@@ -52,6 +62,8 @@ react e state
         jogo = (levelsList state) !! currentLevel state
 
 
+-- | As funções que reagem aos inputs do teclado utilizando a função atualiza e a Eventkey
+
 reactInGame :: Event -> Jogo -> Jogo
 reactInGame (EventKey (Char 'd') Down _ _) jogo =  atualiza (replicate (length (inimigos jogo)) Nothing) (Just AndarDireita) jogo
 reactInGame (EventKey (Char 'd') Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza (replicate (length (inimigos jogo)) Nothing) (Just Parar) jogo else jogo
@@ -70,85 +82,23 @@ reactInGame (EventKey (SpecialKey KeyUp) Down _ _) jogo =  atualiza (replicate (
 reactInGame (EventKey (SpecialKey KeyUp) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length(inimigos jogo)) Nothing) (Just Parar) jogo else jogo
 reactInGame (EventKey (SpecialKey KeyDown) Down _ _) jogo =  atualiza (replicate (length(inimigos jogo)) Nothing) (Just Descer) jogo
 reactInGame (EventKey (SpecialKey KeyDown) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length(inimigos jogo)) Nothing) (Just Parar) jogo else jogo
-reactInGame (EventKey (SpecialKey KeyDelete) Down _ _) jogo =  jogo1
-  where           
-                  (vx,vy) = velocidade jogador1
-                  (px,py) = posicao jogador1
-                  inEscada = emEscada jogador1
-                  pontosjogador = pontos jogador1
-                  (tamanhoX,tamanhoY) = tamanho jogador1
-                  ressaltando = ressalta jogador1
-                  direcaojogador = direcao jogador1
-                  listaInimigos = inimigos jogo
-                  listaColecionaveis = colecionaveis jogo
-                  vidajogador = vida jogador1
-                  impulsaojogador = impulsao jogador1
-                  (maybeEscudo,tempoescudo) = escudo jogador1
-                  jogador1 = jogador jogo
-                  mapa1 = mapa jogo
-                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (True, 100), pontos = pontosjogador,escudo = (maybeEscudo,tempoescudo), impulsao = impulsaojogador}
-                  jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
-reactInGame (EventKey (SpecialKey KeyInsert) Down _ _) jogo =  jogo1
-  where           
-                  (vx,vy) = velocidade jogador1
-                  (px,py) = posicao jogador1
-                  pontosjogador = pontos jogador1
-                  inEscada = emEscada jogador1
-                  impulsaojogador = impulsao jogador1
-                  (maybeEscudo,tempoescudo) = escudo jogador1
-                  (tamanhoX,tamanhoY) = tamanho jogador1
-                  ressaltando = ressalta jogador1
-                  direcaojogador = direcao jogador1
-                  listaInimigos = inimigos jogo
-                  listaColecionaveis = colecionaveis jogo
-                  vidajogador = vida jogador1
-                  jogador1 = jogador jogo
-                  mapa1 = mapa jogo
-                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (False,0), pontos = pontosjogador,escudo = (maybeEscudo,tempoescudo), impulsao = impulsaojogador}
-                  jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
 
-reactInGame (EventKey (Char 'e') Down _ _) jogo =  jogo1
+-- | O mesmo género de funções que as de cima mas agora para dar diferentes habilidades ao jogador "CheatCodes" 
+
+reactInGame (EventKey (SpecialKey KeyDelete) Down _ _) jogo =  jogo{jogador=(jogador jogo){aplicaDano=(True,100)}}
+reactInGame (EventKey (SpecialKey KeyInsert) Down _ _) jogo =  jogo{jogador=(jogador jogo){aplicaDano=(False,0)}}
+reactInGame (EventKey (Char 'e') Down _ _) jogo =  jogo{jogador=(jogador jogo){escudo=(True,100)}}
+reactInGame (EventKey (Char 'q') Up _ _) jogo = jogo{jogador=(jogador jogo){escudo=(False,0)}}
+reactInGame (EventKey (Char 'x') Down _ _) jogo =  if  direcaojogador == Este   then jogo{jogador=(jogador jogo){velocidade=(2,-4),impulsao = True}} else jogo{jogador=(jogador jogo){velocidade = (-2,-4),impulsao = True}}
   where           
-                  (vx,vy) = velocidade jogador1
-                  (px,py) = posicao jogador1
-                  inEscada = emEscada jogador1
-                  pontosjogador = pontos jogador1
-                  (tamanhoX,tamanhoY) = tamanho jogador1
-                  ressaltando = ressalta jogador1
                   direcaojogador = direcao jogador1
-                  listaInimigos = inimigos jogo
-                  listaColecionaveis = colecionaveis jogo
-                  vidajogador = vida jogador1
-                  (maybeMartelo,tempomartelo) = aplicaDano jogador1
-                  impulsaojogador = impulsao jogador1
                   jogador1 = jogador jogo
-                  mapa1 = mapa jogo
-                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (maybeMartelo,tempomartelo), pontos = pontosjogador,escudo = (True,100), impulsao = impulsaojogador}
-                  jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
-reactInGame (EventKey (Char 'q') Up _ _) jogo = jogo1
-  where           
-                  (vx,vy) = velocidade jogador1
-                  (px,py) = posicao jogador1
-                  pontosjogador = pontos jogador1
-                  inEscada = emEscada jogador1
-                  (maybeMartelo,tempomartelo) = aplicaDano jogador1
-                  impulsaojogador = impulsao jogador1
-                  (maybeEscudo,tempoescudo) = escudo jogador1
-                  (tamanhoX,tamanhoY) = tamanho jogador1
-                  ressaltando = ressalta jogador1
-                  direcaojogador = direcao jogador1
-                  listaInimigos = inimigos jogo
-                  listaColecionaveis = colecionaveis jogo
-                  vidajogador = vida jogador1
-                  jogador1 = jogador jogo
-                  mapa1 = mapa jogo
-                  personagem1 = Personagem {direcao = direcaojogador , emEscada = inEscada, velocidade = (vx,vy),posicao = (px,py),tamanho =(tamanhoX,tamanhoY) , ressalta = ressaltando, tipo = Jogador, vida = vidajogador, aplicaDano = (maybeMartelo,tempomartelo), pontos = pontosjogador,escudo = (False,0), impulsao = impulsaojogador}
-                  jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = listaColecionaveis, inimigos = listaInimigos}
 
 reactInGame event jogo = jogo
 
               
 
+-- | Função que ativa a movimenta dos inimigos no ínicio de cada nível, que passa de nível ao chegar á estrela que escreve no ficheiro de "highscore" a mior pontuação que devolve o menu de GameOver quando as vidas acabam como também atualiza a pontuação e o tempo
 
 timeInGame :: Float -> State -> IO State
 timeInGame tempo state = do
@@ -176,6 +126,7 @@ timeInGame tempo state = do
 
     
 
+-- | Função que escreve no terminal todas as características do personagem
 
 draw :: State -> IO Picture
 draw state = do
@@ -188,6 +139,9 @@ draw state = do
   putStrLn ("impulsao: " ++ (show $ impulsao $ jogador $ jogo))
   putStrLn ("posicao: " ++ (show $ posicao $ jogador $ jogo))
   putStrLn ("escudo: " ++ (show $ escudo $ jogador $ jogo))
+  putStrLn ("CurrentLevel: " ++ (show $ currentLevel $ state))
+  putStrLn ("CurrentTheme: " ++ (show $ currentTheme $ state))
+  putStrLn ("CurrentMode: " ++ (show $ currentMode $ state))
 
 
   if currentMenu state == InGame
@@ -195,7 +149,8 @@ draw state = do
   else return (drawMenu state)
   where jogo = (levelsList state) !! currentLevel state
 
-  
+
+-- | Load de todas as imagens em bmp tendo em conta todos os temas
 
 loadImages :: State -> IO State
 loadImages state = do
@@ -328,6 +283,8 @@ loadImages state = do
   barril1Astronaut <- loadBMP "assets/barril1Astronaut.bmp"
   barril2Astronaut <- loadBMP "assets/barril2Astronaut.bmp"
 
+
+-- | Dicionário de imagens dividido em vários sub-dicionários aonde o primeiro é o geral e os outros contêm as mesmas strings para sprites difrentes sendo diferenciados pelo CurrentTheme sabendo que cada um tem o seu sub-dicionário
 
   return state {
     images = [
@@ -467,6 +424,9 @@ loadImages state = do
       ])
       ]
     }
+
+
+-- | A main que lê o ficheiro do maior score que pega o estado inical através do initialState definido na utilities e a função playIO que recebe todos os argumentos necessários
 
 main :: IO ()
 main = do

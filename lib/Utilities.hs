@@ -40,12 +40,14 @@ type Levels = [Jogo]
 
 type Images = [(Theme,[(String, Picture)])]
 
+-- | Estado inicial do jogo quando se clica no play sem quaisquer alterações
+
 initialState :: State
 initialState = State {
   images = [],
   time = 0,
   levelsList = [jogo1,jogo2,jogo3,jogo4,jogo5],
-  currentLevel = 3,
+  currentLevel = 4,
   currentTheme = Mario,
   currentMode = Easy,
   currentMenu = Home,
@@ -54,6 +56,8 @@ initialState = State {
   selectedButton = 0,
   exitGame = False
 }
+
+-- | Escala de cada um dos elementos da matriz do jogo
 
 scaleGame :: Float
 scaleGame = 40
@@ -64,6 +68,7 @@ updateLevel lvs (i, j) = before ++ [j] ++ after
   where (before,_:after) = splitAt i lvs
 
 -- | Função para calcular a hitbox de um personagem considerando que px e py estão no respetivo centro
+
 calculaHitbox :: Personagem -> Hitbox
 calculaHitbox personagem =
   ((px - tamanhoX / 2, py + tamanhoY / 2), (px + tamanhoX / 2, py - tamanhoY / 2))
@@ -214,14 +219,19 @@ tamanhoAlcapoes mapa = map (\[(x1,y1),(x2,y2)]-> double2Int(x2-x1+1)) (primUltAl
 centerOfBlocos :: [[Bloco]] -> [Posicao]
 centerOfBlocos blocos = map (\(x,y) -> (x+0.5,y+0.5)) (indicesBlocos blocos)
 
+-- | Função que retorna todas as posições de todos os blocos do mapa
 indicesBlocos :: [[Bloco]] -> [Posicao]
 indicesBlocos blocos = [(fromIntegral j, fromIntegral i) | i<- [0..height-1], j <- [0..width-1]]
   where
     height = length blocos
     width = length (head blocos)
 
+-- | Função que recebe uma posição e devolve o bloco específico que está nessa posição no mapa
+
 getBloco :: Posicao -> [[Bloco]] -> Bloco
 getBloco (i, j) blocos = (blocos !! floor j) !! floor i
+
+-- | Grupo de funções que verifica se recebe o bloco respetivo
 
 isAlcapao :: Bloco -> Bool
 isAlcapao Alcapao = True
@@ -247,6 +257,3 @@ isBloco :: Bloco -> Bloco -> Bool
 isBloco bloco1 bloco2 = bloco1 == bloco2
 
 
-contalinhas :: Mapa -> Int
-contalinhas blocos = length (head blocos)
-      where (Mapa _ _ blocos) = mapa1

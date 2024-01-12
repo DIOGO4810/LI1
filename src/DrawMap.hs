@@ -8,14 +8,16 @@ import Data.Maybe
 import Niveis
 import Data.Fixed
 
-
+-- | Função que conta o numero de linhas e colunas do mapa e multiplica pela escala dando assim o tamanho da janela
 windowSize :: (Int,Int)
 windowSize = (((length $ head blocos) * float2Int scaleGame),((length blocos) * float2Int scaleGame))
   where (Mapa _ _ blocos) = mapa1
 
+-- | Função que poem cada um dos blocos do meio para o canto do 2ºquadrante trasnformando assim as posições de todos os blocos
 posMapToGloss :: Posicao -> (Float,Float)
 posMapToGloss (x,y) = (((double2Float x)*scaleGame)-(fromIntegral $ (fst windowSize))/2, ((fromIntegral $ (snd windowSize))/2 - (double2Float y) * scaleGame))
 
+-- | Função que desenha os blocos do mapa usando o dicionário de imagens,a função de transformar posições e dando scale nos blocos
 drawBlocks :: State -> Picture
 drawBlocks state = Pictures [Pictures $ map (\pos -> Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) plataforma) (mapaBlocos mapaD Plataforma),
   Pictures $ map (\pos -> Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) alcapao) (mapaBlocos mapaD Alcapao),
@@ -29,7 +31,7 @@ drawBlocks state = Pictures [Pictures $ map (\pos -> Translate (fst(posMapToGlos
         mapaD = mapa $ jogo
         jogo = (levelsList state) !! currentLevel state
 
-
+-- | Função que desenha o player tanto como as suas respetivas animações usando diversas condições de direção e velocidade e dando scale negativo em x para poder inverter o mario quando o mesmo muda de direção
 drawPlayer :: State -> Picture
 drawPlayer state= 
   if ((direcao $ jogador jogoD) == Norte  || (direcao $ jogador jogoD) == Sul) && (emEscada $ jogador jogoD)
@@ -74,7 +76,7 @@ drawPlayer state=
     imagesTheme = fromJust (lookup (currentTheme state) (images state))
     imagesThemeDef = fromJust (lookup Mario (images state))
 
-
+-- | Função que desenha os inimigos de uma maneira similar á do personagem mas sem tantas condições em relação ás animações
 drawEnemies :: State -> Picture
 drawEnemies state = Pictures $ map (\inimigo -> if (direcao inimigo == Este ||  direcao inimigo == Norte || direcao inimigo == Sul) && tipo inimigo == Fantasma then Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ fantasma else if direcao inimigo == Oeste && tipo inimigo == Fantasma then Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ scale (-1) (1) fantasma else if tipo inimigo == MacacoMalvado then Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ macacomalvado else Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ barril) (inimigos $ jogo)
   where 
@@ -94,6 +96,8 @@ drawEnemies state = Pictures $ map (\inimigo -> if (direcao inimigo == Este ||  
     imagesTheme = fromJust (lookup (currentTheme state) (images state))
     jogo = (levelsList state) !! currentLevel state
 
+
+-- | Função que desenha os colecionáveis através do dicionário, scale e o posMaptoGloss
 drawColec :: State -> Picture
 drawColec state = Pictures (map (\(colec,pos) -> if colec == Martelo then (Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ scale (0.8) (0.8) $ martelo) else if colec == Moeda then ( Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ scale (0.8) (0.8) $ moeda) else ( Translate (fst(posMapToGloss pos)) (snd(posMapToGloss pos)) $ scale (0.8) (0.8) $ shield)) (colecionaveis jogo))
   where martelo = scale (scaleGame/50) (scaleGame/50)  $ fromJust(lookup ("martelo") imagesTheme)
@@ -103,12 +107,16 @@ drawColec state = Pictures (map (\(colec,pos) -> if colec == Martelo then (Trans
         imagesTheme = fromJust (lookup (currentTheme state) (images state))
         jogo = (levelsList state) !! currentLevel state
 
+-- | Função que desenha a estrela através do dicionário, scale e o posMaptoGloss
+
 drawStar :: State -> Picture
 drawStar state = Translate (fst(posMapToGloss (posf))) (snd(posMapToGloss (posf))) $ estrela
   where (Mapa (posi,diri) posf blocos) = mapa $ jogo
         estrela = scale (scaleGame/50) (scaleGame/50) $ fromJust(lookup ("estrela") imagesTheme)
         imagesTheme = fromJust (lookup (currentTheme state) (images state))
         jogo = (levelsList state) !! currentLevel state
+
+-- | Função que desenha as vidas do player através do dicionário, scale e o posMaptoGloss
 
 drawLife :: Jogo -> Images -> Picture
 drawLife jogo images = Pictures (drawHearts (fromIntegral(vida $ jogador jogo))) 
@@ -120,6 +128,7 @@ drawLife jogo images = Pictures (drawHearts (fromIntegral(vida $ jogador jogo)))
     heart = scale (scaleGame/50) (scaleGame/50) $ fromJust(lookup ("heart") imagesThemeDef)
     imagesThemeDef = fromJust (lookup Mario images)
 
+-- | Função que desenha a pontuação do lado direito da tela usando o comprimento do score para adaptar as diferentes grandezas do score corretamente 
 
 drawScore :: State -> Picture
 drawScore state = Pictures (drawPoints (currentPoints state))
@@ -129,6 +138,7 @@ drawScore state = Pictures (drawPoints (currentPoints state))
       where ps = reverse $ show p
     imagesThemeDef = fromJust (lookup Mario (images state))
 
+-- | Função que desenha o efeito de "fog" tendo em conta uma maior magnitude da mesma consoante a dificuldade escolhida
 
 drawEscuro :: State -> Picture 
 drawEscuro state = Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) escuro
@@ -142,6 +152,8 @@ drawEscuro state = Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px
         (px,py) = posicao $ jogador jogoD
         jogoD = (levelsList state) !! currentLevel state
     
+-- | Função que desenha o colecionavel de escudo á volta do player
+
 drawShield :: State -> Picture 
 drawShield state = Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) shield
   where imagesThemeDef = fromJust (lookup Mario (images state))
@@ -164,6 +176,8 @@ drawShield state = Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px
         green = makeColorI 45 255 8 150
         yellow = makeColorI 250 229 0 150
 
+
+-- | Função que coleta todas as funções de desenha anteriores e as junta numa função geral que desenha o jogo todo
 
 drawGame :: State -> Picture
 drawGame state = Pictures [drawBlocks state, drawColec state, drawStar state, drawEnemies state, drawShield state, drawPlayer state,  drawEscuro state,drawLife ((levelsList state) !! currentLevel state) (images state),drawScore state]

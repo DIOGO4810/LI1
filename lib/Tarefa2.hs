@@ -55,6 +55,3 @@ valida jogo =
               emvazio (i,j) blocos = getBloco (i,j) blocos == Vazio
               posinimigos = map posicao listaInimigos
 
---temChao2 :: Mapa -> Bool
---temChao2  = if (all isPlataforma (last blocos)) == True then True else False
---posicoesIniciaisValidas = all (\inimigo -> posicao inimigo /= (xi,yi)) listaInimigos

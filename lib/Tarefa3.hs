@@ -101,9 +101,12 @@ tiraVidaJogador tempo mapa listaInimigos personagem =
 aplicaEfeitos :: [(Colecionavel, Posicao)] -> Personagem -> Personagem
 aplicaEfeitos listaColecionaveis personagem = foldl(\personagem (col,(x,y)) -> if (colisaoHitbox (calculaHitbox personagem) ((x-0.5,y+0.5),(x+0.5,y-0.5))) then (if col == Moeda then personagem {pontos=(pontos personagem)+100} else if col==Martelo then personagem {aplicaDano=(True,10)} else personagem {escudo=(True,10)}) else personagem) personagem listaColecionaveis
 
+
+-- | Função que retira o colecionavel da lista de colécionaveis caso o hitbox do mesmo entre em contacto com o do player
 tiraColecionaveis :: Personagem -> [(Colecionavel,Posicao)] -> [(Colecionavel,Posicao)]
 tiraColecionaveis jogadorJogo listaColecionaveis = filter (\(col,(x,y)) -> not (colisaoHitbox (calculaHitbox jogadorJogo) ((x-0.5,y+0.5),(x+0.5,y-0.5)))) listaColecionaveis
 
+-- | Função que ativa o martelo fazendo com que o mesmo na tipagem tenha o primeiro argumento em True caso o segundo seja maior que 0
 temporizadorMartelo :: Tempo -> Personagem -> Personagem
 temporizadorMartelo tempo jogador =
   if tempoArmado > 0 
@@ -113,6 +116,7 @@ temporizadorMartelo tempo jogador =
   else jogador
   where (isArmado,tempoArmado) = aplicaDano jogador
 
+-- | Função que ativa o escudo fazendo com que o mesmo na tipagem tenha o primeiro argumento em True caso o segundo seja maior que 0
 temporizadorEscudo :: Tempo -> Personagem -> Personagem
 temporizadorEscudo tempo jogador =
   if tempoEscudo > 0 

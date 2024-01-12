@@ -24,6 +24,9 @@ atualiza acoesInimigos acaoJogador jogo =
     , colecionaveis = colecionaveis jogo
     }
 
+
+-- | Função que toma em conta todas as diferentes ações que o player pode ter e defínias considerando as determinadas condições necessárias
+
 atualizaJogador ::  Personagem -> Mapa -> Maybe Acao -> Personagem
 atualizaJogador jogador _ Nothing = jogador -- Inércia do movimento
 atualizaJogador jogador mapa (Just acao) =
@@ -64,6 +67,7 @@ atualizaJogador jogador mapa (Just acao) =
     ressaltando = ressalta jogador
     direcaojogador = direcao jogador
 
+-- | Função que toma em conta todas as diferentes ações que os inimigos podem ter que aplica diferentes velocidades a cada uma das ações
 
 atualizaInimigo :: Personagem -> Mapa -> Maybe Acao -> Personagem
 atualizaInimigo inimigo _ Nothing = inimigo -- Inércia do movimento
