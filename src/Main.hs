@@ -65,6 +65,7 @@ react e state
 -- | As funções que reagem aos inputs do teclado utilizando a função atualiza e a Eventkey
 
 reactInGame :: Event -> Jogo -> Jogo
+-- | WASD
 reactInGame (EventKey (Char 'd') Down _ _) jogo =  atualiza (replicate (length (inimigos jogo)) Nothing) (Just AndarDireita) jogo
 reactInGame (EventKey (Char 'd') Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza (replicate (length (inimigos jogo)) Nothing) (Just Parar) jogo else jogo
 reactInGame (EventKey (Char 'a') Down _ _) jogo =  atualiza (replicate (length (inimigos jogo)) Nothing) (Just AndarEsquerda) jogo
@@ -73,6 +74,7 @@ reactInGame (EventKey (Char 'w') Down _ _) jogo =  atualiza (replicate (length (
 reactInGame (EventKey (Char 'w') Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length (inimigos jogo)) Nothing) (Just Parar) jogo else jogo
 reactInGame (EventKey (Char 's') Down _ _) jogo =  atualiza (replicate (length (inimigos jogo)) Nothing) (Just Descer) jogo
 reactInGame (EventKey (Char 's') Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length (inimigos jogo)) Nothing) (Just Parar) jogo else jogo
+-- | Setas
 reactInGame (EventKey (SpecialKey KeySpace) Down _ _) jogo =  atualiza (replicate (length (inimigos jogo)) Nothing) (Just Saltar) jogo
 reactInGame (EventKey (SpecialKey KeyRight) Down _ _) jogo =  atualiza (replicate (length(inimigos jogo)) Nothing) (Just AndarDireita) jogo
 reactInGame (EventKey (SpecialKey KeyRight) Up _ _) jogo =  if ((fst $ velocidade $ jogador jogo) /= -4.5 && (fst $ velocidade $ jogador jogo) /= 4.5) then atualiza (replicate (length(inimigos jogo)) Nothing) (Just Parar) jogo else jogo
@@ -109,8 +111,10 @@ timeInGame tempo state = do
       exitSuccess 
   else if (vida $ jogador jogo) == 0
     then return state {currentMenu=GameOver}
-  else if ( fromIntegral $ floor px,fromIntegral $ floor py)  == (fromIntegral $ floor xf,fromIntegral $ floor yf)
+  else if (fromIntegral $ floor px,fromIntegral $ floor py)  == (fromIntegral $ floor xf,fromIntegral $ floor yf) && (currentLevel state /= ((length (levelsList state))-1))
     then return $ state {currentLevel = currentLevel state + 1}
+  else if (fromIntegral $ floor px,fromIntegral $ floor py)  == (fromIntegral $ floor xf,fromIntegral $ floor yf) && (currentLevel state == ((length (levelsList state))-1))
+    then return $ state {currentLevel=currentLevel initialState,levelsList=(levelsList initialState),currentMenu = Home,selectedButton=0}
   else if currentMenu state == InGame
     then 
     return $ state {
@@ -136,7 +140,9 @@ draw state = do
   putStrLn ("armado: " ++ (show $ aplicaDano $ jogador $ jogo))
   putStrLn ("velocidade: " ++ (show $ velocidade $ jogador $ jogo))
   putStrLn ("emEscada: " ++ (show $ emEscada $ jogador $ jogo))
+  putStrLn ("kickback: " ++ (show $ kickback $ jogador $ jogo))
   putStrLn ("impulsao: " ++ (show $ impulsao $ jogador $ jogo))
+  putStrLn ("posicaoInims: " ++ (show $ map posicao (inimigos jogo)))
   putStrLn ("posicao: " ++ (show $ posicao $ jogador $ jogo))
   putStrLn ("escudo: " ++ (show $ escudo $ jogador $ jogo))
   putStrLn ("CurrentLevel: " ++ (show $ currentLevel $ state))
@@ -195,6 +201,7 @@ loadImages state = do
   mariosaltar <- loadBMP "assets/mariosaltar.bmp"
   plataforma <- loadBMP "assets/plataforma.bmp"
   trampolim <- loadBMP "assets/trampolim.bmp"
+  spikes <- loadBMP "assets/spikes.bmp"
   alcapao <- loadBMP "assets/alcapao.bmp"
   escada <- loadBMP "assets/escada.bmp"
   estrela <- loadBMP "assets/estrela.bmp"
@@ -214,6 +221,7 @@ loadImages state = do
   mariosaltarCat <- loadBMP "assets/mariosaltarCat.bmp"
   plataformaCat <- loadBMP "assets/plataformaCat.bmp"
   trampolimCat <- loadBMP "assets/trampolimCat.bmp"
+  spikesCat <- loadBMP "assets/spikesCat.bmp"
   alcapaoCat <- loadBMP "assets/alcapaoCat.bmp"
   escadaCat <- loadBMP "assets/escadaCat.bmp"
   estrelaCat <- loadBMP "assets/estrelaCat.bmp"
@@ -233,6 +241,7 @@ loadImages state = do
   mariosaltarBear <- loadBMP "assets/mariosaltarBear.bmp"
   plataformaBear <- loadBMP "assets/plataformaBear.bmp"
   trampolimBear <- loadBMP "assets/trampolimBear.bmp"
+  spikesBear <- loadBMP "assets/spikesBear.bmp"
   alcapaoBear <- loadBMP "assets/alcapaoBear.bmp"
   escadaBear <- loadBMP "assets/escadaBear.bmp"
   estrelaBear <- loadBMP "assets/estrelaBear.bmp"
@@ -252,6 +261,7 @@ loadImages state = do
   mariosaltarFrog <- loadBMP "assets/mariosaltarFrog.bmp"
   plataformaFrog <- loadBMP "assets/plataformaFrog.bmp"
   trampolimFrog <- loadBMP "assets/trampolimFrog.bmp"
+  spikesFrog <- loadBMP "assets/spikesFrog.bmp"
   alcapaoFrog <- loadBMP "assets/alcapaoFrog.bmp"
   escadaFrog <- loadBMP "assets/escadaFrog.bmp"
   estrelaFrog <- loadBMP "assets/estrelaFrog.bmp"
@@ -271,6 +281,7 @@ loadImages state = do
   mariosaltarAstronaut <- loadBMP "assets/mariosaltarAstronaut.bmp"
   plataformaAstronaut <- loadBMP "assets/plataformaAstronaut.bmp"
   trampolimAstronaut <- loadBMP "assets/trampolimAstronaut.bmp"
+  spikesAstronaut <- loadBMP "assets/spikesAstronaut.bmp"
   alcapaoAstronaut <- loadBMP "assets/alcapaoAstronaut.bmp"
   escadaAstronaut <- loadBMP "assets/escadaAstronaut.bmp"
   estrelaAstronaut <- loadBMP "assets/estrelaAstronaut.bmp"
@@ -330,6 +341,7 @@ loadImages state = do
         ("mariosaltar",mariosaltar),
         ("plataforma",plataforma),
         ("trampolim",trampolim),
+        ("spikes",spikes),
         ("alcapao",alcapao), 
         ("escada",escada),
         ("estrela",estrela),
@@ -350,6 +362,7 @@ loadImages state = do
         ("mariosaltar",mariosaltarCat),
         ("plataforma",plataformaCat),
         ("trampolim",trampolimCat),
+        ("spikes",spikesCat),
         ("alcapao",alcapaoCat), 
         ("escada",escadaCat),
         ("estrela",estrelaCat),
@@ -370,6 +383,7 @@ loadImages state = do
         ("mariosaltar",mariosaltarBear),
         ("plataforma",plataformaBear),
         ("trampolim",trampolimBear),
+        ("spikes",spikesBear),
         ("alcapao",alcapaoBear), 
         ("escada",escadaBear),
         ("estrela",estrelaBear),
@@ -390,6 +404,7 @@ loadImages state = do
         ("mariosaltar",mariosaltarFrog),
         ("plataforma",plataformaFrog),
         ("trampolim",trampolimFrog),
+        ("spikes",spikesFrog),
         ("alcapao",alcapaoFrog), 
         ("escada",escadaFrog),
         ("estrela",estrelaFrog),
@@ -410,6 +425,7 @@ loadImages state = do
         ("mariosaltar",mariosaltarAstronaut),
         ("plataforma",plataformaAstronaut),
         ("trampolim",trampolimAstronaut),
+        ("spikes",spikesAstronaut),
         ("alcapao",alcapaoAstronaut), 
         ("escada",escadaAstronaut),
         ("estrela",estrelaAstronaut),

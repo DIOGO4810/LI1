@@ -16,7 +16,7 @@ import Niveis
 
 valida :: Jogo -> Bool
 valida jogo =
-  temChao && inimigosRessaltam && posicoesIniciaisValidas && numeroMinimoInimigos && vidasFantasmas && semBlocosEmPersCole
+  temChao && inimigosRessaltam && posicoesIniciaisValidas && numeroMinimoInimigos && vidasFantasmas && semBlocosEmPersCole && restricoesEscadas (mapa jogo) && restricoesAlcapoes (jogador jogo) (mapa jogo)
   where
     (Mapa ((xi,yi),dir) (xf,yf) blocos) = mapa jogo
     listaInimigos = inimigos jogo
@@ -47,7 +47,8 @@ valida jogo =
                 posvazio = mapaVazio mapa
 
     -- | 7. Alçapões não podem ser menos largos que o jogador.
-    restricoesAlcapoes tamanhoX mapa= all (\tamalcapoes -> tamalcapoes>tamanhoX) (tamanhoAlcapoes mapa)
+    restricoesAlcapoes jogador mapa= all (\tamalcapoes -> fromIntegral tamalcapoes>tamanhoX) (tamanhoAlcapoes mapa)
+      where tamanhoX = fst $ tamanho jogador
 
     -- | 8. Não podem existir personagens nem colecionáveis "dentro" de plataformas ou alçapões.
     semBlocosEmPersCole = emvazio (xi,yi) blocos && all (\posinim -> emvazio posinim blocos) posinimigos && all (\(x2, y2) -> emvazio (x2,y2) blocos) listaposcolecionaveis

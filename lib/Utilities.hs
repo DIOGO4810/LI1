@@ -10,7 +10,7 @@ Módulo com as funções auxiliares utilizadas no desenvolvimento das Tarefas.
 module Utilities where
 
 import LI12324
-import Graphics.Gloss
+import Graphics.Gloss 
 import Graphics.Gloss.Data.Point (pointInBox)
 import GHC.Float 
 import Data.List
@@ -46,8 +46,8 @@ initialState :: State
 initialState = State {
   images = [],
   time = 0,
-  levelsList = [jogo1,jogo2,jogo3,jogo4,jogo5],
-  currentLevel = 4,
+  levelsList = [jogo1,jogo2,jogo3,jogo4,jogo5,jogo6],
+  currentLevel = 5,
   currentTheme = Mario,
   currentMode = Easy,
   currentMenu = Home,
@@ -60,7 +60,7 @@ initialState = State {
 -- | Escala de cada um dos elementos da matriz do jogo
 
 scaleGame :: Float
-scaleGame = 40
+scaleGame = 50
 
 -- | Função que troca um elemento de uma lista num determinado indice
 updateLevel :: [a] -> (Int,a) -> [a]
@@ -100,6 +100,20 @@ calculaHitboxEsquerda jogador = ((px-tx/1.9,py-ty/2.5),(px,py+ty/2.5))
 -- | Função que calcula as hitboxes que verificam colisões à direita com obstáculos
 calculaHitboxDireita :: Personagem -> Hitbox
 calculaHitboxDireita jogador = ((px,py-ty/2.5),(px+tx/1.9,py+ty/2.5))
+  where 
+    (px,py) = posicao jogador
+    (tx,ty) = tamanho jogador
+
+-- | Função que calcula as hitboxes que verificam colisões do canto inferior esquerdo com obstáculos
+calculaHitboxInfEsquerda :: Personagem -> Hitbox
+calculaHitboxInfEsquerda jogador = ((px-tx/2,py),(px,py+ty/2))
+  where 
+    (px,py) = posicao jogador
+    (tx,ty) = tamanho jogador
+
+-- | Função que calcula as hitboxes que verificam colisões do canto inferior direito com obstáculos
+calculaHitboxInfDireita :: Personagem -> Hitbox
+calculaHitboxInfDireita jogador = ((px,py),(px+tx/2,py+ty/2))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
@@ -180,8 +194,15 @@ mapaVazio (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isVazio (getBl
 mapaTrampolins :: Mapa -> [Posicao]
 mapaTrampolins (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isTrampolim (getBloco pos blocos)]
 
+mapaLancas :: Mapa -> [Posicao]
+mapaLancas (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isLanca (getBloco pos blocos)]
+
 mapaPlataformasAlcapoes :: [[Bloco]] -> [Posicao]
 mapaPlataformasAlcapoes blocos = [pos | pos <- indicesBlocos blocos, isAlcapao (getBloco pos blocos) || isPlataforma (getBloco pos blocos)]
+
+plataformaProxima :: Posicao -> Mapa -> Posicao 
+plataformaProxima (px,py) mapa = foldl (\(pxn,pyn) (xp,yp)-> if (double2Float(abs(pxn-px)))<(double2Float(abs(xp-px))) && notElem (pxn,pyn-1) (mapaPlataformas mapa) then (pxn,pyn) else (xp,yp)) (0,fromIntegral(ceiling py)) linha 
+  where linha = (filter (\(x,y)-> y == fromIntegral(ceiling py))(mapaPlataformas mapa))
 
 -- | Função que retorna agrupa as escadas adjacentes
 agrupaEscadas :: Mapa -> [[Posicao]]
@@ -252,6 +273,10 @@ isTrampolim _ = False
 isVazio :: Bloco -> Bool
 isVazio Vazio = True
 isVazio _ = False
+
+isLanca :: Bloco -> Bool
+isLanca Lanca = True
+isLanca _ = False
 
 isBloco :: Bloco -> Bloco -> Bool
 isBloco bloco1 bloco2 = bloco1 == bloco2
