@@ -92,10 +92,8 @@ reactInGame (EventKey (SpecialKey KeyDelete) Down _ _) jogo =  jogo{jogador=(jog
 reactInGame (EventKey (SpecialKey KeyInsert) Down _ _) jogo =  jogo{jogador=(jogador jogo){aplicaDano=(False,0)}}
 reactInGame (EventKey (Char 'e') Down _ _) jogo =  jogo{jogador=(jogador jogo){escudo=(True,100)}}
 reactInGame (EventKey (Char 'q') Up _ _) jogo = jogo{jogador=(jogador jogo){escudo=(False,0)}}
-reactInGame (EventKey (Char 'x') Down _ _) jogo =  if  direcaojogador == Este   then jogo{jogador=(jogador jogo){velocidade=(2,-4),impulsao = True}} else jogo{jogador=(jogador jogo){velocidade = (-2,-4),impulsao = True}}
-  where           
-                  direcaojogador = direcao jogador1
-                  jogador1 = jogador jogo
+reactInGame (EventKey (Char 'x') Down _ _) jogo = jogo{jogador=(jogador jogo){velocidade=(fst $ velocidade jogador1,-4),impulsao = True}}
+  where jogador1 = jogador jogo
 
 reactInGame event jogo = jogo
 

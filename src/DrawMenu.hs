@@ -51,8 +51,8 @@ reactPause (EventKey (SpecialKey KeyUp) Down _ _) state = state {selectedButton 
 reactPause (EventKey (SpecialKey KeyDown) Down _ _) state = state {selectedButton = if selectedButton state < 2 then selectedButton state + 1 else selectedButton state} 
 reactPause (EventKey (SpecialKey KeyEnter) Down _ _) state 
   | selectedButton state == 0 = state {currentMenu = InGame,selectedButton=0} --Resume
+  | selectedButton state == 1 = state {levelsList= (levelsList initialState),currentMenu = InGame,selectedButton=0} --Retry
   | selectedButton state == 2 = state {currentLevel=currentLevel initialState,levelsList= (levelsList initialState),currentMenu = Home,selectedButton=0} --Home
-  | selectedButton state == 1 = state {currentLevel=currentLevel initialState,levelsList= (levelsList initialState),currentMenu = InGame,selectedButton=0} --Retry
 reactPause e state = state
 
 -- | Função que reage ao menu de GameOver através dos inputs do teclado
@@ -61,8 +61,8 @@ reactGameOver :: Event -> State -> State
 reactGameOver (EventKey (SpecialKey KeyUp) Down _ _) state = state {selectedButton = if selectedButton state > 0 then selectedButton state - 1 else selectedButton state} 
 reactGameOver (EventKey (SpecialKey KeyDown) Down _ _) state = state {selectedButton = if selectedButton state < 1 then selectedButton state + 1 else selectedButton state} 
 reactGameOver (EventKey (SpecialKey KeyEnter) Down _ _) state 
-  | selectedButton state == 0 = state {currentLevel=currentLevel initialState,levelsList=(levelsList initialState),currentMenu = InGame,selectedButton=0} --Resume
-  | selectedButton state == 1 = state {currentLevel=currentLevel initialState,levelsList=(levelsList initialState),currentMenu = Home,selectedButton=0} --Retry
+  | selectedButton state == 0 = state {levelsList=(levelsList initialState),currentMenu = InGame,selectedButton=0} --Resume
+  | selectedButton state == 1 = state {levelsList=(levelsList initialState),currentMenu = Home,selectedButton=0} --Retry
 reactGameOver e state = state
 
 -- | Função que reage ao menu de Options através dos inputs do teclado

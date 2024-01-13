@@ -25,7 +25,7 @@ valida jogo =
     (tamanhoX, tamanhoY) = tamanho (jogador jogo)
 
     -- | 1. O mapa tem "chão", ou seja, uma plataforma que impede que o jogador ou outro personagem caia fora do mapa.
-    temChao = all isPlataforma (last blocos)
+    temChao = all (\b -> isPlataforma b || isTrampolim b || isLanca b) (last blocos)
 
     -- | 2. Todos os inimigos têm a propriedade ressalta a True, enquanto que o jogador a tem a False.
     inimigosRessaltam = all (\inimigo -> ressalta inimigo) listaInimigos && not (ressalta jogadorJogo)
