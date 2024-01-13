@@ -182,4 +182,4 @@ drawShield state = Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px
 -- | Função que coleta todas as funções de desenha anteriores e as junta numa função geral que desenha o jogo todo
 
 drawGame :: State -> Picture
-drawGame state = Pictures [drawBlocks state, {-drawColec state,-} drawStar state,{- drawEnemies state, drawShield state,-} drawPlayer state,  drawEscuro state{-,drawLife ((levelsList state) !! currentLevel state) (images state),drawScore state-}]
+drawGame state = Pictures [drawBlocks state, drawColec state, drawStar state, drawEnemies state, drawShield state, drawPlayer state,  drawEscuro state,drawLife ((levelsList state) !! currentLevel state) (images state),drawScore state ]
