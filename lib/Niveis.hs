@@ -29,6 +29,7 @@ jog = Personagem { velocidade = (0,0),
 
 
 -- | Nível 1
+mapa1 :: Mapa
 mapa1 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
     [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
     ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
@@ -148,6 +149,7 @@ jogo1 = Jogo mapa1 inim1 colec1 jog{posicao = posi,direcao=diri}
 
 
 -- | Nível 2
+mapa2 :: Mapa
 mapa2 = Mapa ((1.5, 22.5), Este) (13.5, 2.0) (abreviaBlocos $
     [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
     ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
@@ -265,6 +267,7 @@ jogo2 = Jogo mapa2 inim2 colec2 jog{posicao = posi,direcao=diri}
 
 
 -- | Nível 3
+mapa3 :: Mapa
 mapa3 = Mapa ((3.5, 22.5), Oeste) (14.0, 2.0) (abreviaBlocos $
     [['V','V','V','V','V','V','V','V','V','P','V','V','P','V','V']
     ,['V','V','V','V','V','V','V','V','V','P','V','V','P','V','V']
@@ -395,6 +398,7 @@ jogo3 = Jogo mapa3 inim3 colec3 jog{posicao = posi,direcao=diri}
 
 
 -- | Nível 4
+mapa4 :: Mapa
 mapa4 = Mapa ((1.5, 22.5), Este) (7.5, 2.0) (abreviaBlocos $
     [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
     ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
@@ -486,6 +490,7 @@ jogo4 = Jogo mapa4 inim4 colec4 jog{posicao = posi,direcao=diri}
 
 
 -- | Nível 5
+mapa5 :: Mapa
 mapa5 = Mapa ((2.5, 21.5), Este) (14, 12.5) (abreviaBlocos $
     [['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
     ,['V','V','V','V','V','V','V','V','V','V','V','V','V','V','V']
@@ -670,6 +675,7 @@ jogo5 = Jogo mapa5 inim5 colec5 jog{posicao = posi,direcao=diri}
 
 
 -- | Nível 6
+mapa6 :: Mapa
 mapa6 = Mapa ((0.5, 22.5), Este) (3.5, 4.0) (abreviaBlocos $
     [['P','P','P','P','V','V','V','P','V','V','V','P','V','V','V']
     ,['V','V','V','P','V','V','V','P','V','V','V','P','V','V','V']
@@ -753,7 +759,7 @@ inim6 = [Personagem {velocidade = (0,0),
 
 
 colec6 :: [(Colecionavel, Posicao)]
-colec6 = [(Moeda,(2.5,21.5)),(Moeda,(2.5,20.5)),(Moeda,(2.5,19.5)),(Moeda,(2.5,18.5)),(Moeda,(3.5,18.5)),(Moeda,(4.5,18.5)),(Moeda,(4.5,19.5)),(Moeda,(4.5,20.5)),(Moeda,(4.5,21.5)),(Moeda,(6.5,21.5)),(Moeda,(6.5,20.5)),(Moeda,(6.5,19.5)),(Moeda,(6.5,18.5)),(Moeda,(7.5,18.5)),(Moeda,(8.5,18.5)),(Moeda,(8.5,19.5)),(Moeda,(8.5,20.5)),(Moeda,(8.5,21.5)),(Moeda,(10.5,21.5)),(Moeda,(10.5,20.5)),(Moeda,(10.5,19.5)),(Moeda,(10.5,18.5)),(Moeda,(11.5,18.5)),(Moeda,(12.5,18.5)),(Moeda,(12.5,19.5)),(Moeda,(12.5,20.5)),(Moeda,(12.5,21.5)),(Moeda,(2.5,16.5)),(Moeda,(3.5,16.5)),(Moeda,(4.5,16.5)),(Moeda,(5.5,16.5)),(Moeda,(6.5,16.5)),(Moeda,(7.5,16.5)),(Moeda,(8.5,16.5)),(Moeda,(9.5,16.5)),(Moeda,(10.5,16.5)),(Moeda,(11.5,16.5)),(Moeda,(12.5,16.5)),(Moeda,(2.5,13.5)),(Moeda,(3.5,13.5)),(Moeda,(4.5,13.5)),(Moeda,(6.5,13.5)),(Moeda,(7.5,13.5)),(Moeda,(8.5,13.5)),(Moeda,(10.5,13.5)),(Moeda,(11.5,13.5)),(Moeda,(12.5,13.5)),(Martelo,(5.5,13.5)),(Escudo,(10.5,7.5))]
+colec6 = [(Moeda,(2.5,21.5)),(Moeda,(2.5,20.5)),(Moeda,(2.5,19.5)),(Moeda,(2.5,18.5)),(Moeda,(3.5,18.5)),(Moeda,(4.5,18.5)),(Moeda,(4.5,19.5)),(Moeda,(4.5,20.5)),(Moeda,(4.5,21.5)),(Moeda,(6.5,21.5)),(Moeda,(6.5,20.5)),(Moeda,(6.5,19.5)),(Moeda,(6.5,18.5)),(Moeda,(7.5,18.5)),(Moeda,(8.5,18.5)),(Moeda,(8.5,19.5)),(Moeda,(8.5,20.5)),(Moeda,(8.5,21.5)),(Moeda,(10.5,21.5)),(Moeda,(10.5,20.5)),(Moeda,(10.5,19.5)),(Moeda,(10.5,18.5)),(Moeda,(11.5,18.5)),(Moeda,(12.5,18.5)),(Moeda,(12.5,19.5)),(Moeda,(12.5,20.5)),(Moeda,(12.5,21.5)),(Moeda,(2.5,16.5)),(Moeda,(3.5,16.5)),(Moeda,(4.5,16.5)),(Moeda,(5.5,16.5)),(Moeda,(6.5,16.5)),(Moeda,(7.5,16.5)),(Moeda,(8.5,16.5)),(Moeda,(9.5,16.5)),(Moeda,(10.5,16.5)),(Moeda,(11.5,16.5)),(Moeda,(12.5,16.5)),(Moeda,(2.5,13.5)),(Moeda,(3.5,13.5)),(Moeda,(4.5,13.5)),(Moeda,(6.5,13.5)),(Moeda,(7.5,13.5)),(Moeda,(8.5,13.5)),(Moeda,(10.5,13.5)),(Moeda,(11.5,13.5)),(Moeda,(12.5,13.5)),(Moeda,(2.5,10.5)),(Moeda,(3.5,10.5)),(Moeda,(5.5,10.5)),(Moeda,(6.5,10.5)),(Moeda,(7.5,10.5)),(Moeda,(9.5,10.5)),(Moeda,(10.5,10.5)),(Moeda,(11.5,10.5)),(Moeda,(12.5,10.5)),(Moeda,(13.5,10.5)),(Moeda,(2.5,7.5)),(Moeda,(3.5,7.0)),(Moeda,(4.5,6.5)),(Moeda,(5.5,7.0)),(Moeda,(6.5,7.5)),(Moeda,(7.5,7.0)),(Moeda,(8.5,6.5)),(Moeda,(9.5,7.0)),(Moeda,(11.5,7.0)),(Moeda,(12.5,6.5)),(Moeda,(13.5,7.0)),(Moeda,(14.5,3.5)),(Moeda,(14.5,2.5)),(Moeda,(14.5,1.5)),(Moeda,(14.5,0.5)),(Moeda,(13.5,0.5)),(Moeda,(12.5,0.5)),(Moeda,(12.5,1.5)),(Moeda,(12.5,2.5)),(Moeda,(12.5,3.5)),(Moeda,(12.5,4.5)),(Moeda,(12.5,2.5)),(Moeda,(12.5,3.5)),(Moeda,(12.5,4.5)),(Moeda,(11.5,4.5)),(Moeda,(10.5,3.5)),(Moeda,(10.5,2.5)),(Moeda,(10.5,1.5)),(Moeda,(10.5,0.5)),(Moeda,(9.5,0.5)),(Moeda,(8.5,0.5)),(Moeda,(8.5,1.5)),(Moeda,(8.5,2.5)),(Moeda,(8.5,3.5)),(Moeda,(8.5,4.5)),(Moeda,(7.5,4.5)),(Moeda,(6.5,3.5)),(Moeda,(6.5,2.5)),(Moeda,(6.5,1.5)),(Moeda,(6.5,0.5)),(Moeda,(5.5,0.5)),(Moeda,(4.5,0.5)),(Moeda,(4.5,1.5)),(Moeda,(4.5,2.5)),(Moeda,(4.5,3.5)),(Moeda,(4.5,4.5)),(Martelo,(5.5,13.5)),(Escudo,(10.5,7.5))]
 
 jogo6 ::Jogo
 jogo6 = Jogo mapa6 inim6 colec6 jog{posicao = posi,direcao=diri}

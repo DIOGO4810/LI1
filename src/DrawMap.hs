@@ -107,7 +107,7 @@ drawColec state = Pictures (map (\(colec,pos) -> if colec == Martelo then (Trans
 
 drawStar :: State -> Picture
 drawStar state = Translate (fst(posMapToGloss (posf))) (snd(posMapToGloss (posf))) $ estrela
-  where (Mapa (posi,diri) posf blocos) = mapa $ jogo
+  where (Mapa (posi,diri) posf blocos) = mapa jogo
         estrela = scale (scaleGame/50) (scaleGame/50) $ fromJust(lookup ("estrela") imagesTheme)
         imagesTheme = fromJust (lookup (currentTheme state) (images state))
         jogo = (levelsList state) !! currentLevel state

@@ -60,7 +60,6 @@ aplicaGravidade tempo mapa personagem =
   where (Mapa _ _ blocos) = mapa
 
 -- | 4. Função que retira uma vida e aplica um efeito de bounce back ao jogador quando ele colide com um inimigo ou com uma lança e está desarmado
--- TODO: Fix na colisao na escada dentro da plataforma (criar uma propriedade com countdown enquanto o joagador não pode levar dano)
 tiraVidaJogador :: Tempo -> Mapa -> [Personagem] -> Personagem -> Personagem
 tiraVidaJogador tempo mapa listaInimigos personagem = 
   -- Colisão à beira de um muro
@@ -155,7 +154,7 @@ stopLimites mapa personagem=
     then personagem {velocidade = (0, snd $ velocidade personagem), direcao = Oeste}
   else if ((px - tamanhoX/2) <= 0 || (any (\hitboxbloco -> colisaoHitbox (calculaHitboxEsquerda personagem) hitboxbloco) (hitboxesBlocos (mapaPlataformasAlcapoes blocos)))) && (fst $ (velocidade personagem)) < 0
     then personagem {velocidade = (0, snd $ velocidade personagem), direcao = Este}
-  else if emEscada personagem && any (\hitbox -> colisaoHitbox (calculaHitboxEmbaixo personagem) hitbox) (hitboxesBlocos(mapaPlataformas mapa)) && (snd $ velocidade personagem)>0 && (not(any (\pos -> (fromIntegral $ floor (fst $ posicao personagem),fromIntegral $ ceiling ((snd $ posicao personagem) + 0.9)) == pos) (mapaEscadas mapa)) && not(any (\pos -> (fromIntegral $ floor (fst $ posicao personagem),fromIntegral $ ceiling ((snd $ posicao personagem) + 0.9)) == pos) (mapaVazio mapa))) 
+  else if emEscada personagem && (snd $ velocidade personagem)>0 && (any (\hitbox -> colisaoHitbox (calculaHitboxEmbaixo personagem) hitbox) (hitboxesBlocos(mapaPlataformas mapa)) && not((any (\pos -> (fromIntegral $ floor (fst $ posicao personagem),fromIntegral $ ceiling ((snd $ posicao personagem) + 0.9)) == pos) (mapaEscadas mapa)) || (any (\pos -> (fromIntegral $ floor (fst $ posicao personagem),fromIntegral $ ceiling ((snd $ posicao personagem))) == pos) (mapaEscadas mapa))))
     then personagem {velocidade = (0,0)}
   else if emEscada personagem && (snd $ velocidade personagem) /= 0 && (snd $ velocidade personagem) /= -3 && (snd $ velocidade personagem) /= 3 && (fst $ velocidade personagem) == 0 && not (any (\hitbox -> colisaoHitbox (calculaHitboxDentro personagem) hitbox) (hitboxesBlocos(mapaPlataformas mapa)))
     then personagem {velocidade = (0,0),direcao=Norte}
@@ -199,7 +198,7 @@ controlaInimigo mapa inimigo =
 -- | Função que escolhe aleatoriamente a trajetória de um inimigo
 iniciaMovimento :: Mapa -> (Personagem, Int) -> Personagem
 iniciaMovimento mapa (inim, int) =
-  if podeDescer mapa inim && (any (\posesc-> (px > (fst posesc)+0.495) && (px < (fst posesc)+0.505)) (mapaEscadas mapa)) && (snd $ velocidade inim) == 0 && mod int 2 == 0
+  if podeDescer mapa inim && (any (\posesc-> (px > (fst posesc)+0.495) && (px < (fst posesc)+0.505)) (mapaEscadas mapa)) && (snd $ velocidade inim) == 0 && mod int 6 == 0
     then inim{velocidade=(0,1.5),direcao=Sul}
   else if podeSubir mapa inim && (any (\posesc-> (px > (fst posesc)+0.495) && (px < (fst posesc)+0.505)) (mapaEscadas mapa)) && (snd $ velocidade inim) == 0 && mod int 6 == 0
     then inim{velocidade=(0,-1.5),direcao=Norte}

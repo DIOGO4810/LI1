@@ -24,10 +24,22 @@ reactMenu :: Event -> State -> State
 reactMenu (EventKey (SpecialKey KeyUp) Down _ _) state = state {selectedButton = if selectedButton state > 0 then selectedButton state - 1 else selectedButton state} 
 reactMenu (EventKey (SpecialKey KeyDown) Down _ _) state = state {selectedButton = if selectedButton state < 2 then selectedButton state + 1 else selectedButton state} 
 reactMenu (EventKey (SpecialKey KeyEnter) Down _ _) state 
-  | selectedButton state == 0 = state {currentMenu = InGame,selectedButton=0} --Play
+  | selectedButton state == 0 = state {currentMenu = Levels,selectedButton=0} --Levels
   | selectedButton state == 1 = state {currentMenu = Options,selectedButton=0} --Settings
   | selectedButton state == 2 = state {exitGame = True} --Exit
 reactMenu e state = state
+
+reactLevels :: Event -> State -> State
+reactLevels (EventKey (SpecialKey KeyUp) Down _ _) state = state {selectedButton = if selectedButton state > 0 then selectedButton state - 1 else selectedButton state} 
+reactLevels (EventKey (SpecialKey KeyDown) Down _ _) state = state {selectedButton = if selectedButton state < 5 then selectedButton state + 1 else selectedButton state} 
+reactLevels (EventKey (SpecialKey KeyEnter) Down _ _) state 
+  | selectedButton state == 0 = state {currentMenu = InGame,currentLevel=0,selectedButton=0} --Nivel 1
+  | selectedButton state == 1 = state {currentMenu = InGame,currentLevel=1,selectedButton=0} --Nivel 2
+  | selectedButton state == 2 = state {currentMenu = InGame,currentLevel=2,selectedButton=0} --Nivel 3
+  | selectedButton state == 3 = state {currentMenu = InGame,currentLevel=3,selectedButton=0} --Nivel 4
+  | selectedButton state == 4 = state {currentMenu = InGame,currentLevel=4,selectedButton=0} --Nivel 5
+  | selectedButton state == 5 = state {currentMenu = InGame,currentLevel=5,selectedButton=0} --Nivel 6
+reactLevels e state = state
 
 reactPause :: Event -> State -> State
 reactPause (EventKey (SpecialKey KeyUp) Down _ _) state = state {selectedButton = if selectedButton state > 0 then selectedButton state - 1 else selectedButton state} 

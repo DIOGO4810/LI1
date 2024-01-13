@@ -42,6 +42,7 @@ react (EventKey (Char 'm') Down _ _) state
 react (EventKey (Char 'p') Down _ _) state = if (currentMenu state)== InGame then return $ state {currentMenu = Pause} else return state
 react e state 
   | currentMenu state == InGame = return $ state {levelsList = updateLevel (levelsList state) (currentLevel state,jogoS)}
+  | currentMenu state == Levels = return $ reactLevels e state
   | currentMenu state == Pause = return $ reactPause e state
   | currentMenu state == Options = return $ reactOptions e state
   | currentMenu state == Mode = return $ reactMode e state
@@ -150,6 +151,12 @@ loadImages state = do
   botao1Home <- loadBMP "assets/menuplay.bmp"
   botao2Home <- loadBMP "assets/menuoptions.bmp"
   botao3Home <- loadBMP "assets/menuexit.bmp"
+  botao1Levels <- loadBMP "assets/botao1Levels.bmp"
+  botao2Levels <- loadBMP "assets/botao2Levels.bmp"
+  botao3Levels <- loadBMP "assets/botao3Levels.bmp"
+  botao4Levels <- loadBMP "assets/botao4Levels.bmp"
+  botao5Levels <- loadBMP "assets/botao5Levels.bmp"
+  botao6Levels <- loadBMP "assets/botao6Levels.bmp"
   botao1Options <- loadBMP "assets/botao1Options.bmp"
   botao2Options <- loadBMP "assets/botao2Options.bmp"
   botao3Options <- loadBMP "assets/botao3Options.bmp"
@@ -288,6 +295,12 @@ loadImages state = do
         ("botao1Home", botao1Home),
         ("botao2Home", botao2Home),
         ("botao3Home", botao3Home),
+        ("botao1Levels", botao1Levels),
+        ("botao2Levels", botao2Levels),
+        ("botao3Levels", botao3Levels),
+        ("botao4Levels", botao4Levels),
+        ("botao5Levels", botao5Levels),
+        ("botao6Levels", botao6Levels),
         ("botao1Options", botao1Options),
         ("botao2Options", botao2Options),
         ("botao3Options", botao3Options),
