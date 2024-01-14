@@ -21,7 +21,7 @@ import GHC.Float (double2Float, int2Double)
 movimenta :: Semente -> Tempo -> Jogo -> Jogo
 movimenta semente tempo jogo = ((jogadorWrapper tempo)(inimigosWrapper semente tempo (mapaWrapper jogo)))
 
--- | Conjunto de funções referentes ao jogador
+-- | Conjunto de funções referentes ao jogador e aos colecionáveis
 
 jogadorWrapper :: Tempo -> Jogo -> Jogo
 jogadorWrapper tempo jogoW = jogoW {
@@ -68,7 +68,6 @@ aplicaGravidade tempo mapa personagem =
   where (Mapa _ _ blocos) = mapa
 
 -- | 4. Função que retira uma vida e aplica um efeito de bounce back ao jogador quando ele colide com um inimigo ou com uma lança e está desarmado
-
 tiraVidaJogador :: Tempo -> Mapa -> [Personagem] -> Personagem -> Personagem
 tiraVidaJogador tempo mapa listaInimigos personagem = 
   -- Colisão à beira de um muro
@@ -273,9 +272,7 @@ ejeta mapa tempo personagem =
     then personagem {velocidade = (fst $ (velocidade personagem), -2)} 
   else if not (emEscada personagem) && any (\hitboxbloco -> colisaoHitbox (calculaHitboxDentro personagem) hitboxbloco) (hitboxesBlocos(mapaPlataformas mapa)) && any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmbaixo personagem) hitboxbloco) (hitboxesBlocos(mapaPlataformasAlcapoes blocos)) && not((any (\hitboxbloco -> colisaoHitbox (calculaHitbox personagem) hitboxbloco) (hitboxesBlocos(mapaPlataformas mapa))) && (any (\pos -> (fromIntegral $ floor (fst $ posicao personagem),fromIntegral $ ceiling ((snd $ posicao personagem) + 1)) == pos) (mapaEscadas mapa))) 
     then personagem {velocidade = (fst $ (velocidade personagem), -2)} 
-  else if not(impulsao personagem) && not (emEscada personagem) && any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmCima personagem) hitboxbloco) (hitboxesBlocos(mapaAlcapoes mapa)) 
-    then personagem {velocidade = (fst $ (velocidade personagem), 1+(snd $ gravidade)*tempo)}
-  else if not (emEscada personagem) && any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmCima personagem) hitboxbloco) (hitboxesBlocos(mapaPlataformas mapa)) 
+  else if not (emEscada personagem) && any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmCima personagem) hitboxbloco) (hitboxesBlocos(mapaPlataformasAlcapoes blocos)) 
     then personagem {velocidade = (fst $ (velocidade personagem), 1+(snd $ gravidade)*tempo)}
   else if any (\hitboxbloco -> colisaoHitbox (calculaHitboxDentro personagem) hitboxbloco) (hitboxesBlocos(mapaTrampolins mapa)) && not(any (\hitboxbloco -> colisaoHitbox (calculaHitboxEmCima personagem) hitboxbloco) (hitboxesBlocos(mapaTrampolins mapa))) && (snd $ velocidade personagem)>0
     then personagem {velocidade = (fst $ (velocidade personagem), -2)} 

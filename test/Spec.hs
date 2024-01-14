@@ -259,6 +259,7 @@ testAtualiza = test
 
 
 
+test_suite_01 :: Test
 test_suite_01 = test ["Basic Test" ~: True ~=? True]
 
 main :: IO ()

@@ -38,7 +38,7 @@ fr = 60
 -- | Função que atualiza o estado em que o jogador está no momento através das funções que reagem a cada um dos respetivos menus como também teclas de atalho que fecham o jogo, mudam de tema, de dificuldade e o de entrar no menu de pausa
 
 react :: Event -> State -> IO State
-react (EventKey (SpecialKey KeyEsc) Down _ _) jogo = exitSuccess
+react (EventKey (SpecialKey KeyEsc) Down _ _) state = exitSuccess
 react (EventKey (Char 't') Down _ _) state 
   | currentTheme state == Mario = return $ state {currentTheme=MarioCat}
   | currentTheme state == MarioCat = return $ state {currentTheme=MarioBear}
@@ -87,7 +87,6 @@ reactInGame (EventKey (SpecialKey KeyDown) Down _ _) jogo =  atualiza (replicate
 reactInGame (EventKey (SpecialKey KeyDown) Up _ _) jogo =  if (emEscada $ jogador jogo) then atualiza (replicate (length(inimigos jogo)) Nothing) (Just Parar) jogo else jogo
 
 -- | O mesmo género de funções que as de cima mas agora para dar diferentes habilidades ao jogador "CheatCodes" 
-
 reactInGame (EventKey (SpecialKey KeyDelete) Down _ _) jogo =  jogo{jogador=(jogador jogo){aplicaDano=(True,100)}}
 reactInGame (EventKey (SpecialKey KeyInsert) Down _ _) jogo =  jogo{jogador=(jogador jogo){aplicaDano=(False,0)}}
 reactInGame (EventKey (Char 'e') Down _ _) jogo =  jogo{jogador=(jogador jogo){escudo=(True,100)}}

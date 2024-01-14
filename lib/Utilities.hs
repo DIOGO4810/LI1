@@ -60,7 +60,7 @@ initialState = State {
 -- | Escala de cada um dos elementos da matriz do jogo
 
 scaleGame :: Float
-scaleGame = 40
+scaleGame = 50
 
 -- | Função que troca um elemento de uma lista num determinado índice
 updateLevel :: [a] -> (Int,a) -> [a]
