@@ -47,7 +47,7 @@ initialState = State {
   images = [],
   time = 0,
   levelsList = [jogo1,jogo2,jogo3,jogo4,jogo5,jogo6],
-  currentLevel = 5,
+  currentLevel = 1,
   currentTheme = Mario,
   currentMode = Easy,
   currentMenu = Home,
@@ -60,7 +60,7 @@ initialState = State {
 -- | Escala de cada um dos elementos da matriz do jogo
 
 scaleGame :: Float
-scaleGame = 40
+scaleGame = 50
 
 -- | Função que troca um elemento de uma lista num determinado indice
 updateLevel :: [a] -> (Int,a) -> [a]
