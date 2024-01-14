@@ -149,7 +149,14 @@ draw state = do
 
 
   if currentMenu state == InGame
-    then return (drawGame state)
+    then 
+      case currentTheme state of
+        Mario -> return $ Pictures[Translate 0 0 $ Color (makeColorI 2 13 31 255) $ rectangleSolid (fromIntegral(fst windowSize)) (fromIntegral(snd windowSize)),drawGame state]
+        MarioCat -> return $ Pictures[Translate 0 0 $ Color (makeColorI 31 2 2 255) $ rectangleSolid (fromIntegral(fst windowSize)) (fromIntegral(snd windowSize)),drawGame state]
+        MarioBear -> return $ Pictures[Translate 0 0 $ Color (makeColorI 26 19 19 255) $ rectangleSolid (fromIntegral(fst windowSize)) (fromIntegral(snd windowSize)),drawGame state]
+        MarioFrog -> return $ Pictures[Translate 0 0 $ Color (makeColorI 6 26 2 255) $ rectangleSolid (fromIntegral(fst windowSize)) (fromIntegral(snd windowSize)),drawGame state]
+        MarioAstronaut -> return $ Pictures[Translate 0 0 $ Color (makeColorI 38 33 0 255) $ rectangleSolid (fromIntegral(fst windowSize)) (fromIntegral(snd windowSize)),drawGame state]
+
   else return (drawMenu state)
   where jogo = (levelsList state) !! currentLevel state
 
