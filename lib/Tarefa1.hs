@@ -14,7 +14,7 @@ import Niveis
 
 
 
--- | Função para verificar colisões com plataformas e os limites do Mapa laterais e superior
+-- | Função para verificar colisões com plataformas, os limites do mapa laterais e superiores
 colisoesParede :: Mapa -> Personagem -> Bool
 colisoesParede (Mapa _ _ blocos) personagem = foraDosLimitesLaterais || acimaDoLimiteSuperior || colideComBloco
   where

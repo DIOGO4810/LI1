@@ -141,7 +141,7 @@ testemovimenta = test
             let colecionaveis1 = [(Martelo,(3,2))]
             let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = colecionaveis1, inimigos = listaInimigos1}
 
-            assertEqual "O jogo a movimentar a corretamente" True ((vida . head . inimigos . movimenta 100 1 $ jogo1) < 5)
+            assertEqual "O jogo a movimentar corretamente" True ((vida . head . inimigos . movimenta 100 1 $ jogo1) < 5)
 
         ,"Teste para confirmar se a funçao faz com que o jogador perca um de vida em contacto com o inimigo" ~: do
 
@@ -207,21 +207,21 @@ testemovimenta = test
 testAtualiza :: Test
 testAtualiza = test
  [
-    "Teste para confirmar se o jogador ganhou velocidade para a direita a receber a acao AndarDireita" ~: do
+    "Teste para confirmar se o jogador ganhou velocidade para a direita a receber a ação AndarDireita" ~: do
 
         let acoesjogador = Just AndarDireita
         let personagem1 = Personagem {direcao = Este , impulsao = False,kickback = (False,0),escudo = (False,0), emEscada = False, velocidade = (0,0),posicao =(1,22.5),tamanho = (1,1), ressalta = False, tipo = Jogador, vida = 50, aplicaDano = (False,0), pontos = 0}
         let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = [], inimigos = []}
 
-        assertEqual "Verificar se a função atualiza funciona" True ((fst . velocidade . jogador . atualiza [] acoesjogador $ jogo1) > 0)
+        assertEqual "Verificar se a função atualiza funciona corretamente" True ((fst . velocidade . jogador . atualiza [] acoesjogador $ jogo1) > 0)
 
-    ,"Teste para confirmar se o jogador perde toda a sua velocidade a receber a acao Parar" ~: do
+    ,"Teste para confirmar se o jogador perde toda a sua velocidade a receber a ação Parar" ~: do
 
         let acoesjogador = Just Parar
         let personagem1 = Personagem {direcao = Este , impulsao = False,kickback = (False,0),escudo = (False,0), emEscada = False, velocidade = (0,0),posicao =(1,22.5),tamanho = (1,1), ressalta = False, tipo = Jogador, vida = 50, aplicaDano = (False,0), pontos = 0}
         let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = [], inimigos = []}
 
-        assertEqual "Verificar se a função atualiza funciona" True ((velocidade . jogador . atualiza [] acoesjogador $ jogo1) ==(0,0))
+        assertEqual "Verificar se a função atualiza funciona corretamente" True ((velocidade . jogador . atualiza [] acoesjogador $ jogo1) ==(0,0))
 
     ,"Teste para confirmar se o jogador muda de direção" ~: do
 
@@ -229,7 +229,7 @@ testAtualiza = test
         let personagem1 = Personagem {direcao = Este , impulsao = False,kickback = (False,0),escudo = (False,0), emEscada = False, velocidade = (0,0),posicao =(1,22.5),tamanho = (1,1), ressalta = False, tipo = Jogador, vida = 50, aplicaDano = (False,0), pontos = 0}
         let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = [], inimigos = []}
 
-        assertEqual "Verificar se a função atualiza funciona" True ((direcao . jogador . atualiza [] acoesjogador $ jogo1) == Oeste)
+        assertEqual "Verificar se a função atualiza funciona corretamente" True ((direcao . jogador . atualiza [] acoesjogador $ jogo1) == Oeste)
 
     ,"Teste para confirmar se o jogador ganha velocidade em Y negativa a saltar" ~: do
 
@@ -237,7 +237,7 @@ testAtualiza = test
         let personagem1 = Personagem {direcao = Este , impulsao = False,kickback = (False,0),escudo = (False,0), emEscada = False, velocidade = (0,0),posicao =(1,22.5),tamanho = (1,1), ressalta = False, tipo = Jogador, vida = 50, aplicaDano = (False,0), pontos = 0}
         let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = [], inimigos = []}
 
-        assertEqual "Verificar se a função atualiza funciona" True ((snd . velocidade . jogador . atualiza [] acoesjogador $ jogo1) < 0)
+        assertEqual "Verificar se a função atualiza funciona corretamente" True ((snd . velocidade . jogador . atualiza [] acoesjogador $ jogo1) < 0)
 
     ,"Teste para confirmar se o jogador ganha velocidade em Y negativa ao subir uma escada" ~: do
 
@@ -245,7 +245,7 @@ testAtualiza = test
         let personagem1 = Personagem {direcao = Este , impulsao = False,kickback = (False,0),escudo = (False,0), emEscada = True, velocidade = (0,0),posicao =(7.5,22.5),tamanho = (1,1), ressalta = False, tipo = Jogador, vida = 50, aplicaDano = (False,0), pontos = 0}
         let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = [], inimigos = []}
 
-        assertEqual "Verificar se a função atualiza funciona" True ((snd . velocidade . jogador . atualiza [] acoesjogador $ jogo1) < 0)
+        assertEqual "Verificar se a função atualiza funciona correatemente" True ((snd . velocidade . jogador . atualiza [] acoesjogador $ jogo1) < 0)
 
     ,"Teste para confirmar se o jogador ganha velocidade em Y positiva ao descer uma escada" ~: do
 
@@ -253,7 +253,7 @@ testAtualiza = test
         let personagem1 = Personagem {direcao = Este , impulsao = False,kickback = (False,0),escudo = (False,0), emEscada = True, velocidade = (0,0),posicao =(7.5,22.5),tamanho = (1,1), ressalta = False, tipo = Jogador, vida = 50, aplicaDano = (False,0), pontos = 0}
         let jogo1 = Jogo {mapa = mapa1, jogador = personagem1, colecionaveis = [], inimigos = []}
 
-        assertEqual "Verificar se a função atualiza funciona" True ((snd . velocidade . jogador . atualiza [] acoesjogador $ jogo1) > 0)
+        assertEqual "Verificar se a função atualiza funciona corretamente" True ((snd . velocidade . jogador . atualiza [] acoesjogador $ jogo1) > 0)
 
  ]
 

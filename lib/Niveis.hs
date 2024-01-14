@@ -689,7 +689,7 @@ jogo6 ::Jogo
 jogo6 = Jogo mapa6 inim6 colec6 jog{posicao = posi,direcao=diri}
   where (Mapa (posi,diri) posf blocos) = mapa6
 
-
+-- | Funções que abreviam os elementos das matrizes de cada mapa. Muda de forma direta para a inicial do nome de cada elemento
 
 abreviaBlocos :: [[Char]] -> [[Bloco]]
 abreviaBlocos = map (\bloco -> replaceValue bloco) 

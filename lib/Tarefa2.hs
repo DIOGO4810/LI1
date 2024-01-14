@@ -14,6 +14,8 @@ import Data.List
 import Utilities
 import Niveis
 
+-- | Função que valida um jogo tendo em conta determinadas condições
+
 valida :: Jogo -> Bool
 valida jogo =
   temChao && inimigosRessaltam && posicoesIniciaisValidas && numeroMinimoInimigos && vidasFantasmas && semBlocosEmPersCole && restricoesEscadas (mapa jogo) && restricoesAlcapoes (jogador jogo) (mapa jogo)
@@ -24,7 +26,7 @@ valida jogo =
     listaColecionaveis = colecionaveis jogo
     (tamanhoX, tamanhoY) = tamanho (jogador jogo)
 
-    -- | 1. O mapa tem "chão", ou seja, uma plataforma que impede que o jogador ou outro personagem caia fora do mapa.
+    -- | 1. O mapa tem "chão", ou seja, uma plataforma que impede que o jogador ou outra personagem caia fora do mapa.
     temChao = all (\b -> isPlataforma b || isTrampolim b || isLanca b) (last blocos)
 
     -- | 2. Todos os inimigos têm a propriedade ressalta a True, enquanto que o jogador a tem a False.
@@ -36,7 +38,7 @@ valida jogo =
     -- | 4. Número mínimo de inimigos: 2 (dois).
     numeroMinimoInimigos = length listaInimigos >= 2
 
-    -- | 5. Inimigos Fantasma têm exatamente 1 (uma) vida.
+    -- | 5. Inimigos do tipo fantasma têm que ter exatamente 1 de vida.
     vidasFantasmas = all (\inimigo -> if tipo inimigo == Fantasma then vida inimigo == 1 else True) listaInimigos
 
     -- | 6. Escadas não podem começar/terminar em alçapões, e pelo menos uma das suas extremidades tem que ser do tipo Plataforma.

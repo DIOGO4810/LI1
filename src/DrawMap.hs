@@ -13,7 +13,7 @@ windowSize :: (Int,Int)
 windowSize = (((length $ head blocos) * float2Int scaleGame),((length blocos) * float2Int scaleGame))
   where (Mapa _ _ blocos) = mapa1
 
--- | Função que poem cada um dos blocos do meio para o canto do 2ºquadrante trasnformando assim as posições de todos os blocos
+-- | Função que coloca cada um dos blocos do meio para o canto do 2ºquadrante trasnformando assim as posições de todos os blocos
 posMapToGloss :: Posicao -> (Float,Float)
 posMapToGloss (x,y) = (((double2Float x)*scaleGame)-(fromIntegral $ (fst windowSize))/2, ((fromIntegral $ (snd windowSize))/2 - (double2Float y) * scaleGame))
 
@@ -33,7 +33,7 @@ drawBlocks state = Pictures [Pictures $ map (\pos -> Translate (fst(posMapToGlos
         mapaD = mapa $ jogo
         jogo = (levelsList state) !! currentLevel state
 
--- | Função que desenha o player tanto como as suas respetivas animações usando diversas condições de direção e velocidade e dando scale negativo em x para poder inverter o mario quando o mesmo muda de direção
+-- | Função que desenha o player, as suas respetivas animações usando diversas condições de direção e velocidade, dando scale negativo em x para poder inverter o Mário quando o mesmo muda de direção
 drawPlayer :: State -> Picture
 drawPlayer state= 
   if ((direcao $ jogador jogoD) == Norte  || (direcao $ jogador jogoD) == Sul) && (emEscada $ jogador jogoD)
@@ -78,7 +78,7 @@ drawPlayer state=
     imagesTheme = fromJust (lookup (currentTheme state) (images state))
     imagesThemeDef = fromJust (lookup Mario (images state))
 
--- | Função que desenha os inimigos de uma maneira similar á do personagem mas sem tantas condições em relação ás animações
+-- | Função que desenha os inimigos de uma maneira similar à do personagem mas sem tantas condições em relação ás animações
 drawEnemies :: State -> Picture
 drawEnemies state = Pictures $ map (\inimigo -> if (direcao inimigo == Este ||  direcao inimigo == Norte || direcao inimigo == Sul) && tipo inimigo == Fantasma then Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ fantasma else if direcao inimigo == Oeste && tipo inimigo == Fantasma then Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ scale (-1) (1) fantasma else if tipo inimigo == MacacoMalvado then Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ macacomalvado else Translate (fst(posMapToGloss (posicao inimigo))) (snd(posMapToGloss (posicao inimigo))) $ barril) (inimigos $ jogo)
   where 
@@ -154,7 +154,7 @@ drawEscuro state = Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px
         (px,py) = posicao $ jogador jogoD
         jogoD = (levelsList state) !! currentLevel state
     
--- | Função que desenha o colecionavel de escudo á volta do player
+-- | Função que desenha o colecionavel de escudo à volta do player
 
 drawShield :: State -> Picture 
 drawShield state = Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px,py))) shield
@@ -179,7 +179,7 @@ drawShield state = Translate (fst(posMapToGloss (px,py))) (snd(posMapToGloss (px
         yellow = makeColorI 250 229 0 150
 
 
--- | Função que coleta todas as funções de desenha anteriores e as junta numa função geral que desenha o jogo todo
+-- | Função que coleta todas as funções de desenho anteriores e as junta numa função geral que desenha o jogo todo
 
 drawGame :: State -> Picture
 drawGame state = Pictures [drawBlocks state, drawColec state, drawStar state, drawEnemies state, drawShield state, drawPlayer state,  drawEscuro state,drawLife ((levelsList state) !! currentLevel state) (images state),drawScore state]

@@ -60,9 +60,9 @@ initialState = State {
 -- | Escala de cada um dos elementos da matriz do jogo
 
 scaleGame :: Float
-scaleGame = 50
+scaleGame = 40
 
--- | Função que troca um elemento de uma lista num determinado indice
+-- | Função que troca um elemento de uma lista num determinado índice
 updateLevel :: [a] -> (Int,a) -> [a]
 updateLevel lvs (i, j) = before ++ [j] ++ after 
   where (before,_:after) = splitAt i lvs
@@ -76,49 +76,49 @@ calculaHitbox personagem =
     (px, py) = posicao personagem
     (tamanhoX, tamanhoY) = tamanho personagem
 
--- | Função que calcula as hitboxes que verificam colisões embaixo com obstáculos
+-- | Função que calcula a hitbox que verifica colisões em baixo com obstáculos
 calculaHitboxEmbaixo :: Personagem -> Hitbox
 calculaHitboxEmbaixo jogador = ((px-tx/2.5,py),(px+tx/2.5,py+ty/2))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
 
--- | Função que calcula as hitboxes que verificam colisões em cima com obstáculos
+-- | Função que calcula a hitbox que verifica colisões em cima com obstáculos
 calculaHitboxEmCima :: Personagem -> Hitbox
 calculaHitboxEmCima jogador = ((px-tx/2.5,py-ty/2),(px+tx/2.5,py))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
 
--- | Função que calcula as hitboxes que verificam colisões à esquerda com obstáculos
+-- | Função que calcula a hitboxe que verifica colisões à esquerda com obstáculos
 calculaHitboxEsquerda :: Personagem -> Hitbox
 calculaHitboxEsquerda jogador = ((px-tx/1.9,py-ty/2.5),(px,py+ty/2.5))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
 
--- | Função que calcula as hitboxes que verificam colisões à direita com obstáculos
+-- | Função que calcula a hitbox que verifica colisões à direita com obstáculos
 calculaHitboxDireita :: Personagem -> Hitbox
 calculaHitboxDireita jogador = ((px,py-ty/2.5),(px+tx/1.9,py+ty/2.5))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
 
--- | Função que calcula as hitboxes que verificam colisões do canto inferior esquerdo com obstáculos
+-- | Função que calcula a hitbox que verifica colisões do canto inferior esquerdo com obstáculos
 calculaHitboxInfEsquerda :: Personagem -> Hitbox
 calculaHitboxInfEsquerda jogador = ((px-tx/2,py),(px,py+ty/2))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
 
--- | Função que calcula as hitboxes que verificam colisões do canto inferior direito com obstáculos
+-- | Função que calcula a hitbox que verifica colisões do canto inferior direito com obstáculos
 calculaHitboxInfDireita :: Personagem -> Hitbox
 calculaHitboxInfDireita jogador = ((px,py),(px+tx/2,py+ty/2))
   where 
     (px,py) = posicao jogador
     (tx,ty) = tamanho jogador
 
--- | Função que calcula as hitboxes que verificam se o jogador está dentro de um bloco 
+-- | Função que calcula a hitbox que verifica se o jogador está dentro de um bloco 
 calculaHitboxDentro :: Personagem -> Hitbox
 calculaHitboxDentro jogador = ((px-tx/2.5,py-ty/2.5),(px+tx/2.5,py+ty/2.5))
   where 
@@ -148,7 +148,7 @@ colisaoHitboxAux ((x1,y1), (x2,y2)) ((x3,y3),(x4,y4)) = pointInBox (double2Float
                                                     || pointInBox (double2Float x3,double2Float y4) (double2Float x1,double2Float y1) (double2Float x2,double2Float y2)
                                                     || pointInBox (double2Float x4,double2Float y3) (double2Float x1,double2Float y1) (double2Float x2,double2Float y2)
 
--- | Função que retorna uma lista com as hitboxes dos blocos
+-- | Função que retorna uma lista com as hitboxes dos blocos ao receber as posições dos mesmos
 hitboxesBlocos :: [Posicao] -> [Hitbox]
 hitboxesBlocos = map (\(x,y) -> ((x,y),(x+1,y+1))) 
 
@@ -175,7 +175,7 @@ replaceVazio [] _ = []
 replaceVazio (x:xs) 0 = Vazio : xs 
 replaceVazio (x:xs) n = x : replaceVazio xs (n - 1)
 
--- | Função que retorna a lista de posições dos blocos
+-- | Funções que retornam a lista de posições de um determinado bloco no mapa
 mapaBlocos :: Mapa -> Bloco -> [Posicao]
 mapaBlocos (Mapa _ _ blocos) bloco = [pos | pos <- centerOfBlocos blocos, isBloco bloco (getBloco pos blocos)]
 
@@ -200,11 +200,13 @@ mapaLancas (Mapa _ _ blocos) = [pos | pos <- indicesBlocos blocos, isLanca (getB
 mapaPlataformasAlcapoes :: [[Bloco]] -> [Posicao]
 mapaPlataformasAlcapoes blocos = [pos | pos <- indicesBlocos blocos, isAlcapao (getBloco pos blocos) || isPlataforma (getBloco pos blocos)]
 
+-- | Função que recebe uma posição e um mapa e devolve a posição da plataforma mais próxima
+
 plataformaProxima :: Posicao -> Mapa -> Posicao 
 plataformaProxima (px,py) mapa = foldl (\(pxn,pyn) (xp,yp)-> if (double2Float(abs(pxn-px)))<(double2Float(abs(xp-px))) && notElem (pxn,pyn-1) (mapaPlataformas mapa) then (pxn,pyn) else (xp,yp)) (0,fromIntegral(ceiling py)) linha 
   where linha = (filter (\(x,y)-> y == fromIntegral(ceiling py))(mapaPlataformas mapa))
 
--- | Função que retorna agrupa as escadas adjacentes
+-- | Função que agrupa as escadas adjacentes
 agrupaEscadas :: Mapa -> [[Posicao]]
 agrupaEscadas mapa =  agrupaEscadasAux (sortOn fst (mapaEscadas mapa))
 
@@ -216,10 +218,12 @@ agrupaEscadasAux ((x,y):t)
     | otherwise = [(x,y)] : r
     where r = agrupaEscadasAux t
 
+-- | Função que devolve o primeiro e último elemento de um conjunto de escadas
+
 primUltEscadas :: Mapa -> [[Posicao]]
 primUltEscadas mapa = map (\pos->[head pos,last pos]) (agrupaEscadas mapa)
 
--- | Função que retorna agrupa os alçapões adjacentes
+-- | Função que agrupa os alçapões adjacentes
 agrupaAlcapoes :: Mapa -> [[Posicao]]
 agrupaAlcapoes mapa =  agrupaAlcapoesAux (sortOn snd (mapaAlcapoes mapa))
 
@@ -231,11 +235,17 @@ agrupaAlcapoesAux ((x,y):t)
     | otherwise = [(x,y)] : r
     where r = agrupaAlcapoesAux t
 
+-- | Função que devolve o primeiro e último elemento de um conjunto de alçapões
+
 primUltAlcapoes :: Mapa -> [[Posicao]]
 primUltAlcapoes mapa = map (\pos->[head pos,last pos]) (agrupaAlcapoes mapa)
 
+-- | Função que calcula o tamanho dos alçapões
+
 tamanhoAlcapoes :: Mapa -> [Int]
 tamanhoAlcapoes mapa = map (\[(x1,y1),(x2,y2)]-> double2Int(x2-x1+1)) (primUltAlcapoes mapa)
+
+-- | Função que transforma as posições de cada um dos índices dos blocos na sua posição central 
 
 centerOfBlocos :: [[Bloco]] -> [Posicao]
 centerOfBlocos blocos = map (\(x,y) -> (x+0.5,y+0.5)) (indicesBlocos blocos)

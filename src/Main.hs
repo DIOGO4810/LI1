@@ -99,7 +99,7 @@ reactInGame event jogo = jogo
 
               
 
--- | Função que ativa a movimenta dos inimigos no ínicio de cada nível, que passa de nível ao chegar á estrela que escreve no ficheiro de "highscore" a mior pontuação que devolve o menu de GameOver quando as vidas acabam como também atualiza a pontuação e o tempo
+-- | Função que ativa o movimenta dos inimigos no ínicio de cada nível, que passa de nível ao chegar á estrela, que escreve no ficheiro de "highscore" a maior pontuação, que devolve o menu de GameOver quando as vidas acabam e também atualiza a pontuação e o tempo
 
 timeInGame :: Float -> State -> IO State
 timeInGame tempo state = do
@@ -300,7 +300,7 @@ loadImages state = do
   barril2Astronaut <- loadBMP "assets/barril2Astronaut.bmp"
 
 
--- | Dicionário de imagens dividido em vários sub-dicionários aonde o primeiro é o geral e os outros contêm as mesmas strings para sprites difrentes sendo diferenciados pelo CurrentTheme sabendo que cada um tem o seu sub-dicionário
+-- | Dicionário de imagens dividido em vários sub-dicionários aonde o primeiro é o geral e os outros contêm as mesmas strings para sprites diferentes sendo diferenciados pelo CurrentTheme sabendo que cada um tem o seu sub-dicionário
 
   return state {
     images = [
@@ -453,7 +453,7 @@ loadImages state = do
     }
 
 
--- | A main que lê o ficheiro do maior score que pega o estado inical através do initialState definido na utilities e a função playIO que recebe todos os argumentos necessários
+-- | A main que lê o ficheiro do maior score.Pega no estado inical através do initialState definido na utilities e a função playIO que recebe todos os argumentos necessários
 
 main :: IO ()
 main = do
