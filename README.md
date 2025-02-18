@@ -1,5 +1,14 @@
 # Laboratórios de Informática I
 
+Nota: 20/20 Valores
+
+Um remake do jogo Donkey Kong em Haskell 
+
+## Dependencies
+gloss- 1.13.2.2
+random- 1.2.1.1
+base- 4.16.4.0
+
 ## Executável
 
 Pode compilar e executar o programa através dos comandos `build` e `run` do `cabal`.
