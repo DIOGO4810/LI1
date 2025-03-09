@@ -1,4 +1,4 @@
-![image](assets/Screenshot from 2025-03-09 20-05-49.png)
+![image](assets/Screenshot%20from%202025-03-09%2020-05-49.png)
 
 
 # Laboratórios de Informática I
