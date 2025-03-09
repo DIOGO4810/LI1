@@ -1,3 +1,6 @@
+![image](assets/Screenshot from 2025-03-09 20-05-49.png)
+
+
 # Laboratórios de Informática I
 
 Nota: 20/20 Valores
